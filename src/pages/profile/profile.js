@@ -3,8 +3,8 @@ import React from 'react';
 import Layout from '../../components/layout';
 import UserCard from './userCard';
 import UserCategory from './userCategory';
-import UserDetails from './userDetails';
 import UserSummary from './userSummary';
+// import UserDetails from './userDetails';
 
 const Profile = () => {
   return (

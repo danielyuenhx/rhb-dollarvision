@@ -150,4 +150,119 @@ const TRANSACTIONS_DATA = [
   },
 ];
 
-export { WALLETS_DATA, CATEGORIES_DATA, TRANSACTIONS_DATA };
+const REWARD_DATA = [
+  {
+    label: 'Budget! Budget! Budget!',
+    description: 'Stay within your budget for any one of the category',
+    expired: '11/10/2023',
+    lottie: 'https://assets4.lottiefiles.com/packages/lf20_yZpLO2.json',
+    earned: true,
+    points: 300,
+  },
+  {
+    label: 'Turn around',
+    description:
+      'Spend atleast 10% lesser compared to your previous month spending',
+    expired: '11/10/2023',
+    lottie: 'https://assets4.lottiefiles.com/packages/lf20_ep1tn2ew.json',
+    earned: true,
+    points: 250,
+  },
+  {
+    label: 'On the way!',
+    description: 'Save RM1000 for one of the item in your piggy bank',
+    expired: '11/10/2023',
+    lottie: 'https://assets5.lottiefiles.com/private_files/lf30_omlrftyq.json',
+    earned: false,
+    points: 150,
+  },
+  {
+    label: 'Boring Guy',
+    description: 'Spend less than RM 200 in entertainments',
+    expired: '11/10/2023',
+    lottie: 'https://assets4.lottiefiles.com/packages/lf20_lFRXJJKwS5.json',
+    earned: false,
+    points: 300,
+  },
+  {
+    label: 'Stop it NOW!',
+    description: 'Spend more than RM3000 per month',
+    expired: '11/10/2023',
+    lottie: 'https://assets4.lottiefiles.com/packages/lf20_OdVhgq.json',
+    earned: false,
+    points: 600,
+  },
+];
+
+const SUMMARY_DATA = [
+  {
+    label: 'Food',
+    totalSpend: '1200',
+    averageSpend: '800',
+    lastMonth: '1300',
+    advice: [
+      { key: 1, info: 'Your spending on food are way too excessive!' },
+      { key: 2, info: 'You should cook more at home.' },
+      { key: 3, info: 'Stop going to cafe or pricey restaurants too often.' },
+    ],
+  },
+  {
+    label: 'Transport',
+    totalSpend: '400',
+    averageSpend: '300',
+    lastMonth: '300',
+    advice: [
+      {
+        key: 1,
+        info: 'You are not to far off from the average spenders in transportation.',
+      },
+      {
+        key: 2,
+        info: 'Take the public transport whenever you can to reduce fuel usage.',
+      },
+      {
+        key: 3,
+        info: 'Try to have carpooling more often with your friends if possible.',
+      },
+    ],
+  },
+  {
+    label: 'Shopping',
+    totalSpend: '600',
+    averageSpend: '200',
+    lastMonth: '300',
+    advice: [
+      {
+        key: 1,
+        info: 'You do like to purchase a lot of the latest eletronic gadgets.',
+      },
+      {
+        key: 2,
+        info: 'Do not buy an item just for show off, save and invest!',
+      },
+      { key: 3, info: 'You do not always need the most trendy item.' },
+    ],
+  },
+  {
+    label: 'Entertainment',
+    totalSpend: '500',
+    averageSpend: '600',
+    lastMonth: '700',
+    advice: [
+      { key: 1, info: 'Great job for staying within your budget!' },
+      { key: 2, info: 'We noticed you spend a lot of money on cinema movies.' },
+      {
+        key: 3,
+        info: 'Try to look for promotion price whenever you can to save more money.',
+      },
+    ],
+  },
+];
+
+export {
+  WALLETS_DATA,
+  CATEGORIES_DATA,
+  TRANSACTIONS_DATA,
+  REWARD_DATA,
+  SUMMARY_DATA,
+};
