@@ -5,8 +5,11 @@ import {
   Flex,
   Avatar,
   useColorMode,
+  Button,
+  Collapse,
 } from '@chakra-ui/react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {
   faWallet,
@@ -14,88 +17,165 @@ import {
   faMoneyBill,
   faAward,
   faChartSimple,
+  faArrowRightArrowLeft,
 } from '@fortawesome/free-solid-svg-icons';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
 export const Sidebar = () => {
   const navigate = useNavigate();
-  const { colorMode } = useColorMode();
+  const location = useLocation();
+  const [show, setShow] = useState(false);
+  const [selected, setSelected] = useState();
+  const [expand, setExpand] = useState(true);
+
+  useEffect(() => {
+    setSelected(location.pathname);
+  }, [location]);
 
   const sideBarList = [
     {
       path: '/',
       name: 'Overview',
-      icon: <FontAwesomeIcon icon={faChartSimple} color="white" />,
+      icon: (
+        <FontAwesomeIcon
+          icon={faChartSimple}
+          color={selected === '/' ? 'white' : '#3dbbf5'}
+          size="2x"
+        />
+      ),
     },
     {
       path: '/piggybank',
       name: 'Piggy Bank',
-      icon: <FontAwesomeIcon icon={faPiggyBank} color="white" />,
+      icon: (
+        <FontAwesomeIcon
+          icon={faPiggyBank}
+          color={selected === '/piggybank' ? 'white' : '#3dbbf5'}
+          size="2x"
+        />
+      ),
     },
     {
       path: '/wallet',
       name: 'Wallet',
-      icon: <FontAwesomeIcon icon={faWallet} color="white" />,
+      icon: (
+        <FontAwesomeIcon
+          icon={faWallet}
+          color={selected === '/wallet' ? 'white' : '#3dbbf5'}
+          size="2x"
+        />
+      ),
     },
     {
       path: '/budget',
       name: 'Budget',
-      icon: <FontAwesomeIcon icon={faMoneyBill} color="white" />,
+      icon: (
+        <FontAwesomeIcon
+          icon={faMoneyBill}
+          color={selected === '/budget' ? 'white' : '#3dbbf5'}
+          size="2x"
+        />
+      ),
     },
     {
       path: '/rewards',
       name: 'Rewards',
-      icon: <FontAwesomeIcon icon={faAward} color="white" />,
+      icon: (
+        <FontAwesomeIcon
+          icon={faAward}
+          color={selected === '/rewards' ? 'white' : '#3dbbf5'}
+          size="2x"
+        />
+      ),
     },
   ];
 
   return (
     <Box
-      bgColor={colorMode === 'light' ? 'white' : 'gray.700'}
-      h="100vh"
-      minWidth="250px"
-      px="1.5%"
+      width={expand ? '250px' : '95px'}
       position="sticky"
       top="0"
+      h="100vh"
+      transitionDuration="0.1s"
+      justifyContent="center"
     >
-      <Flex justify="space-between" direction="column" h="100%">
-        <Box marginTop="50px" textAlign="center">
-          <Text as="b" fontSize="3xl" fontWeight="bold">
-            Dollar-Vision
-          </Text>
+      <Box
+        bg="primaryBlue"
+        justifyContent={expand ? 'flex-end' : ' center'}
+        display="flex"
+        alignItems="center"
+        paddingTop="10px"
+        paddingBottom="10px"
+        paddingRight={expand ? '10px' : '0px'}
+      >
+        <IconButton bgColor="transparent" border="0px" _hover={{}} _active={{}}>
+          <FontAwesomeIcon
+            icon={faArrowRightArrowLeft}
+            size="2x"
+            color="black"
+            onClick={() => {
+              setExpand(!expand);
+            }}
+          />
+        </IconButton>
+      </Box>
 
-          {sideBarList.map(Link => {
-            return (
-              <Box
-                key={Link.name}
-                onClick={() => navigate(Link.path)}
-                cursor="pointer"
-                height="60px"
-                mt="10%"
-                borderRadius="10px"
-                display="flex"
-                justifyContent="flex-start"
-                alignItems="center"
-                transitionDuration="0.2s"
-                pl="10%"
-                gap="10%"
-                _hover={{
-                  backgroundColor: colorMode === 'light' ? 'white' : 'gray.800',
-                  transform: `scale(1.1)`,
-                }}
-              >
-                <IconButton
-                  bgColor="secondaryBlue"
-                  _hover={{ bgColor: 'secondaryBlue' }}
-                >
-                  {Link.icon}
-                </IconButton>
-                <Text as="b">{Link.name}</Text>
-              </Box>
-            );
-          })}
-        </Box>
+      <Box bgColor="secondaryBlue" px="1.5%" h="100%">
         <Flex
+          justify="flex-start"
+          direction="column"
+          h="100%"
+          alignItems="center"
+        >
+          <Box textAlign="center" justifyContent="center">
+            {/* <Text as="b" fontSize="3xl" fontWeight="bold">
+            Dollar-Vision
+          </Text> */}
+
+            {sideBarList.map(Link => {
+              return (
+                <Box
+                  key={Link.name}
+                  onClick={() => navigate(Link.path)}
+                  cursor="pointer"
+                  height="60px"
+                  mt="30px"
+                  borderRadius="10px"
+                  display="flex"
+                  justifyContent="flex-start"
+                  alignItems="center"
+                  transitionDuration="0.2s"
+                  // pl="10%"
+                  gap="10%"
+                  // _hover={{
+                  //   backgroundColor: colorMode === 'light' ? 'white' : 'gray.800',
+                  //   transform: `scale(1.1)`,
+                  // }}
+                >
+                  <Flex
+                    justify="flex-start"
+                    align="center"
+                    width={expand ? '150px' : '10%'}
+                  >
+                    <IconButton
+                      bgColor="transparent"
+                      border="0px"
+                      _hover={{}}
+                      _active={{}}
+                    >
+                      {Link.icon}
+                    </IconButton>
+                    {expand && (
+                      <Text as="b" transitionDuration="0.5s" pl="15%">
+                        {Link.name}
+                      </Text>
+                    )}
+                  </Flex>
+                </Box>
+              );
+            })}
+          </Box>
+          {/* <Flex
           cursor="pointer"
           borderRadius="10px"
           gap="10%"
@@ -105,19 +185,25 @@ export const Sidebar = () => {
           height="60px"
           alignItems="center"
           transitionDuration="0.2s"
-          _hover={{
-            backgroundColor: colorMode === 'light' ? 'white' : 'gray.800',
-            transform: `scale(1.1)`,
-          }}
+          // _hover={{
+          //   backgroundColor: colorMode === 'light' ? 'white' : 'gray.800',
+          //   transform: `scale(1.1)`,
+          // }}
         >
-          <Flex onClick={() => navigate('/profile')} justify="space-between" alignItems="center" w="55%"> 
+          <Flex
+            onClick={() => navigate('/profile')}
+            justify="space-between"
+            alignItems="center"
+            w="55%"
+          >
             <Avatar size="sm" />
             <Text as="b">Profile</Text>
           </Flex>
 
           <ColorModeSwitcher />
+        </Flex> */}
         </Flex>
-      </Flex>
+      </Box>
     </Box>
   );
 };
