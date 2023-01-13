@@ -197,9 +197,9 @@ const REWARD_DATA = [
 const SUMMARY_DATA = [
   {
     label: 'Food',
-    totalSpend: '1200',
-    averageSpend: '800',
-    lastMonth: '1300',
+    totalSpend: 1200,
+    averageSpend: 800,
+    lastMonth: 700,
     advice: [
       { key: 1, info: 'Your spending on food are way too excessive!' },
       { key: 2, info: 'You should cook more at home.' },
@@ -208,9 +208,9 @@ const SUMMARY_DATA = [
   },
   {
     label: 'Transport',
-    totalSpend: '400',
-    averageSpend: '300',
-    lastMonth: '300',
+    totalSpend: 400,
+    averageSpend: 300,
+    lastMonth: 300,
     advice: [
       {
         key: 1,
@@ -228,9 +228,9 @@ const SUMMARY_DATA = [
   },
   {
     label: 'Shopping',
-    totalSpend: '600',
-    averageSpend: '200',
-    lastMonth: '300',
+    totalSpend: 600,
+    averageSpend: 200,
+    lastMonth: 300,
     advice: [
       {
         key: 1,
@@ -245,9 +245,9 @@ const SUMMARY_DATA = [
   },
   {
     label: 'Entertainment',
-    totalSpend: '500',
-    averageSpend: '600',
-    lastMonth: '700',
+    totalSpend: 500,
+    averageSpend: 600,
+    lastMonth: 700,
     advice: [
       { key: 1, info: 'Great job for staying within your budget!' },
       { key: 2, info: 'We noticed you spend a lot of money on cinema movies.' },
