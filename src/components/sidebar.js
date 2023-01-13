@@ -127,7 +127,7 @@ export const Sidebar = () => {
 
   return (
     <Box
-      width={expand ? '250px' : '95px'}
+      width={expand ? '300px' : '95px'}
       position="sticky"
       top="0"
       h="100vh"
@@ -146,7 +146,12 @@ export const Sidebar = () => {
         height="74px"
       >
         <IconButton bgColor="transparent" border="0px" _hover={{}} _active={{}}>
-          <Hamburger toggle={setExpand} toggled={expand} rounded color="#0067b1" />
+          <Hamburger
+            toggle={setExpand}
+            toggled={expand}
+            rounded
+            color="#0067b1"
+          />
         </IconButton>
       </Box>
 
@@ -189,16 +194,19 @@ export const Sidebar = () => {
                     >
                       {Link.icon}
                     </IconButton>
-                    {expand && (
-                      <Text
-                        as="b"
-                        transitionDuration="0.5s"
-                        pl="15%"
-                        color="white"
-                      >
-                        {Link.name}
-                      </Text>
-                    )}
+                    <Text
+                      as="b"
+                      pl="15%"
+                      color="white"
+                      width={expand ? '100px' : '0px'}
+                      overflow="hidden"
+                      textOverflow="clip"
+                      whiteSpace="nowrap"
+                      transitionDuration="0.5s"
+                      textAlign="left"
+                    >
+                      {Link.name}
+                    </Text>
                   </Flex>
                 </Box>
               );
@@ -207,7 +215,7 @@ export const Sidebar = () => {
             <Box
               bgColor="#0c7ac9"
               borderRadius="10px"
-              width={expand ? '175px' : '50px'}
+              width={expand ? '200px' : '50px'}
               transitionDuration="0.5s"
             >
               {expand && (
@@ -248,17 +256,19 @@ export const Sidebar = () => {
                       >
                         {Link.icon}
                       </IconButton>
-                      {expand && (
-                        <Text
-                          as="b"
-                          pl="15%"
-                          color="white"
-                          textAlign="left"
-                          width="200px"
-                        >
-                          {Link.name}
-                        </Text>
-                      )}
+                      <Text
+                        as="b"
+                        pl="15%"
+                        color="white"
+                        textAlign="left"
+                        width={expand ? '100px' : '0px'}
+                        overflow="hidden"
+                        textOverflow="clip"
+                        whiteSpace="nowrap"
+                        transitionDuration="0.5s"
+                      >
+                        {Link.name}
+                      </Text>
                     </Flex>
                   </Box>
                 );

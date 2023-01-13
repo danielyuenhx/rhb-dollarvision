@@ -57,7 +57,7 @@ const dashboard = () => {
         decommissioned on 1st January 2022. We apologise for any inconvenience
         caused.
       </Alert>
-      <Flex gap="30px">
+      <Flex gap="50px">
         <Flex direction="column" flexGrow={2} flexBasis={2}>
           <Tables />
         </Flex>

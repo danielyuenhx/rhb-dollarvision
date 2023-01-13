@@ -1,5 +1,6 @@
 import { Box, Flex } from '@chakra-ui/layout';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { FaCreditCard } from 'react-icons/fa';
 import React from 'react';
 
 const iconItem = ({ text, icon }) => {
@@ -7,16 +8,22 @@ const iconItem = ({ text, icon }) => {
     <Flex
       direction="column"
       textAlign="center"
+      justifyContent="flex-start"
+      alignItems="center"
+      verticalAlign="top"
+      gap="10px"
     >
-      <Box
+      <Flex
         w="100px"
         h="100px"
         borderRadius="100%"
         backgroundColor="secondaryBlue"
         cursor="pointer"
+        justifyContent="center"
+        alignItems="center"
       >
-        <FontAwesomeIcon icon={icon} color="black" size="xl" />
-      </Box>
+        {icon}
+      </Flex>
       {text}
     </Flex>
   );
