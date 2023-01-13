@@ -1,41 +1,28 @@
 import React from 'react';
-import {
-  ChakraProvider,
-  Box,
-  Text,
-  Link,
-  VStack,
-  Code,
-  Grid,
-  theme,
-} from '@chakra-ui/react';
-import { ColorModeSwitcher } from './ColorModeSwitcher';
-import { Logo } from './Logo';
+import { Routes, Route } from 'react-router-dom';
+import Overview from './pages/overview/overview';
+import PiggyBank from './pages/piggyBank/piggyBank';
+import Wrapper from './components/wrapper';
+import { Box } from '@chakra-ui/react';
+import Wallet from './pages/wallet/wallet';
+import Budget from './pages/budget/budget';
+import Gamification from './pages/gamification/gamification';
+import Profile from './pages/profile/profile';
 
 function App() {
   return (
-    <ChakraProvider theme={theme}>
-      <Box textAlign="center" fontSize="xl">
-        <Grid minH="100vh" p={3}>
-          <ColorModeSwitcher justifySelf="flex-end" />
-          <VStack spacing={8}>
-            <Logo h="40vmin" pointerEvents="none" />
-            <Text>
-              Edit <Code fontSize="xl">src/App.js</Code> and save to reload.
-            </Text>
-            <Link
-              color="teal.500"
-              href="https://chakra-ui.com"
-              fontSize="2xl"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learn Chakra
-            </Link>
-          </VStack>
-        </Grid>
-      </Box>
-    </ChakraProvider>
+    <Box bgColor="backgroundColor">
+      <Routes>
+        <Route path="/" element={<Wrapper />}>
+          <Route index element={<Overview />} />
+          <Route path="piggybank" element={<PiggyBank />} />
+          <Route path="wallet" element={<Wallet />} />
+          <Route path="budget" element={<Budget />} />
+          <Route path="gamification" element={<Gamification />} />
+          <Route path="profile" element={<Profile />} />
+        </Route>
+      </Routes>
+    </Box>
   );
 }
 
