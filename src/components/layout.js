@@ -3,7 +3,12 @@ import { Box } from '@chakra-ui/react';
 
 const Layout = props => {
   return (
-    <Box width="100vh" height="auto">
+    <Box
+      height="auto"
+      marginX="auto"
+      maxWidth="1000px"
+      marginBottom={['200px', '200px', '200px', '200px', '0px']}
+    >
       {props.children}
     </Box>
   );

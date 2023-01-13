@@ -12,13 +12,14 @@ import Profile from './pages/profile/profile';
 function App() {
   return (
     <Box bgColor="backgroundColor">
+      {/* Routes */}
       <Routes>
         <Route path="/" element={<Wrapper />}>
           <Route index element={<Overview />} />
           <Route path="piggybank" element={<PiggyBank />} />
           <Route path="wallet" element={<Wallet />} />
           <Route path="budget" element={<Budget />} />
-          <Route path="gamification" element={<Gamification />} />
+          <Route path="rewards" element={<Gamification />} />
           <Route path="profile" element={<Profile />} />
         </Route>
       </Routes>
