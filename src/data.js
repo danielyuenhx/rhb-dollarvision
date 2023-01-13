@@ -157,7 +157,7 @@ const REWARD_DATA = [
     expired: '11/10/2023',
     lottie: 'https://assets4.lottiefiles.com/packages/lf20_yZpLO2.json',
     earned: true,
-    points: 300,
+    completion: 15,
   },
   {
     label: 'Turn around',
@@ -166,7 +166,7 @@ const REWARD_DATA = [
     expired: '11/10/2023',
     lottie: 'https://assets4.lottiefiles.com/packages/lf20_ep1tn2ew.json',
     earned: true,
-    points: 250,
+    completion: 37,
   },
   {
     label: 'On the way!',
@@ -174,7 +174,7 @@ const REWARD_DATA = [
     expired: '11/10/2023',
     lottie: 'https://assets5.lottiefiles.com/private_files/lf30_omlrftyq.json',
     earned: false,
-    points: 150,
+    completion: 20,
   },
   {
     label: 'Boring Guy',
@@ -182,7 +182,7 @@ const REWARD_DATA = [
     expired: '11/10/2023',
     lottie: 'https://assets4.lottiefiles.com/packages/lf20_lFRXJJKwS5.json',
     earned: false,
-    points: 300,
+    completion: 5,
   },
   {
     label: 'Stop it NOW!',
@@ -190,7 +190,7 @@ const REWARD_DATA = [
     expired: '11/10/2023',
     lottie: 'https://assets4.lottiefiles.com/packages/lf20_OdVhgq.json',
     earned: false,
-    points: 600,
+    completion: 56,
   },
 ];
 

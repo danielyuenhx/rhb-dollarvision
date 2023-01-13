@@ -50,13 +50,15 @@ const Rewards = () => {
               </Flex>
             </CardBody>
             <CardFooter>
-              <Flex width="100%" justifyContent="flex-end" alignItems="center">
-                {/* <Text color="secondaryBlue">{reward.points}</Text> */}
-                {
-                  <Text fontSize="small" opacity={reward.earned ? 0 : 1}>
-                    Complete before {reward.expired}
-                  </Text>
-                }
+              <Flex
+                width="100%"
+                justifyContent="space-between"
+                alignItems="center"
+              >
+                <Text color="secondaryBlue" fontSize="smaller">{reward.completion}% of users completed</Text> 
+                <Text fontSize="smaller" opacity={reward.earned ? 0 : 1} textAlign="end">
+                  Complete before {reward.expired}
+                </Text>
               </Flex>
             </CardFooter>
           </Card>
