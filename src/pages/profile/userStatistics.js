@@ -22,7 +22,6 @@ const UserStatistics = () => {
         if (data.totalSpend > data.averageSpend) {
           amount = data.totalSpend - data.averageSpend;
         } else if (data.averageSpend > data.totalSpend) {
-          console.log(data);
           amount = data.averageSpend - data.totalSpend;
         }
 
