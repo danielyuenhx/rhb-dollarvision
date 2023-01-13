@@ -69,6 +69,93 @@ const CATEGORIES_DATA = [
 
 const TRANSACTIONS_DATA = [
   {
+    wallet_id: 1,
+    category_id: 1,
+    description: 'Chicken Rice - lunch',
+    entry_date: '2023-01-14',
+    amount: 25.4,
+  },
+  {
+    wallet_id: 1,
+    category_id: 2,
+    description: 'Grab to work',
+    entry_date: '2023-01-14',
+    amount: 10.0,
+  },
+  {
+    wallet_id: 1,
+    category_id: 3,
+    description: 'Movie date',
+    entry_date: '2023-01-14',
+    amount: 50.1,
+  },
+  {
+    wallet_id: 1,
+    category_id: 4,
+    description: 'Shopping',
+    entry_date: '2023-01-14',
+    amount: 100.3,
+  },
+  {
+    wallet_id: 1,
+    category_id: 5,
+    description: 'Others',
+    entry_date: '2023-01-14',
+    amount: 10.0,
+  },
+  {
+    wallet_id: 1,
+    category_id: 1,
+    description: 'McDonalds',
+    entry_date: '2023-01-14',
+    amount: 20.1,
+  },
+  {
+    wallet_id: 1,
+    category_id: 1,
+    description: 'Nasi Lemak',
+    entry_date: '2023-01-14',
+    amount: 20.0,
+  },
+  {
+    wallet_id: 1,
+    category_id: 1,
+    description: 'Chicken Rice',
+    entry_date: '2023-01-14',
+    amount: 25.4,
+  },
+  {
+    wallet_id: 1,
+    category_id: 1,
+    description: 'Nasi Briyani',
+    entry_date: '2023-01-14',
+    amount: 20.0,
+  },
+  {
+    wallet_id: 1,
+    category_id: 1,
+    description: 'Chicken Rice',
+    entry_date: '2023-01-14',
+    amount: 15.4,
+  },
+  {
+    wallet_id: 1,
+    category_id: 6,
+    description: 'MyCompany',
+    entry_date: '2023-01-14',
+    amount: 900.0,
+  },
+  {
+    wallet_id: 1,
+    category_id: 7,
+    description: 'from parents',
+    entry_date: '2023-01-14',
+    amount: 250.0,
+  }
+];
+
+const OLD_TRANSACTIONS_DATA = [
+  {
     id: 1,
     walletId: 1,
     categoryId: 1,

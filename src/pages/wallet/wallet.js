@@ -3,7 +3,6 @@ import {
   Card,
   CardBody,
   Flex,
-  Heading,
   Image,
   Modal,
   ModalBody,
@@ -13,6 +12,10 @@ import {
   ModalHeader,
   ModalOverlay,
   Select,
+  Stat,
+  StatHelpText,
+  StatLabel,
+  StatNumber,
   Tab,
   Table,
   TableContainer,
@@ -22,20 +25,59 @@ import {
   Tabs,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
   useDisclosure,
 } from '@chakra-ui/react';
-import React, { useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layout';
 import CreditCard from './images/credit.png';
 import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
-import { WALLETS_DATA, CATEGORIES_DATA, TRANSACTIONS_DATA } from '../../data';
+import supabase from '../../supabaseClient';
+
+const parseAmount = (amount, categoryType) => {
+  if (categoryType === 'expense') {
+    return `-${amount.toFixed(2)}`;
+  } else {
+    return `+${amount.toFixed(2)}`;
+  }
+};
 
 const Wallet = () => {
+  const [wallets, setWallets] = useState([]);
+  const [categories, setCategories] = useState([]);
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    const getWallets = async () => {
+      let { data: wallets } = await supabase.from('wallets').select();
+      setWallets(wallets);
+    };
+    const getCategories = async () => {
+      let { data: categories } = await supabase.from('categories').select();
+      setCategories(categories);
+    };
+    const getTransactions = async () => {
+      let { data: transactions } = await supabase
+        .from('transactions')
+        .select(`*, categories ( name, type )`)
+        .order('date', { ascending: false })
+        .order('created_at', { ascending: false });
+      setTransactions(transactions);
+    };
+    // const insertData = async () => {
+    //   const { data, error } = await supabase
+    //     .from('transactions')
+    //     .insert(TRANSACTIONS_DATA);
+    // };
+    // insertData();
+    getWallets();
+    getCategories();
+    getTransactions();
+  }, []);
+
   const { isOpen, onOpen, onClose } = useDisclosure();
   const tabsRef = useRef();
   const { width } = useContainerDimensions(tabsRef);
@@ -80,8 +122,8 @@ const Wallet = () => {
     <Layout>
       <Flex gap="30px" direction="row">
         <Flex gap="25px" direction="column" w="35%">
-          <Select placeholder="Select wallet">
-            {WALLETS_DATA.map(wallet => (
+          <Select>
+            {wallets.map(wallet => (
               <option key={wallet.id} value={wallet.id}>
                 {wallet.name}
               </option>
@@ -178,39 +220,43 @@ const Wallet = () => {
 
           <Flex gap="25px" direction="row" wrap={true} w="100%">
             <Card w="50%">
-              <CardBody>
-                <Heading size="s">Total Balance</Heading>
-                <Text fontSize="sm" pt="2">
-                  100.00
-                </Text>
-              </CardBody>
+              <Stat>
+                <CardBody>
+                  <StatLabel>Total Balance</StatLabel>
+                  <StatNumber>MYR 100.00</StatNumber>
+                  <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                </CardBody>
+              </Stat>
             </Card>
             <Card w="50%">
-              <CardBody>
-                <Heading size="s">Nett Change</Heading>
-                <Text fontSize="sm" pt="2">
-                  100.00
-                </Text>
-              </CardBody>
+              <Stat>
+                <CardBody>
+                  <StatLabel>Nett Change</StatLabel>
+                  <StatNumber>MYR 100.00</StatNumber>
+                  <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                </CardBody>
+              </Stat>
             </Card>
           </Flex>
 
           <Flex gap="25px" direction="row" wrap={true} w="100%">
             <Card w="50%">
-              <CardBody>
-                <Heading size="s">Income</Heading>
-                <Text fontSize="sm" pt="2">
-                  100.00
-                </Text>
-              </CardBody>
+              <Stat>
+                <CardBody>
+                  <StatLabel>Income</StatLabel>
+                  <StatNumber>MYR 100.00</StatNumber>
+                  <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                </CardBody>
+              </Stat>
             </Card>
             <Card w="50%">
-              <CardBody>
-                <Heading size="s">Expense</Heading>
-                <Text fontSize="sm" pt="2">
-                  100.00
-                </Text>
-              </CardBody>
+              <Stat>
+                <CardBody>
+                  <StatLabel>Expense</StatLabel>
+                  <StatNumber>MYR 100.00</StatNumber>
+                  <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                </CardBody>
+              </Stat>
             </Card>
           </Flex>
 
@@ -226,18 +272,12 @@ const Wallet = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  {TRANSACTIONS_DATA.map(transaction => (
+                  {transactions.map(transaction => (
                     <Tr key={transaction.id}>
-                      <Td>
-                        {
-                          CATEGORIES_DATA.find(
-                            category => category.id === transaction.categoryId
-                          ).name
-                        }
-                      </Td>
-                      <Td>{transaction.date}</Td>
+                      <Td>{transaction.categories.name}</Td>
+                      <Td>{transaction.date.split("-").reverse().join("/")}</Td>
                       <Td>{transaction.description}</Td>
-                      <Td isNumeric>{transaction.amount}</Td>
+                      <Td isNumeric>{parseAmount(transaction.amount, transaction.categories.type)}</Td>
                     </Tr>
                   ))}
                 </Tbody>
