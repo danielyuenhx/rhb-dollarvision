@@ -17,6 +17,10 @@ import {
   faMoneyBill,
   faAward,
   faChartSimple,
+  faHome,
+  faHandHoldingDollar,
+  faChartPie,
+  faHeart,
   faClipboard,
 } from '@fortawesome/free-solid-svg-icons';
 import Hamburger from 'hamburger-react';
@@ -27,21 +31,52 @@ export const Sidebar = () => {
   const location = useLocation();
   const [show, setShow] = useState(false);
   const [selected, setSelected] = useState();
-  const [expand, setExpand] = useState(true);
+  const [expand, setExpand] = useState(false);
 
   useEffect(() => {
     setSelected(location.pathname);
   }, [location]);
 
+  const originalSidebarList = [
+    {
+      name: 'Home',
+      path: '/',
+      icon: (
+        <FontAwesomeIcon
+          icon={faHome}
+          color={selected === '/' ? 'white' : '#3dbbf5'}
+          size="xl"
+        />
+      ),
+    },
+    {
+      name: 'Savings',
+      path: '/',
+      icon: (
+        <FontAwesomeIcon icon={faHandHoldingDollar} color="#3dbbf5" size="xl" />
+      ),
+    },
+    {
+      name: 'Statistics',
+      path: '/',
+      icon: <FontAwesomeIcon icon={faChartPie} color="#3dbbf5" size="xl" />,
+    },
+    {
+      name: 'Favourites',
+      path: '/',
+      icon: <FontAwesomeIcon icon={faHeart} color="#3dbbf5" size="xl" />,
+    },
+  ];
+
   const sideBarList = [
     {
-      path: '/',
+      path: '/overview',
       name: 'Overview',
       icon: (
         <FontAwesomeIcon
           icon={faChartSimple}
-          color={selected === '/' ? 'white' : '#3dbbf5'}
-          size="2x"
+          color={selected === '/overview' ? 'white' : '#3dbbf5'}
+          size="xl"
         />
       ),
     },
@@ -52,7 +87,7 @@ export const Sidebar = () => {
         <FontAwesomeIcon
           icon={faPiggyBank}
           color={selected === '/piggybank' ? 'white' : '#3dbbf5'}
-          size="2x"
+          size="xl"
         />
       ),
     },
@@ -63,7 +98,7 @@ export const Sidebar = () => {
         <FontAwesomeIcon
           icon={faWallet}
           color={selected === '/wallet' ? 'white' : '#3dbbf5'}
-          size="2x"
+          size="xl"
         />
       ),
     },
@@ -74,7 +109,7 @@ export const Sidebar = () => {
         <FontAwesomeIcon
           icon={faMoneyBill}
           color={selected === '/budget' ? 'white' : '#3dbbf5'}
-          size="2x"
+          size="xl"
         />
       ),
     },
@@ -85,6 +120,17 @@ export const Sidebar = () => {
         <FontAwesomeIcon
           icon={faAward}
           color={selected === '/rewards' ? 'white' : '#3dbbf5'}
+          size="xl"
+        />
+      ),
+    },
+    {
+      path: '/summary',
+      name: 'Summary',
+      icon: (
+        <FontAwesomeIcon
+          icon={faClipboard}
+          color={selected === '/summary' ? 'white' : '#3dbbf5'}
           size="2x"
         />
       ),
@@ -104,7 +150,7 @@ export const Sidebar = () => {
 
   return (
     <Box
-      width={expand ? '250px' : '95px'}
+      width={expand ? '300px' : '95px'}
       position="sticky"
       top="0"
       h="100vh"
@@ -120,9 +166,15 @@ export const Sidebar = () => {
         paddingTop="10px"
         paddingBottom="10px"
         paddingRight={expand ? '10px' : '0px'}
+        height="74px"
       >
         <IconButton bgColor="transparent" border="0px" _hover={{}} _active={{}}>
-          <Hamburger toggle={setExpand} toggled={expand} rounded />
+          <Hamburger
+            toggle={setExpand}
+            toggled={expand}
+            rounded
+            color="#0067b1"
+          />
         </IconButton>
       </Box>
 
@@ -138,30 +190,24 @@ export const Sidebar = () => {
             Dollar-Vision
           </Text> */}
 
-            {sideBarList.map(Link => {
+            {originalSidebarList.map(Link => {
               return (
                 <Box
                   key={Link.name}
                   onClick={() => navigate(Link.path)}
                   cursor="pointer"
-                  height="60px"
-                  mt="30px"
+                  height="70px"
+                  p="5px"
                   borderRadius="10px"
                   display="flex"
-                  justifyContent="flex-start"
+                  justifyContent="center"
                   alignItems="center"
                   transitionDuration="0.2s"
-                  // pl="10%"
-                  gap="10%"
-                  // _hover={{
-                  //   backgroundColor: colorMode === 'light' ? 'white' : 'gray.800',
-                  //   transform: `scale(1.1)`,
-                  // }}
                 >
                   <Flex
                     justify="flex-start"
                     align="center"
-                    width={expand ? '150px' : '10%'}
+                    width={expand ? '150px' : ''}
                   >
                     <IconButton
                       bgColor="transparent"
@@ -171,20 +217,86 @@ export const Sidebar = () => {
                     >
                       {Link.icon}
                     </IconButton>
-                    {expand && (
-                      <Text
-                        as="b"
-                        transitionDuration="0.5s"
-                        pl="15%"
-                        color={Link.path === selected ? 'white' : 'primaryBlue'}
-                      >
-                        {Link.name}
-                      </Text>
-                    )}
+                    <Text
+                      as="b"
+                      pl="15%"
+                      color="white"
+                      width={expand ? '100px' : '0px'}
+                      overflow="hidden"
+                      textOverflow="clip"
+                      whiteSpace="nowrap"
+                      transitionDuration="0.5s"
+                      textAlign="left"
+                    >
+                      {Link.name}
+                    </Text>
                   </Flex>
                 </Box>
               );
             })}
+
+            <Box
+              bgColor="#0c7ac9"
+              borderRadius="10px"
+              width={expand ? '200px' : '50px'}
+              transitionDuration="0.5s"
+            >
+              {expand && (
+                <Text
+                  textAlign="left"
+                  p="15px 0px 0px 15px"
+                  color="#ffffff"
+                  width="200px"
+                >
+                  DollarVision
+                </Text>
+              )}
+              {sideBarList.map(Link => {
+                return (
+                  <Box
+                    key={Link.name}
+                    onClick={() => navigate(Link.path)}
+                    cursor="pointer"
+                    height="70px"
+                    borderRadius="10px"
+                    display="flex"
+                    justifyContent="center"
+                    alignItems="center"
+                    transitionDuration="0.2s"
+                    // pl="10%"
+                    gap="10%"
+                  >
+                    <Flex
+                      justify="flex-start"
+                      align="center"
+                      width={expand ? '150px' : ''}
+                    >
+                      <IconButton
+                        bgColor="transparent"
+                        border="0px"
+                        _hover={{}}
+                        _active={{}}
+                      >
+                        {Link.icon}
+                      </IconButton>
+                      <Text
+                        as="b"
+                        pl="15%"
+                        color="white"
+                        textAlign="left"
+                        width={expand ? '100px' : '0px'}
+                        overflow="hidden"
+                        textOverflow="clip"
+                        whiteSpace="nowrap"
+                        transitionDuration="0.5s"
+                      >
+                        {Link.name}
+                      </Text>
+                    </Flex>
+                  </Box>
+                );
+              })}
+            </Box>
           </Box>
           {/* <Flex
           cursor="pointer"
