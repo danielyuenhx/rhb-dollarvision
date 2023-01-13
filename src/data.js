@@ -5,6 +5,18 @@ const WALLETS_DATA = [
     image: 'credit.png',
     initialBalance: 1000,
   },
+  {
+    id: 2,
+    name: 'RHB Platinum Credit Card',
+    image: 'credit-plat.png',
+    initialBalance: 0,
+  },
+  {
+    id: 3,
+    name: 'Cash',
+    image: 'cash.png',
+    initialBalance: 100,
+  },
 ];
 
 const CATEGORIES_DATA = [
@@ -46,6 +58,11 @@ const CATEGORIES_DATA = [
   {
     id: 8,
     name: 'Others',
+    type: 'income',
+  },
+  {
+    id: 9,
+    name: 'Repayment',
     type: 'income',
   },
 ];
@@ -132,3 +149,5 @@ const TRANSACTIONS_DATA = [
     amount: 25.4,
   },
 ];
+
+export { WALLETS_DATA, CATEGORIES_DATA, TRANSACTIONS_DATA };

@@ -31,13 +31,14 @@ import {
 import React, { useRef } from 'react';
 import Layout from '../../components/layout';
 import CreditCard from './images/credit.png';
-import { PieChart, Pie, Sector, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
+import { WALLETS_DATA, CATEGORIES_DATA, TRANSACTIONS_DATA } from '../../data';
 
 const Wallet = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const tabsRef = useRef();
-  const { width, height } = useContainerDimensions(tabsRef);
+  const { width } = useContainerDimensions(tabsRef);
 
   const data = [
     { name: 'Group A', value: 400 },
@@ -80,15 +81,17 @@ const Wallet = () => {
       <Flex gap="30px" direction="row">
         <Flex gap="25px" direction="column" w="35%">
           <Select placeholder="Select wallet">
-            <option value="wallet1">RHB Debit Card</option>
-            <option value="wallet2">RHB Platinum Credit Card</option>
-            <option value="wallet3">Wallet 3</option>
+            {WALLETS_DATA.map(wallet => (
+              <option key={wallet.id} value={wallet.id}>
+                {wallet.name}
+              </option>
+            ))}
           </Select>
           <Image src={CreditCard} alt="credit" />
           <Tabs isFitted variant="enclosed" ref={tabsRef}>
             <TabList mb="1em">
-              <Tab>One</Tab>
-              <Tab>Two</Tab>
+              <Tab>Income</Tab>
+              <Tab>Expense</Tab>
             </TabList>
             <TabPanels>
               <TabPanel>
@@ -124,6 +127,11 @@ const Wallet = () => {
                       </Tr>
                     </Thead>
                     <Tbody>
+                      {/* group transactions by category and create a row for each category and sort by highest number of transactions */}
+                      {/* {CATEGORIES_DATA.map(category => (
+                        <Tr key={category.id}>
+                          <Td>{category.name}</Td>
+                          <Td>{} */}
                       <Tr>
                         <Td>Food</Td>
                         <Td>6</Td>
@@ -179,7 +187,7 @@ const Wallet = () => {
             </Card>
             <Card w="50%">
               <CardBody>
-                <Heading size="s">Total Balance</Heading>
+                <Heading size="s">Nett Change</Heading>
                 <Text fontSize="sm" pt="2">
                   100.00
                 </Text>
@@ -190,7 +198,7 @@ const Wallet = () => {
           <Flex gap="25px" direction="row" wrap={true} w="100%">
             <Card w="50%">
               <CardBody>
-                <Heading size="s">Total Balance</Heading>
+                <Heading size="s">Income</Heading>
                 <Text fontSize="sm" pt="2">
                   100.00
                 </Text>
@@ -198,7 +206,7 @@ const Wallet = () => {
             </Card>
             <Card w="50%">
               <CardBody>
-                <Heading size="s">Total Balance</Heading>
+                <Heading size="s">Expense</Heading>
                 <Text fontSize="sm" pt="2">
                   100.00
                 </Text>
@@ -206,7 +214,7 @@ const Wallet = () => {
             </Card>
           </Flex>
 
-          <Card>
+          <Card mb={10}>
             <TableContainer>
               <Table variant="simple">
                 <Thead>
@@ -218,24 +226,20 @@ const Wallet = () => {
                   </Tr>
                 </Thead>
                 <Tbody>
-                  <Tr>
-                    <Td>Food</Td>
-                    <Td>RHB</Td>
-                    <Td>Lunch - CR</Td>
-                    <Td isNumeric>25.4</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Transport</Td>
-                    <Td>RHB</Td>
-                    <Td>To work</Td>
-                    <Td isNumeric>30.48</Td>
-                  </Tr>
-                  <Tr>
-                    <Td>Dating</Td>
-                    <Td>RHB</Td>
-                    <Td>Cafe</Td>
-                    <Td isNumeric>0.91444</Td>
-                  </Tr>
+                  {TRANSACTIONS_DATA.map(transaction => (
+                    <Tr key={transaction.id}>
+                      <Td>
+                        {
+                          CATEGORIES_DATA.find(
+                            category => category.id === transaction.categoryId
+                          ).name
+                        }
+                      </Td>
+                      <Td>{transaction.date}</Td>
+                      <Td>{transaction.description}</Td>
+                      <Td isNumeric>{transaction.amount}</Td>
+                    </Tr>
+                  ))}
                 </Tbody>
               </Table>
             </TableContainer>
