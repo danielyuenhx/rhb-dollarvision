@@ -212,7 +212,7 @@ const UserCard = () => {
       >
         <CardBody p="3%">
           <Text fontSize="3xl" fontWeight="bold">
-            Welcome back to Dollar-Vision, <br></br>Zheng Jie
+            Quick Advice
           </Text>
           <Box width="85%" mt="5%">
             <Text color="gray.500">

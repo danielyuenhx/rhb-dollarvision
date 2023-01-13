@@ -17,7 +17,7 @@ import {
   faMoneyBill,
   faAward,
   faChartSimple,
-  faArrowRightArrowLeft,
+  faClipboard,
 } from '@fortawesome/free-solid-svg-icons';
 import Hamburger from 'hamburger-react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
@@ -89,6 +89,17 @@ export const Sidebar = () => {
         />
       ),
     },
+    {
+      path: '/summary',
+      name: 'Summary',
+      icon: (
+        <FontAwesomeIcon
+          icon={faClipboard}
+          color={selected === '/summary' ? 'white' : '#3dbbf5'}
+          size="2x"
+        />
+      ),
+    },
   ];
 
   return (
@@ -111,11 +122,7 @@ export const Sidebar = () => {
         paddingRight={expand ? '10px' : '0px'}
       >
         <IconButton bgColor="transparent" border="0px" _hover={{}} _active={{}}>
-          <Hamburger
-            toggle={setExpand}
-            toggled={expand}
-            rounded
-          />
+          <Hamburger toggle={setExpand} toggled={expand} rounded />
         </IconButton>
       </Box>
 
@@ -169,7 +176,7 @@ export const Sidebar = () => {
                         as="b"
                         transitionDuration="0.5s"
                         pl="15%"
-                        color="white"
+                        color={Link.path === selected ? 'white' : 'primaryBlue'}
                       >
                         {Link.name}
                       </Text>

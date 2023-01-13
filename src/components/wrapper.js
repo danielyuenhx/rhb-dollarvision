@@ -30,8 +30,8 @@ const Wrapper = () => {
       case '/rewards':
         setTitle('Rewards');
         break;
-      case '/profile':
-        setTitle('Profile');
+      case '/summary':
+        setTitle('Summary');
         break;
 
       default:
