@@ -11,7 +11,11 @@ const Rewards = () => {
     <SimpleGrid minChildWidth="300px" spacing="50px">
       {REWARD_DATA.map(reward => {
         return (
-          <Card height="400px" opacity={reward.earned ? 1 : 0.5} key={reward.label}>
+          <Card
+            height="400px"
+            opacity={reward.earned ? 1 : 0.5}
+            key={reward.label}
+          >
             <CardHeader>
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontWeight="bold">{reward.label}</Text>
@@ -46,13 +50,13 @@ const Rewards = () => {
               </Flex>
             </CardBody>
             <CardFooter>
-              <Flex
-                width="100%"
-                justifyContent="flex-end"
-                alignItems="center"
-              >
+              <Flex width="100%" justifyContent="flex-end" alignItems="center">
                 {/* <Text color="secondaryBlue">{reward.points}</Text> */}
-                <Text fontSize="small">Complete before {reward.expired}</Text>
+                {
+                  <Text fontSize="small" opacity={reward.earned ? 0 : 1}>
+                    Complete before {reward.expired}
+                  </Text>
+                }
               </Flex>
             </CardFooter>
           </Card>
