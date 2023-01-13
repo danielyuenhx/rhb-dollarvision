@@ -12,7 +12,7 @@ const Profile = () => {
       <Flex gap="30px" direction="column">
         <UserCard />
         <UserSummary />
-        <UserDetails />
+        {/* <UserDetails /> */}
         <UserCategory />
       </Flex>
     </Layout>
