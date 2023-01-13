@@ -19,6 +19,7 @@ import {
   faChartSimple,
   faArrowRightArrowLeft,
 } from '@fortawesome/free-solid-svg-icons';
+import Hamburger from 'hamburger-react';
 import { ColorModeSwitcher } from '../ColorModeSwitcher';
 
 export const Sidebar = () => {
@@ -96,7 +97,8 @@ export const Sidebar = () => {
       position="sticky"
       top="0"
       h="100vh"
-      transitionDuration="0.1s"
+      transitionDuration="0.5s"
+      transitionTimingFunction="cubic-bezier"
       justifyContent="center"
     >
       <Box
@@ -109,13 +111,10 @@ export const Sidebar = () => {
         paddingRight={expand ? '10px' : '0px'}
       >
         <IconButton bgColor="transparent" border="0px" _hover={{}} _active={{}}>
-          <FontAwesomeIcon
-            icon={faArrowRightArrowLeft}
-            size="2x"
-            color="black"
-            onClick={() => {
-              setExpand(!expand);
-            }}
+          <Hamburger
+            toggle={setExpand}
+            toggled={expand}
+            rounded
           />
         </IconButton>
       </Box>
@@ -166,7 +165,12 @@ export const Sidebar = () => {
                       {Link.icon}
                     </IconButton>
                     {expand && (
-                      <Text as="b" transitionDuration="0.5s" pl="15%">
+                      <Text
+                        as="b"
+                        transitionDuration="0.5s"
+                        pl="15%"
+                        color="white"
+                      >
                         {Link.name}
                       </Text>
                     )}
