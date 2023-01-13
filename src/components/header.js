@@ -24,6 +24,7 @@ const header = () => {
       px="30px"
       bgColor="#f7fafc"
       zIndex="10000"
+      boxShadow="1px 1px 10px rgba(0, 0, 0, 0.07)"
     >
       <Link to="/">
         <Image
@@ -47,6 +48,7 @@ const header = () => {
                 justifyContent="center"
                 alignItems="center"
                 gap="10px"
+                _hover={{ cursor: 'pointer' }}
               >
                 <FontAwesomeIcon icon={section.icon} color="#0067b1" size="s" />
                 {section.text}

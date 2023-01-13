@@ -143,10 +143,10 @@ export const Sidebar = () => {
         paddingTop="10px"
         paddingBottom="10px"
         paddingRight={expand ? '10px' : '0px'}
-        height="75px"
+        height="74px"
       >
         <IconButton bgColor="transparent" border="0px" _hover={{}} _active={{}}>
-          <Hamburger toggle={setExpand} toggled={expand} rounded />
+          <Hamburger toggle={setExpand} toggled={expand} rounded color="#0067b1" />
         </IconButton>
       </Box>
 

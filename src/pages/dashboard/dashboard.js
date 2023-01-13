@@ -1,95 +1,70 @@
 import React from 'react';
-import {
-  Text,
-  Alert,
-  AlertIcon,
-  TableContainer,
-  Table,
-  TableCaption,
-  Thead,
-  Tr,
-  Th,
-  Tbody,
-  Td,
-  Tfoot,
-} from '@chakra-ui/react';
+import { Box, Text, Alert, AlertIcon, Flex, Button } from '@chakra-ui/react';
+import Tables from './tables';
 import Layout from '../../components/layout';
+import Icons from './icons';
 
 const dashboard = () => {
   return (
     <Layout>
-      <Text fontSize="4xl" fontWeight="bold">
-        Hi, Daniel!
-      </Text>
-      <Text mb="20px">Your last login was on 10:30:00 PM, Fri 13 Jan 2023</Text>
+      <Flex
+        justifyContent="space-between"
+        alignItems="center"
+        marginTop="-20px"
+      >
+        <Box>
+          <Text fontSize="4xl" fontWeight="bold">
+            Hi, Daniel!
+          </Text>
+          <Text mb="20px">
+            Your last login was on 10:30:00 PM, Fri 13 Jan 2023
+          </Text>
+        </Box>
+        <Flex gap="10px">
+          <Button
+            variant="primaryButton"
+            width="auto"
+            fontSize="0.9rem"
+            _hover={{ bg: 'secondaryBlue' }}
+          >
+            RHB Now Transaction Record
+          </Button>
+          <Box position="relative">
+            <Box
+              w="12px"
+              h="12px"
+              bg="red.500"
+              borderRadius="100%"
+              position="absolute"
+              zIndex="1"
+              top="-1"
+              right="-1"
+            />
+            <Button
+              variant="primaryButton"
+              width="auto"
+              fontSize="0.9rem"
+              _hover={{ bg: 'secondaryBlue' }}
+            >
+              Messages
+            </Button>
+          </Box>
+        </Flex>
+      </Flex>
       <Alert status="info" mb="30px">
         <AlertIcon />
         Kindly be informed that Kiosk terminals at RHB Branches will be
         decommissioned on 1st January 2022. We apologise for any inconvenience
         caused.
       </Alert>
-      <TableContainer
-        w="65%"
-        minHeight="200px"
-        borderRadius="10px"
-        border="1px solid lightGray"
-      >
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Local Currency Deposits</Th>
-              <Th></Th>
-              <Th isNumeric>Balance</Th>
-            </Tr>
-          </Thead>
-          <Tbody>
-            <Tr
-              transitionDuration="0.2s"
-              _hover={{ bg: '#f0eded', cursor: 'pointer' }}
-            >
-              <Td color="primaryBlue" fontWeight="bold">
-                SAVINGS ACCOUNT-I
-              </Td>
-              <Td>MYR</Td>
-              <Td isNumeric>1526.52</Td>
-            </Tr>
-            <Tr
-              transitionDuration="0.2s"
-              _hover={{ bg: '#f0eded', cursor: 'pointer' }}
-            >
-              <Td color="primaryBlue" fontWeight="bold">
-                STATEMENT SAVINGS ACCOUNT
-              </Td>
-              <Td>MYR</Td>
-              <Td isNumeric>30.48</Td>
-            </Tr>
-            <Tr fontWeight="bold">
-              <Td color="secondaryBlue" fontWeight="bold">
-                Total
-              </Td>
-              <Td>MYR</Td>
-              <Td isNumeric>1557.00</Td>
-            </Tr>
-          </Tbody>
-        </Table>
-      </TableContainer>
-      <TableContainer
-        w="65%"
-        minHeight="200px"
-        borderRadius="10px"
-        border="1px solid lightGray"
-      >
-        <Table variant="simple">
-          <Thead>
-            <Tr>
-              <Th>Local Currency Deposits</Th>
-              <Th></Th>
-              <Th isNumeric>Balance</Th>
-            </Tr>
-          </Thead>
-          <Tbody border="1px solid"></Tbody>
-        </Table>
-      </TableContainer>
+      <Flex gap="30px">
+        <Flex direction="column" flexGrow={2} flexBasis={2}>
+          <Tables />
+        </Flex>
+        <Flex flexGrow={1} flexBasis={1}>
+          <Icons />
+        </Flex>
+      </Flex>
     </Layout>
   );
 };
