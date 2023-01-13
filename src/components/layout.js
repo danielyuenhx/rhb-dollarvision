@@ -7,7 +7,7 @@ const Layout = props => {
       height="auto"
       marginX="auto"
       maxWidth="1200px"
-      marginBottom={['200px', '200px', '200px', '200px', '0px']}
+      marginBottom={['200px', '200px', '200px', '200px', '100px']}
     >
       {props.children}
     </Box>

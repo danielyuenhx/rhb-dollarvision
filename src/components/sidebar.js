@@ -135,17 +135,6 @@ export const Sidebar = () => {
         />
       ),
     },
-    {
-      path: '/summary',
-      name: 'Summary',
-      icon: (
-        <FontAwesomeIcon
-          icon={faClipboard}
-          color={selected === '/summary' ? 'white' : '#3dbbf5'}
-          size="2x"
-        />
-      ),
-    },
   ];
 
   return (
