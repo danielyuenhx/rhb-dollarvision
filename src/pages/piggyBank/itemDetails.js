@@ -25,6 +25,8 @@ import {
   TableContainer,
   Box,
 } from '@chakra-ui/react';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 
 const itemDetails = ({ selectedItem }) => {
@@ -32,20 +34,28 @@ const itemDetails = ({ selectedItem }) => {
   const completionDate = new Date();
   completionDate.setMonth(
     completionDate.getMonth() +
-      Math.round(selectedItem.total / selectedItem.perMonth)
+      Math.round(selectedItem.total / selectedItem.per_month)
   );
 
   const progress = selectedItem.paid / selectedItem.total;
 
   return (
-    <Card w="100%">
-      <CardHeader>
-        <Text fontSize="2xl" fontWeight="bold">
-          {selectedItem.title}
-        </Text>
+    <Card w="100%" h="100%">
+      <CardHeader bgColor="secondaryBlue" borderRadius="10px 10px 0px 0px">
+        <Flex justifyContent="space-between" alignItems="center">
+          <Box>
+            <Text fontSize="2xl" fontWeight="bold" color="white">
+              {selectedItem.name}
+            </Text>
+            <Text color="white">{selectedItem.desc}</Text>
+          </Box>
+          <Box marginRight="10px" cursor="pointer">
+            <FontAwesomeIcon icon={faEdit} size="xl" color="white" />
+          </Box>
+        </Flex>
       </CardHeader>
       <CardBody>
-        <StatGroup>
+        <StatGroup mb={5}>
           <Stat>
             <StatLabel>Total</StatLabel>
             <StatNumber>
@@ -70,7 +80,7 @@ const itemDetails = ({ selectedItem }) => {
         </StatGroup>
         <StatGroup mb={5}>
           <Stat>
-            <StatLabel>Paid amount</StatLabel>
+            <StatLabel>Saved amount</StatLabel>
             <StatNumber>
               {selectedItem.paid.toLocaleString('en-US', {
                 style: 'currency',
@@ -85,7 +95,7 @@ const itemDetails = ({ selectedItem }) => {
           <Stat>
             <StatLabel>Per month</StatLabel>
             <StatNumber>
-              {selectedItem.perMonth.toLocaleString('en-US', {
+              {selectedItem.per_month.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'MYR',
               })}
@@ -97,7 +107,7 @@ const itemDetails = ({ selectedItem }) => {
             </StatHelpText>
           </Stat>
         </StatGroup>
-        <Box mb={10}>
+        <Box>
           <Text fontSize="md" mb="5px">
             Progress
           </Text>
@@ -108,46 +118,14 @@ const itemDetails = ({ selectedItem }) => {
             color="black"
             placement="top"
           >
-            <Progress colorScheme="blue" height="32px" value={progress * 100} />
+            <Progress
+              hasStripe
+              colorScheme="blue"
+              height="32px"
+              value={progress * 100}
+            />
           </Tooltip>
         </Box>
-        <TableContainer>
-          <Table variant="simple">
-            <Thead>
-              <Tr>
-                <Th>24/4/2022</Th>
-              </Tr>
-            </Thead>
-            <Thead>
-              <Tr>
-                <Th>Category</Th>
-                <Th>Wallet</Th>
-                <Th>Description</Th>
-                <Th isNumeric>Amount</Th>
-              </Tr>
-            </Thead>
-            <Tbody>
-              <Tr>
-                <Td>Food</Td>
-                <Td>RHB</Td>
-                <Td>Lunch</Td>
-                <Td isNumeric>25.4</Td>
-              </Tr>
-              <Tr>
-                <Td>Transport</Td>
-                <Td>RHB</Td>
-                <Td>To work</Td>
-                <Td isNumeric>30.48</Td>
-              </Tr>
-              <Tr>
-                <Td>Dating</Td>
-                <Td>RHB</Td>
-                <Td>Cafe</Td>
-                <Td isNumeric>0.91444</Td>
-              </Tr>
-            </Tbody>
-          </Table>
-        </TableContainer>
       </CardBody>
     </Card>
   );
