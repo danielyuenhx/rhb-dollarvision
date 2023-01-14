@@ -47,7 +47,7 @@ const itemDetails = ({
         <Text fontSize="2xl" fontWeight="bold" color="white">
           {selectedItem.name}
         </Text>
-        {categories.map(category => (
+        {/* {categories.map(category => (
           <Badge
             variant="solid"
             colorScheme="cyan"
@@ -56,7 +56,23 @@ const itemDetails = ({
           >
             {category.name}
           </Badge>
-        ))}
+        ))} */}
+        <Badge
+          variant="solid"
+          colorScheme="cyan"
+          marginTop="5px"
+          marginRight="0.6rem"
+        >
+          Food
+        </Badge>
+          <Badge
+            variant="solid"
+            colorScheme="cyan"
+            marginTop="5px"
+            marginRight="0.6rem"
+          >
+            Transport
+          </Badge>
       </CardHeader>
       <CardBody>
         <StatGroup mb={5}>
