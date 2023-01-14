@@ -241,16 +241,19 @@ export const Sidebar = () => {
               width={expand ? '200px' : '50px'}
               transitionDuration="0.5s"
             >
-              {expand && (
-                <Text
-                  textAlign="left"
-                  p="15px 0px 0px 15px"
-                  color="#ffffff"
-                  width="200px"
-                >
-                  DollarVision
-                </Text>
-              )}
+              <Text
+                textAlign="left"
+                p="15px 0px 0px 15px"
+                color="#ffffff"
+                width={expand ? '100px' : '0px'}
+                height={expand ? '35px' : '0px'}
+                overflow="hidden"
+                textOverflow="clip"
+                whiteSpace="nowrap"
+                transitionDuration="0.5s"
+              >
+                DollarVision
+              </Text>
               {sideBarList.map(Link => {
                 return (
                   <Box
