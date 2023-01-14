@@ -8,7 +8,7 @@ export const useTransactions = (
   startDate = undefined,
   endDate = undefined
 ) => {
-  const [allTransactions, setAllTransactions] = useState([]);
+  const [allTransactionsByWallet, setAllTransactionsByWallet] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -34,16 +34,15 @@ export const useTransactions = (
     const { data: transactions } = await query;
     setTransactions(transactions);
 
-    if (walletId) {
-      let { data: allTransactions } = await supabase
-        .from('transactions')
-        .select(`*, categories (*)`)
-        .eq('wallet_id', walletId)
-        .order('date', { ascending: false })
-        .order('created_at', { ascending: false });
+    // get all transactions based on wallet id
+    let { data: allTransactionsByWallet } = await supabase
+      .from('transactions')
+      .select(`*, categories (*)`)
+      .eq('wallet_id', walletId)
+      .order('date', { ascending: false })
+      .order('created_at', { ascending: false });
 
-      setAllTransactions(allTransactions);
-    }
+    setAllTransactionsByWallet(allTransactionsByWallet);
     setIsLoading(false);
   };
 
@@ -51,5 +50,5 @@ export const useTransactions = (
     getTransactions(walletId, categoryIds, startDate, endDate);
   }, [walletId, categoryIds, startDate, endDate]);
 
-  return { transactions, allTransactions, isLoading };
+  return { transactions, allTransactionsByWallet, isLoading };
 };

@@ -25,7 +25,6 @@ import {
   Tabs,
   Tbody,
   Td,
-  Text,
   Th,
   Thead,
   Tr,
@@ -33,7 +32,8 @@ import {
 } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layout';
-import CreditCard from './images/credit.png';
+import DebitCard from './images/rhb-debit.png';
+import CreditCard from './images/rhb-credit.jpg';
 import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
 import { useCalculations } from '../../hooks/useCalculations';
@@ -55,7 +55,7 @@ const Wallet = () => {
   const initialBalance =
     selectedWallet > 0 ? selectedWallet.initial_balance : 0;
   const [filteredCategories, setFilteredCategories] = useState([]);
-  const { transactions, allTransactions, isLoading } = useTransactions(
+  const { transactions, allTransactionsByWallet, isLoading } = useTransactions(
     selectedWallet.id,
     filteredCategories
   );
@@ -159,7 +159,11 @@ const Wallet = () => {
                 </option>
               ))}
             </Select>
-            <Image src={CreditCard} alt="credit" />
+            {selectedWallet.id === 1 ? (
+              <Image src={DebitCard} alt="rhb debit card" />
+            ) : selectedWallet.id === 2 ? (
+              <Image src={CreditCard} alt="rhb credit card" />
+            ) : null}
             <Tabs isFitted variant="enclosed" ref={tabsRef}>
               <TabList mb="1em">
                 <Tab>Income</Tab>
