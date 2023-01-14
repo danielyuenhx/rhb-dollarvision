@@ -12,8 +12,10 @@ export const useTransactions = (
   const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  // [1, 2, 3]
   const getTransactions = async (walletId, categoryIds, startDate, endDate) => {
     setIsLoading(true);
+    // get transactions based on the filters
     let query = supabase
       .from('transactions')
       .select(`*, categories (*)`)
@@ -32,6 +34,7 @@ export const useTransactions = (
     const { data: transactions } = await query;
     setTransactions(transactions);
 
+    // get all transactions based on wallet id
     let { data: allTransactions } = await supabase
       .from('transactions')
       .select(`*, categories (*)`)
