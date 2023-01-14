@@ -7,11 +7,6 @@ const colors = {
   primaryBlue: '#3dbbf5',
   secondaryBlue: '#0067b1',
   backgroundColor: '#f5f5f5',
-  rhbBlue: {
-    50: '#f7fafc',
-    // ...
-    900: '#171923',
-  },
 };
 
 const components = {
@@ -26,8 +21,9 @@ const config = {
 };
 
 const fonts = {
-  heading: `'Heebo', sans-serif`,
-  body: `'Heebo', sans-serif`,
+  heading: `'Inter', sans-serif`,
+  body: `'Inter', sans-serif`,
+  
 };
 
 export const theme = extendTheme({ colors, components, fonts, config });

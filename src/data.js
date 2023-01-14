@@ -287,62 +287,24 @@ const SUMMARY_DATA = [
     totalSpend: 1200,
     averageSpend: 800,
     lastMonth: 700,
-    advice: [
-      { key: 1, info: 'Your spending on food are way too excessive!' },
-      { key: 2, info: 'You should cook more at home.' },
-      { key: 3, info: 'Stop going to cafe or pricey restaurants too often.' },
-    ],
   },
   {
     label: 'Transport',
     totalSpend: 400,
     averageSpend: 300,
     lastMonth: 300,
-    advice: [
-      {
-        key: 1,
-        info: 'You are not to far off from the average spenders in transportation.',
-      },
-      {
-        key: 2,
-        info: 'Take the public transport whenever you can to reduce fuel usage.',
-      },
-      {
-        key: 3,
-        info: 'Try to have carpooling more often with your friends if possible.',
-      },
-    ],
   },
   {
     label: 'Shopping',
     totalSpend: 600,
     averageSpend: 200,
     lastMonth: 300,
-    advice: [
-      {
-        key: 1,
-        info: 'You do like to purchase a lot of the latest eletronic gadgets.',
-      },
-      {
-        key: 2,
-        info: 'Do not buy an item just for show off, save and invest!',
-      },
-      { key: 3, info: 'You do not always need the most trendy item.' },
-    ],
   },
   {
     label: 'Entertainment',
     totalSpend: 500,
     averageSpend: 600,
     lastMonth: 700,
-    advice: [
-      { key: 1, info: 'Great job for staying within your budget!' },
-      { key: 2, info: 'We noticed you spend a lot of money on cinema movies.' },
-      {
-        key: 3,
-        info: 'Try to look for promotion price whenever you can to save more money.',
-      },
-    ],
   },
 ];
 

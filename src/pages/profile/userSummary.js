@@ -19,7 +19,7 @@ const UserSummary = () => {
         </CardHeader>
         <CardBody>
           <Flex direction="column">
-            <Flex w="70%">
+            <Flex>
               <Text>
                 Overall, you are not very consistent at budgeting and saving
                 money especially when it comes to Food and Shopping. You spend

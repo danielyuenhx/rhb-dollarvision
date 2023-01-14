@@ -56,7 +56,7 @@ const UserStatistics = () => {
                       }
                     >
                       RM {amount}&nbsp;
-                      {data.totalSpend > data.averageSpend ? 'More' : 'Less'}
+                      {data.totalSpend > data.averageSpend ? 'increase' : 'decrease'}
                     </Text>
                   </Flex>
                 </StatHelpText>
