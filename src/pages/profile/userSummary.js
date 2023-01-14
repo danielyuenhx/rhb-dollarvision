@@ -6,7 +6,13 @@ const UserSummary = () => {
   return (
     <Flex>
       <Card w="100%">
-        <CardHeader fontSize="2xl" fontWeight="bold">
+        <CardHeader
+          fontSize="2xl"
+          fontWeight="bold"
+          bgColor="primaryBlue"
+          borderTopLeftRadius="inherit"
+          borderTopRightRadius="inherit"
+        >
           <Flex justify="space-between">Statistics</Flex>
         </CardHeader>
         <CardBody>

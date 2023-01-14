@@ -31,7 +31,7 @@ const UserCategory = () => {
   const addHandler = () => {};
 
   return (
-    <Flex mb="100px">
+    <Flex>
       <Modal isOpen={isOpen} onClose={onClose} isCentered>
         <ModalOverlay />
         <ModalContent>
@@ -50,7 +50,13 @@ const UserCategory = () => {
       </Modal>
 
       <Card w="100%">
-        <CardHeader fontSize="2xl" fontWeight="bold">
+        <CardHeader
+          fontSize="2xl"
+          fontWeight="bold"
+          bgColor="primaryBlue"
+          borderTopLeftRadius="inherit"
+          borderTopRightRadius="inherit"
+        >
           <Flex justify="space-between">
             Categories
             <Button colorScheme="blue" variant="solid" onClick={onOpen}>

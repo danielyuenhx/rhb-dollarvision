@@ -16,6 +16,7 @@ import {
   ModalCloseButton,
   ListItem,
   UnorderedList,
+  CardHeader,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 
@@ -152,7 +153,9 @@ const UserCard = () => {
               </UnorderedList>
             </Flex>
 
-            <Text fontWeight="bold"  marginTop="20px">Your top category is</Text>
+            <Text fontWeight="bold" marginTop="20px">
+              Your top category is
+            </Text>
             <Flex gap="15px" marginBottom="20px" marginTop="5px">
               <Tag variant="solid" colorScheme="purple" size="lg">
                 Food
@@ -210,10 +213,16 @@ const UserCard = () => {
         w={['100%', '100%', '100%', '100%', '90%']}
         height={['100%', '100%', '100%', '100%', '400px']}
       >
-        <CardBody p="3%">
+        <CardHeader
+          bgColor="primaryBlue"
+          borderTopLeftRadius="inherit"
+          borderTopRightRadius="inherit"
+        >
           <Text fontSize="3xl" fontWeight="bold">
             Quick Advice
           </Text>
+        </CardHeader>
+        <CardBody p="3%">
           <Box width="85%" mt="5%">
             <Text color="gray.500">
               We noticed that you spend a little too much latety, time to tone

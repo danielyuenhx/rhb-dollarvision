@@ -16,7 +16,11 @@ const Rewards = () => {
             opacity={reward.earned ? 1 : 0.5}
             key={reward.label}
           >
-            <CardHeader>
+            <CardHeader
+              bgColor="primaryBlue"
+              borderTopLeftRadius="inherit"
+              borderTopRightRadius="inherit"
+            >
               <Flex justifyContent="space-between" alignItems="center">
                 <Text fontWeight="bold">{reward.label}</Text>
                 {reward.earned && (
@@ -55,8 +59,14 @@ const Rewards = () => {
                 justifyContent="space-between"
                 alignItems="center"
               >
-                <Text color="secondaryBlue" fontSize="smaller">{reward.completion}% of users completed</Text> 
-                <Text fontSize="smaller" opacity={reward.earned ? 0 : 1} textAlign="end">
+                <Text color="secondaryBlue" fontSize="smaller">
+                  {reward.completion}% of users completed
+                </Text>
+                <Text
+                  fontSize="smaller"
+                  opacity={reward.earned ? 0 : 1}
+                  textAlign="end"
+                >
                   Complete before {reward.expired}
                 </Text>
               </Flex>
