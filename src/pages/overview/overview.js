@@ -32,14 +32,23 @@ import {
   Tr,
   useDisclosure,
   Spinner,
+  Select,
+  FormControl,
+  FormLabel,
+  VStack,
+  Box,
+  Input,
+  NumberInput,
+  NumberInputField,
 } from '@chakra-ui/react';
-import React, { useRef } from 'react';
+import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
 import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
 import { useCalculations } from '../../hooks/useCalculations';
 import _ from 'lodash';
 import { useAllTransactions } from '../../hooks/useAllTransactions';
+import supabase from '../../supabaseClient';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -54,6 +63,7 @@ const Overview = () => {
     allTransactions: transactions,
     totalBalance: initialBalance,
     isLoading,
+    setAllTransactions,
   } = useAllTransactions();
   const { totalBalance, totalIncome, totalExpense, nettChange } =
     useCalculations(initialBalance, transactions);
@@ -62,20 +72,17 @@ const Overview = () => {
     transactions,
     transaction => transaction.date
   );
-  console.log(transactionsGroupedByDate);
   const dateKeysSorted = Object.keys(transactionsGroupedByDate).sort(function (
     a,
     b
   ) {
     return b - a;
   });
-  console.log(dateKeysSorted);
 
   const transactionsGroupedByExpenseOrIncome = _.groupBy(
     transactions,
     transaction => transaction.categories.type
   );
-  console.log(transactionsGroupedByExpenseOrIncome);
 
   const expenseTransactionsGroupedByCategory = _.groupBy(
     transactionsGroupedByExpenseOrIncome.expense,
@@ -99,7 +106,6 @@ const Overview = () => {
       };
     })
     .sort((a, b) => b.totalAmount - a.totalAmount);
-  console.log(expenseTransactionsInfo);
 
   const incomeTransactionsInfo = Object.keys(
     incomeTransactionsGroupedByCategory
@@ -115,7 +121,6 @@ const Overview = () => {
       };
     })
     .sort((a, b) => b.totalAmount - a.totalAmount);
-  console.log(incomeTransactionsInfo);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const tabsRef = useRef();
@@ -133,6 +138,70 @@ const Overview = () => {
     '#FF00FF',
     '#000000',
   ];
+
+  const todayDate = new Date();
+  const offset = todayDate.getTimezoneOffset();
+  const [date, setDate] = useState(
+    new Date(todayDate.getTime() - offset * 60 * 1000)
+      .toISOString()
+      .split('T')[0]
+  );
+  const [wallet, setWallet] = useState('1');
+  const [selectType, setSelectType] = useState('expense');
+  const [selectCategory, setSelectCategory] = useState('1');
+  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useState(0.0);
+
+  const handleDate = e => {
+    console.log(e.target.value);
+    setDate(e.target.value);
+  };
+
+  const handleWallet = e => {
+    console.log(e.target.value);
+    setWallet(e.target.value);
+  };
+
+  const handleSelectType = e => {
+    console.log(e.target.value);
+    setSelectType(e.target.value);
+  };
+
+  const handleSelectCategory = e => {
+    console.log(e.target.value);
+    setSelectCategory(e.target.value);
+  };
+
+  const handleDescription = e => {
+    setDescription(e.target.value);
+  };
+
+  const handleAmount = e => {
+    console.log(e.target.value);
+    setAmount(e.target.value);
+  };
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    console.log('submit');
+    const { data } = await supabase
+      .from('transactions')
+      .insert({
+        wallet_id: wallet,
+        date: date,
+        category_id: selectCategory,
+        description: description,
+        amount: amount,
+      })
+      .select(`*, categories (*), wallets (*)`);
+    setWallet('1');
+    setSelectType('expense');
+    setSelectCategory('1');
+    setDescription('');
+    setAmount(0.0);
+    setAllTransactions([data[0], ...transactions]);
+    onClose();
+  };
 
   return (
     <Layout>
@@ -152,7 +221,7 @@ const Overview = () => {
               variant="solid"
               alignSelf="self-end"
             >
-              Add New Transaction
+              Add Transaction
             </Button>
           </Flex>
           <Flex gap="25px" direction="row" wrap={true} w="100%">
@@ -313,11 +382,87 @@ const Overview = () => {
             <Modal onClose={onClose} isOpen={isOpen} isCentered>
               <ModalOverlay />
               <ModalContent>
-                <ModalHeader>Modal Title</ModalHeader>
+                <ModalHeader>Add Transaction</ModalHeader>
                 <ModalCloseButton />
-                <ModalBody>Add new transaction</ModalBody>
+                <ModalBody>
+                  <FormControl>
+                    <VStack spacing={4}>
+                      <Box alignItems="left" width="100%">
+                        <FormLabel fontSize="sm">Date</FormLabel>
+                        <Input
+                          onChange={handleDate}
+                          placeholder="Select Date"
+                          type="date"
+                          value={date}
+                        />
+                      </Box>
+                      <Box alignItems="left" width="100%">
+                        <FormLabel fontSize="sm">Wallet</FormLabel>
+                        <Select onChange={handleWallet} value={wallet}>
+                          <option value="1">RHB Savings Account-I</option>
+                          <option value="3">Cash</option>
+                        </Select>
+                      </Box>
+                      <Box alignItems="left" width="100%">
+                        <FormLabel fontSize="sm">Type</FormLabel>
+                        <Select onChange={handleSelectType} value={selectType}>
+                          <option value="expense">Expense</option>
+                          <option value="income">Income</option>
+                        </Select>
+                      </Box>
+                      <Box alignItems="left" width="100%">
+                        <FormLabel fontSize="sm">Category</FormLabel>
+                        <Select
+                          onChange={handleSelectCategory}
+                          value={selectCategory}
+                        >
+                          {selectType === 'expense' ? (
+                            <>
+                              <option value="1">Food</option>
+                              <option value="2">Transport</option>
+                              <option value="3">Entertainment</option>
+                              <option value="4">Shopping</option>
+                              <option value="5">Others</option>
+                            </>
+                          ) : (
+                            <>
+                              <option value="6">Salary</option>
+                              <option value="7">Allowance</option>
+                              <option value="8">Others</option>
+                            </>
+                          )}
+                        </Select>
+                      </Box>
+                      <Box alignItems="left" width="100%">
+                        <FormLabel fontSize="sm">
+                          Description (Optional)
+                        </FormLabel>
+                        <Input
+                          placeholder="Write Description"
+                          onChange={handleDescription}
+                          value={description}
+                        />
+                      </Box>
+                      <Box alignItems="left" width="100%">
+                        <FormLabel fontSize="sm">Amount</FormLabel>
+                        <NumberInput defaultValue={0} min={0} precision={2}>
+                          <NumberInputField
+                            onChange={handleAmount}
+                            value={amount}
+                          />
+                        </NumberInput>
+                      </Box>
+                    </VStack>
+                  </FormControl>
+                </ModalBody>
                 <ModalFooter>
-                  <Button onClick={onClose}>Close</Button>
+                  <Button
+                    onClick={handleSubmit}
+                    colorScheme="blue"
+                    variant="solid"
+                  >
+                    Add Transaction
+                  </Button>
                 </ModalFooter>
               </ModalContent>
             </Modal>

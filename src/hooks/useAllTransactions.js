@@ -37,5 +37,5 @@ export const useAllTransactions = () => {
     getTransactions();
   }, []);
 
-  return { allTransactions, totalBalance, isLoading };
+  return { allTransactions, totalBalance, isLoading, setAllTransactions };
 };
