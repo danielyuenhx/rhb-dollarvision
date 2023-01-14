@@ -49,7 +49,7 @@ const header = () => {
                 gap="10px"
                 _hover={{ cursor: 'pointer' }}
               >
-                <FontAwesomeIcon icon={section.icon} color="#0067b1" size="s" />
+                <FontAwesomeIcon icon={section.icon} color="#0067b1" size="sm" />
                 {section.text}
               </Text>
             </>
