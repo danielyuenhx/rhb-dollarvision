@@ -193,7 +193,7 @@ const UserCard = () => {
         linear-gradient(127deg, rgba(34, 193, 195,1) , rgba(141, 84, 255,0.5) 70.71%)`}
           ></Box>
           <Text fontSize="3xl" fontWeight="bold" mt="10px">
-            Zheng Jie
+            Daniel Yuen
           </Text>
           <Text fontSize="15px">Omega Spender</Text>
         </CardBody>
@@ -224,7 +224,7 @@ const UserCard = () => {
           Quick Advice
         </CardHeader>
         <CardBody p="3%">
-          <Box width="85%" mt="5%">
+          <Box width="85%">
             <Text color="gray.500">
               We noticed that you spend a little too much latety, time to tone
               it back down. Saving is more important!
