@@ -90,7 +90,7 @@ const UserCard = () => {
       } else {
         setDegree(degree + 1);
       }
-    }, 25);
+    }, 20);
 
     return () => clearInterval(interval);
   }, [aDigit, bDigit, degree, reverse, reverseDeg, turnA, turnB]);
