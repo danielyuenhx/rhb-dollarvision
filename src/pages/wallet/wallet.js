@@ -345,7 +345,7 @@ const Wallet = () => {
               <TableContainer>
                 <Table variant="simple">
                   <Thead>
-                    <Tr>
+                    <Tr bg="gray.200">
                       <Th>Category</Th>
                       <Th>Description</Th>
                       <Th isNumeric>Amount</Th>
@@ -355,10 +355,12 @@ const Wallet = () => {
                     {dateKeysSorted.map(dateKey => {
                       return (
                         <>
-                          <Tr>
-                            <Th fontSize={16}>
+                        <Tr bg="gray.100">
+                            <Th>
                               {dateKey.split('-').reverse().join('/')}
                             </Th>
+                            <Th></Th>
+                            <Th></Th>
                           </Tr>
                           {transactionsGroupedByDate[dateKey].map(
                             transaction => (

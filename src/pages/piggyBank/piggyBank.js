@@ -57,16 +57,12 @@ const PiggyBank = () => {
     },
   ];
 
-  const onClickHandler = index => {
-    setSelectedItem(index);
-  };
-
   useEffect(() => {
     const getPiggybank = async () => {
-      await supabase
+      let { data: items } = await supabase
         .from('piggybank')
-        .select('name, desc, total, paid, per_month')
-        .then(res => setItems(res.data));
+        .select('name, desc, total, paid, per_month');
+      setItems(items);
     };
     getPiggybank();
   }, []);
@@ -88,25 +84,21 @@ const PiggyBank = () => {
                     desc={item.desc}
                     total={item.total}
                     paid={item.paid}
-                    onClick={onClickHandler}
+                    onClick={setSelectedItem.bind(null, index)}
                   />
                 ))}
+              <Button
+                variant="primaryButton"
+                w="auto"
+                _hover={{ transform: '' }}
+                float="right"
+                onClick={onOpen}
+              >
+                {' '}
+                Add Piggy Bank
+              </Button>
             </Flex>
-            <Flex gap="20px" direction="column" w="100%">
-              <Box>
-                <Button
-                  variant="primaryButton"
-                  w="auto"
-                  _hover={{ transform: '' }}
-                  float="right"
-                  onClick={onOpen}
-                >
-                  {' '}
-                  Add Piggy Bank
-                </Button>
-              </Box>
-              {items && <ItemDetails selectedItem={items[selectedItem]} />}
-            </Flex>
+            {items && <ItemDetails selectedItem={items[selectedItem]} />}
           </Flex>
 
           <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
