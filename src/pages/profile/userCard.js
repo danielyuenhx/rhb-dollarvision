@@ -214,13 +214,14 @@ const UserCard = () => {
         height={['100%', '100%', '100%', '100%', '400px']}
       >
         <CardHeader
-          bgColor="primaryBlue"
+          fontSize="2xl"
+          color="white"
+          fontWeight="bold"
+          bgColor="secondaryBlue"
           borderTopLeftRadius="inherit"
           borderTopRightRadius="inherit"
         >
-          <Text fontSize="3xl" fontWeight="bold">
-            Quick Advice
-          </Text>
+          Quick Advice
         </CardHeader>
         <CardBody p="3%">
           <Box width="85%" mt="5%">

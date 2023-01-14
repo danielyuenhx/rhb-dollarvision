@@ -9,7 +9,8 @@ const UserSummary = () => {
         <CardHeader
           fontSize="2xl"
           fontWeight="bold"
-          bgColor="primaryBlue"
+          color="white"
+          bgColor="secondaryBlue"
           borderTopLeftRadius="inherit"
           borderTopRightRadius="inherit"
         >

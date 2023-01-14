@@ -52,8 +52,9 @@ const UserCategory = () => {
       <Card w="100%">
         <CardHeader
           fontSize="2xl"
+          color="white"
           fontWeight="bold"
-          bgColor="primaryBlue"
+          bgColor="secondaryBlue"
           borderTopLeftRadius="inherit"
           borderTopRightRadius="inherit"
         >

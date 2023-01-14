@@ -17,17 +17,18 @@ const Rewards = () => {
             key={reward.label}
           >
             <CardHeader
-              bgColor="primaryBlue"
+              fontWeight="bold"
+              bgColor="secondaryBlue"
               borderTopLeftRadius="inherit"
               borderTopRightRadius="inherit"
             >
               <Flex justifyContent="space-between" alignItems="center">
-                <Text fontWeight="bold" fontSize="xl">{reward.label}</Text>
+                <Text  color="white" fontWeight="bold" fontSize="xl">{reward.label}</Text>
                 {reward.earned && (
                   <FontAwesomeIcon
                     icon={faCircleCheck}
-                    color="green"
-                    size="1x"
+                    color="white"
+                    size="2x"
                   />
                 )}
               </Flex>
