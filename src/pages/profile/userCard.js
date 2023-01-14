@@ -175,7 +175,7 @@ const UserCard = () => {
 
       <Card
         height="400px"
-        width="300px"
+        width="320px"
         onClick={onOpen}
         _hover={{ cursor: 'pointer' }}
       >
@@ -207,7 +207,7 @@ const UserCard = () => {
       </Card>
 
       <Card
-        w={['100%', '100%', '100%', '100%', 'auto']}
+        w={['100%', '100%', '100%', '100%', '90%']}
         height={['100%', '100%', '100%', '100%', '400px']}
       >
         <CardBody p="3%">
