@@ -17,15 +17,12 @@ const UserSummary = () => {
         </CardHeader>
         <CardBody>
           <Flex direction="column">
-            <Text fontWeight="bold">
-              Comparison of your spending with a young aduilt in Subang area:{' '}
-            </Text>
-
             <Flex w="70%">
               <Text>
-                Overall, you are not very good at budgeting and saving money
-                especially when it comes to food and shopping. You spend a lot
-                more compared to an average young adult in Subang Area.
+                Overall, you are not very consistent at budgeting and saving
+                money especially when it comes to Food and Shopping. You spend
+                much more on average compared to other young adults in your
+                area.
               </Text>
             </Flex>
 

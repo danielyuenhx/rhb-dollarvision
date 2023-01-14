@@ -23,7 +23,6 @@ const header = () => {
       justifyContent="space-between"
       px="30px"
       bgColor="#f7fafc"
-      zIndex="10000"
       boxShadow="1px 1px 10px rgba(0, 0, 0, 0.07)"
     >
       <Link to="/">

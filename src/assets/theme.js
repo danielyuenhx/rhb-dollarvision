@@ -7,6 +7,11 @@ const colors = {
   primaryBlue: '#3dbbf5',
   secondaryBlue: '#0067b1',
   backgroundColor: '#f5f5f5',
+  rhbBlue: {
+    50: '#f7fafc',
+    // ...
+    900: '#171923',
+  },
 };
 
 const components = {

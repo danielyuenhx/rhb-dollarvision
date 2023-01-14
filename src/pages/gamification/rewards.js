@@ -22,7 +22,7 @@ const Rewards = () => {
               borderTopRightRadius="inherit"
             >
               <Flex justifyContent="space-between" alignItems="center">
-                <Text fontWeight="bold">{reward.label}</Text>
+                <Text fontWeight="bold" fontSize="xl">{reward.label}</Text>
                 {reward.earned && (
                   <FontAwesomeIcon
                     icon={faCircleCheck}
@@ -45,7 +45,7 @@ const Rewards = () => {
                   autoplay
                   speed={1}
                   style={{
-                    width: '150px',
+                    width: '250px',
                     height: '180px',
                   }}
                 />
