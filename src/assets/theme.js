@@ -20,9 +20,14 @@ const components = {
   Card,
 };
 
+const config = {
+  initialColorMode: 'light',
+  useSystemColorMode: false,
+};
+
 const fonts = {
   heading: `'Heebo', sans-serif`,
   body: `'Heebo', sans-serif`,
 };
 
-export const theme = extendTheme({ colors, components, fonts });
+export const theme = extendTheme({ colors, components, fonts, config });

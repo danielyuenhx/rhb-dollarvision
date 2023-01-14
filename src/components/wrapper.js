@@ -48,8 +48,8 @@ const Wrapper = () => {
     <>
       <Flex
         bgColor={colorMode === 'light' ? 'gray.50' : 'gray.800'}
-        h="auto"
-        minHeight="100vh"
+        h="100%"
+        minHeight="110vh"
         dir="row"
         w="auto"
         margin="auto"

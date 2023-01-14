@@ -146,6 +146,7 @@ export const Sidebar = () => {
       transitionDuration="0.5s"
       transitionTimingFunction="cubic-bezier"
       justifyContent="center"
+      paddingBottom="50px"
     >
       <Box
         bg="primaryBlue"
