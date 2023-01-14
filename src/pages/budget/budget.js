@@ -5,9 +5,11 @@ import { Button, Flex, Box, Spinner } from '@chakra-ui/react';
 import ItemCard from './itemCard';
 import ItemDetails from './itemDetails';
 import { useBudgets } from '../../hooks/useBudgets';
+import { useCategories } from '../../hooks/useCategories';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCalculations } from '../../hooks/useCalculations';
 import _ from 'lodash';
+import supabase from '../../supabaseClient';
 
 const Budget = () => {
   const [selectedItem, setSelectedItem] = useState(0);
@@ -16,12 +18,14 @@ const Budget = () => {
 
   const { budget, isLoading: budgetsIsLoading } = useBudgets();
 
-  const { transactions, allTransactions, isLoading } = useTransactions(
+  const { transactions, allTransactions } = useTransactions(
     undefined,
     selectedCategories
   );
 
   const { totalExpense } = useCalculations(0, transactions);
+
+  const { categories } = useCategories(selectedCategories);
 
   useEffect(() => {
     if (budget && !budgetsIsLoading) {
@@ -55,7 +59,7 @@ const Budget = () => {
 
   return (
     <Layout>
-      {totalExpense ? (
+      {(totalExpense && categories) ? (
         <Flex gap="30px" direction="row">
           <Flex gap="25px" direction="column" w="50%">
             {fetchedItems &&
@@ -69,15 +73,15 @@ const Budget = () => {
                   onClick={setSelectedItem.bind(null, index)}
                 />
               ))}
-              <Button
-                variant="primaryButton"
-                w="auto"
-                _hover={{ transform: '' }}
-                float="right"
-              >
-                {' '}
-                Add Budget
-              </Button>
+            <Button
+              variant="primaryButton"
+              w="auto"
+              _hover={{ transform: '' }}
+              float="right"
+            >
+              {' '}
+              Add Budget
+            </Button>
           </Flex>
           {fetchedItems && (
             <ItemDetails
@@ -86,6 +90,7 @@ const Budget = () => {
               dateKeysSorted={dateKeysSorted}
               transactionsGroupedByDate={transactionsGroupedByDate}
               parseAmount={parseAmount}
+              categories={categories}
             />
           )}
         </Flex>

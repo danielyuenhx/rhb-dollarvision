@@ -7,36 +7,38 @@ import {
   StatLabel,
   StatNumber,
   StatHelpText,
-  StatArrow,
   StatGroup,
-  VStack,
-  HStack,
-  Flex,
   Progress,
   Tooltip,
   Table,
   Thead,
   Tbody,
-  Tfoot,
   Tr,
   Th,
   Td,
-  TableCaption,
   TableContainer,
   Box,
+  Badge,
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import React from 'react';
 
-const itemDetails = ({ selectedItem, spent, dateKeysSorted, transactionsGroupedByDate, parseAmount }) => {
+const itemDetails = ({
+  selectedItem,
+  spent,
+  categories,
+  dateKeysSorted,
+  transactionsGroupedByDate,
+  parseAmount,
+}) => {
   const currentDate = new Date();
   // const completionDate = new Date();
   // completionDate.setMonth(
   //   completionDate.getMonth() +
   //     Math.round(selectedItem.total / selectedItem.per_month)
   // );
-  console.log(selectedItem)
+  console.log(categories);
 
   const progress = spent / selectedItem.total;
 
@@ -46,7 +48,16 @@ const itemDetails = ({ selectedItem, spent, dateKeysSorted, transactionsGroupedB
         <Text fontSize="2xl" fontWeight="bold" color="white">
           {selectedItem.name}
         </Text>
-        <Text color="white">{selectedItem.desc}</Text>
+        {categories.map(category => (
+          <Badge
+            variant="solid"
+            colorScheme="cyan"
+            marginTop="5px"
+            marginRight="0.6rem"
+          >
+            {category.name}
+          </Badge>
+        ))}
       </CardHeader>
       <CardBody>
         <StatGroup mb={5}>
@@ -118,9 +129,7 @@ const itemDetails = ({ selectedItem, spent, dateKeysSorted, transactionsGroupedB
                 return (
                   <>
                     <Tr bg="gray.100">
-                      <Th>
-                        {dateKey.split('-').reverse().join('/')}
-                      </Th>
+                      <Th>{dateKey.split('-').reverse().join('/')}</Th>
                       <Th></Th>
                       <Th></Th>
                     </Tr>
