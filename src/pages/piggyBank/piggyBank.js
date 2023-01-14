@@ -139,7 +139,7 @@ const PiggyBank = () => {
             onClose={onClose}
             isCentered
             size="xl"
-            scrollBehavior={'outside'}
+            scrollBehavior={'inside'}
             closeOnOverlayClick={false}
           >
             <ModalOverlay />
