@@ -21,7 +21,7 @@ export const useTransactions = (
       query.eq('wallet_id', walletId);
     }
 
-    if (categoryIds.length !== 0) {
+    if (categoryIds && categoryIds.length !== 0) {
       query = query.in('category_id', categoryIds);
     }
     if (startDate && endDate) {

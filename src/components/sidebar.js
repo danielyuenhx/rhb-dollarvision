@@ -235,7 +235,7 @@ export const Sidebar = () => {
                 textAlign="left"
                 p="15px 0px 0px 15px"
                 color="#ffffff"
-                width={expand ? '100px' : '0px'}
+                width={expand ? '200px' : '0px'}
                 height={expand ? '35px' : '0px'}
                 overflow="hidden"
                 textOverflow="clip"
@@ -277,7 +277,7 @@ export const Sidebar = () => {
                         pl="15%"
                         color="white"
                         textAlign="left"
-                        width={expand ? '100px' : '0px'}
+                        width={expand ? '150px' : '0px'}
                         overflow="hidden"
                         textOverflow="clip"
                         whiteSpace="nowrap"

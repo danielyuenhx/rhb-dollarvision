@@ -152,7 +152,7 @@ const Wallet = () => {
     <Layout>
       {!walletsIsLoading && !isLoading ? (
         <Flex gap="30px" direction="row">
-          <Flex gap="25px" direction="column" w="35%">
+          <Flex gap="25px" direction="column" w="40%">
             <Select value={selectedWallet.id} onChange={handleWalletChange}>
               {wallets.map(wallet => (
                 <option key={wallet.id} value={wallet.id}>
@@ -280,7 +280,7 @@ const Wallet = () => {
               </TabPanels>
             </Tabs>
           </Flex>
-          <Flex gap="25px" direction="column" wrap={true} w="65%">
+          <Flex gap="25px" direction="column" wrap={true} w="60%">
             <Flex gap="25px" direction="column" w="100%">
               <Button
                 onClick={onOpen}

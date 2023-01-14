@@ -2,17 +2,20 @@ import React from 'react';
 import {
   TableContainer,
   Table,
-  TableCaption,
   Thead,
   Tr,
   Th,
   Tbody,
   Td,
-  Tfoot,
   Button,
 } from '@chakra-ui/react';
+import { useTransactions } from '../../hooks/useTransactions';
+import { useCalculations } from '../../hooks/useCalculations';
 
-const tables = () => {
+const Tables = () => {
+  const { allTransactionsByWallet } = useTransactions(1);
+  const { totalBalance } = useCalculations(0, allTransactionsByWallet);
+
   return (
     <>
       <TableContainer
@@ -56,24 +59,14 @@ const tables = () => {
                 SAVINGS ACCOUNT-I
               </Td>
               <Td>MYR</Td>
-              <Td isNumeric>1526.52</Td>
-            </Tr>
-            <Tr
-              transitionDuration="0.2s"
-              _hover={{ bg: 'gray.200', cursor: 'pointer' }}
-            >
-              <Td color="primaryBlue" fontWeight="bold">
-                STATEMENT SAVINGS ACCOUNT
-              </Td>
-              <Td>MYR</Td>
-              <Td isNumeric>30.48</Td>
+              <Td isNumeric>{totalBalance}</Td>
             </Tr>
             <Tr fontWeight="bold">
               <Td color="secondaryBlue" fontWeight="bold">
                 Total
               </Td>
               <Td>MYR</Td>
-              <Td isNumeric>1557.00</Td>
+              <Td isNumeric>{totalBalance}</Td>
             </Tr>
           </Tbody>
         </Table>
@@ -116,4 +109,4 @@ const tables = () => {
   );
 };
 
-export default tables;
+export default Tables;

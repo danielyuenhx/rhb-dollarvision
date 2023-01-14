@@ -1,15 +1,10 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Box, Text, Alert, AlertIcon, Flex, Button } from '@chakra-ui/react';
 import Tables from './tables';
 import Layout from '../../components/layout';
 import Icons from './icons';
 
-import { useWallets } from '../../hooks/useWallets';
-import { useTransactions } from '../../hooks/useTransactions';
-import { useCalculations } from '../../hooks/useCalculations';
-
-const dashboard = () => {
-
+const Dashboard = () => {
   return (
     <Layout>
       <Flex
@@ -21,7 +16,7 @@ const dashboard = () => {
           <Text fontSize="4xl" fontWeight="bold">
             Hi, Daniel!
           </Text>
-          <Text mb="20px">
+          <Text mb="20px" color="gray.500">
             Your last login was on 10:30:00 PM, Fri 13 Jan 2023
           </Text>
         </Box>
@@ -74,4 +69,4 @@ const dashboard = () => {
   );
 };
 
-export default dashboard;
+export default Dashboard;

@@ -358,8 +358,10 @@ const PiggyBank = () => {
                       <Flex justify="space-around">
                         <Button
                           onClick={() => {
-                            window.location.href =
-                              'https://www.rhbinsurance.com.my/';
+                            window.open(
+                              'https://www.rhbinsurance.com.my/',
+                              '_blank'
+                            );
                           }}
                           variant="solid"
                           bgColor="secondaryBlue"
@@ -373,8 +375,10 @@ const PiggyBank = () => {
                         </Button>
                         <Button
                           onClick={() => {
-                            window.location.href =
-                              'https://www.rhbgroup.com/personal/loans/personal-financing/index.html';
+                            window.open(
+                              'https://www.rhbgroup.com/personal/loans/personal-financing/index.html',
+                              '_blank'
+                            );
                           }}
                           variant="solid"
                           bgColor="secondaryBlue"

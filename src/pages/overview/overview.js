@@ -194,7 +194,7 @@ const Overview = () => {
             </Card>
           </Flex>
           <Flex gap="25px" direction="row" wrap={true} w="100%">
-            <Flex gap="25px" direction="column" w="35%">
+            <Flex gap="25px" direction="column" w="40%">
               <Tabs isFitted variant="enclosed" ref={tabsRef}>
                 <TabList mb="1em">
                   <Tab>Income</Tab>
@@ -321,13 +321,14 @@ const Overview = () => {
                 </ModalFooter>
               </ModalContent>
             </Modal>
-            <Flex gap="25px" direction="column" w="65%">
+            <Flex gap="25px" direction="column" w="60%">
               <Card mb={10}>
                 <TableContainer>
                   <Table variant="simple">
                     <Thead>
                       <Tr bg="gray.200">
                         <Th borderRadius="0.375rem 0 0 0">Category</Th>
+                        <Th>Wallet</Th>
                         <Th>Description</Th>
                         <Th isNumeric borderRadius="0 0.375rem 0 0">
                           Amount
@@ -342,11 +343,13 @@ const Overview = () => {
                               <Th>{dateKey.split('-').reverse().join('/')}</Th>
                               <Th></Th>
                               <Th></Th>
+                              <Th></Th>
                             </Tr>
                             {transactionsGroupedByDate[dateKey].map(
                               transaction => (
                                 <Tr>
                                   <Td>{transaction.categories.name}</Td>
+                                  <Td>{transaction.wallets.name}</Td>
                                   <Td>{transaction.description}</Td>
                                   <Td isNumeric>
                                     {parseAmount(
