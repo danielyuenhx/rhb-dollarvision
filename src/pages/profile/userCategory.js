@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Flex,
   Card,
@@ -17,18 +17,26 @@ import {
   Tag,
   Input,
 } from '@chakra-ui/react';
+import supabase from '../../supabaseClient';
 
 const UserCategory = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
-  const category = [
-    { title: 'Food' },
-    { title: 'Entertainment' },
-    { title: 'Shopping' },
-    { title: 'Transport' },
-  ];
+  const [data, setData] = useState();
 
   const addHandler = () => {};
+
+  useEffect(() => {
+    // declare the data fetching function
+    const fetchData = async () => {
+      await supabase
+        .from('categories')
+        .select('*')
+        .eq('type', 'expense')
+        .then(res => setData(res));
+    };
+
+    fetchData().catch(console.error);
+  }, []);
 
   return (
     <Flex>
@@ -67,12 +75,11 @@ const UserCategory = () => {
         </CardHeader>
         <CardBody>
           <Flex gap="40px" justify="flex-start" flexWrap="wrap">
-            {category.map((category, index) => {
+            {data?.data?.map(category => {
               return (
-                <Box key={category + index} w="auto" borderRadius="10px">
+                <Box key={category.id} w="auto" borderRadius="10px">
                   <Tag colorScheme="gray" size="lg">
-                    {' '}
-                    {category.title}
+                    {category.name}
                   </Tag>
                 </Box>
               );
