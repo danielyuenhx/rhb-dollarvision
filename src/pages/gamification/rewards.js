@@ -12,7 +12,7 @@ const Rewards = () => {
       {REWARD_DATA.map(reward => {
         return (
           <Card
-            height="400px"
+            height="420px"
             opacity={reward.earned ? 1 : 0.5}
             key={reward.label}
           >

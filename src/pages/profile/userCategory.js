@@ -26,7 +26,6 @@ const UserCategory = () => {
   const addHandler = () => {};
 
   useEffect(() => {
-    // declare the data fetching function
     const fetchData = async () => {
       await supabase
         .from('categories')
