@@ -9,7 +9,6 @@ import { useCategories } from '../../hooks/useCategories';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCalculations } from '../../hooks/useCalculations';
 import _ from 'lodash';
-import supabase from '../../supabaseClient';
 
 const Budget = () => {
   const [selectedItem, setSelectedItem] = useState(0);

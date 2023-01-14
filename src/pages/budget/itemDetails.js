@@ -38,7 +38,6 @@ const itemDetails = ({
   //   completionDate.getMonth() +
   //     Math.round(selectedItem.total / selectedItem.per_month)
   // );
-  console.log(categories);
 
   const progress = spent / selectedItem.total;
 
