@@ -57,8 +57,6 @@ const PiggyBank = () => {
   const [selectedItem, setSelectedItem] = useState(0);
   const [items, setItems] = useState();
 
-  const [selectedPiggyBank, setSelectedPiggyBank] = useState();
-
   const PIGGYBANK_OPTIONS = [
     {
       name: 'Retirement Fund',
@@ -85,6 +83,25 @@ const PiggyBank = () => {
         'https://kdvr.com/wp-content/uploads/sites/11/2022/03/best-piggy-bank-16f62d.jpg',
     },
   ];
+
+  const onClickHandler = index => {
+    setSelectedItem(index);
+  };
+
+  const proceedHandler = async () => {
+    startAnimation();
+    setConfirmed(true);
+    await supabase.from('piggybank').insert([
+      {
+        name: 'Car Down Payment',
+        desc: 'Funds for purchasing a new car',
+        total: 12000,
+        paid: 0,
+        per_month: 200,
+        wallet_id: 1,
+      },
+    ]);
+  };
 
   useEffect(() => {
     const getPiggybank = async () => {
@@ -374,14 +391,7 @@ const PiggyBank = () => {
 
                     {/* Confirmation */}
                     <Flex direction="column" gap="20px" textAlign="center">
-                      <Button
-                        onClick={() => {
-                          setConfirmed(true);
-                          startAnimation();
-                        }}
-                      >
-                        Proceed
-                      </Button>
+                      <Button onClick={proceedHandler}>Proceed</Button>
                       <Text fontWeight="bold" fontStyle="italic" color="green">
                         Upon confirmation, RM{' '}
                         {((amount * (15 / 100)) / (sliderValue * 12)).toFixed(
