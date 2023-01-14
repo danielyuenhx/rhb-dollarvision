@@ -74,9 +74,9 @@ const PiggyBank = () => {
       {
         name: 'Car Down Payment',
         desc: 'Funds for purchasing a new car',
-        total: 80000,
+        total: 12000,
         paid: 0,
-        per_month: 400,
+        per_month: 200,
         wallet_id: 1,
       },
     ]);
@@ -84,10 +84,10 @@ const PiggyBank = () => {
 
   useEffect(() => {
     const getPiggybank = async () => {
-      await supabase
+      let { data: items } = await supabase
         .from('piggybank')
-        .select('name, desc, total, paid, per_month')
-        .then(res => setItems(res.data));
+        .select('name, desc, total, paid, per_month');
+      setItems(items);
     };
     getPiggybank();
   }, []);
@@ -125,25 +125,21 @@ const PiggyBank = () => {
                     desc={item.desc}
                     total={item.total}
                     paid={item.paid}
-                    onClick={onClickHandler}
+                    onClick={setSelectedItem.bind(null, index)}
                   />
                 ))}
+              <Button
+                variant="primaryButton"
+                w="auto"
+                _hover={{ transform: '' }}
+                float="right"
+                onClick={onOpen}
+              >
+                {' '}
+                Add Piggy Bank
+              </Button>
             </Flex>
-            <Flex gap="20px" direction="column" w="100%">
-              <Box>
-                <Button
-                  variant="primaryButton"
-                  w="auto"
-                  _hover={{ transform: '' }}
-                  float="right"
-                  onClick={onOpen}
-                >
-                  {' '}
-                  Add Piggy Bank
-                </Button>
-              </Box>
-              {items && <ItemDetails selectedItem={items[selectedItem]} />}
-            </Flex>
+            {items && <ItemDetails selectedItem={items[selectedItem]} />}
           </Flex>
 
           <Modal

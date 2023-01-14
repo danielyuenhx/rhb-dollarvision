@@ -25,6 +25,7 @@ import {
   Tabs,
   Tbody,
   Td,
+  Text,
   Th,
   Thead,
   Tr,
@@ -33,11 +34,12 @@ import {
 import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layout';
 import CreditCard from './images/credit.png';
-import { PieChart, Pie, Cell, ResponsiveContainer } from 'recharts';
+import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
 import { useCalculations } from '../../hooks/useCalculations';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useWallets } from '../../hooks/useWallets';
+import _ from 'lodash';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -63,6 +65,64 @@ const Wallet = () => {
   const handleWalletChange = e => {
     setSelectedWallet(wallets.find(w => w.id === parseInt(e.target.value)));
   };
+  const transactionsGroupedByDate = _.groupBy(
+    transactions,
+    transaction => transaction.date
+  );
+  console.log(transactionsGroupedByDate);
+  const dateKeysSorted = Object.keys(transactionsGroupedByDate).sort(function (
+    a,
+    b
+  ) {
+    return b - a;
+  });
+  console.log(dateKeysSorted);
+
+  const transactionsGroupedByExpenseOrIncome = _.groupBy(
+    transactions,
+    transaction => transaction.categories.type
+  );
+  console.log(transactionsGroupedByExpenseOrIncome);
+
+  const expenseTransactionsGroupedByCategory = _.groupBy(
+    transactionsGroupedByExpenseOrIncome.expense,
+    transaction => transaction.categories.name
+  );
+  const incomeTransactionsGroupedByCategory = _.groupBy(
+    transactionsGroupedByExpenseOrIncome.income,
+    transaction => transaction.categories.name
+  );
+  const expenseTransactionsInfo = Object.keys(
+    expenseTransactionsGroupedByCategory
+  )
+    .map(key => {
+      return {
+        name: key,
+        totalAmount: expenseTransactionsGroupedByCategory[key].reduce(
+          (a, b) => a + b.amount,
+          0
+        ),
+        totalTransactions: expenseTransactionsGroupedByCategory[key].length,
+      };
+    })
+    .sort((a, b) => b.totalAmount - a.totalAmount);
+  console.log(expenseTransactionsInfo);
+
+  const incomeTransactionsInfo = Object.keys(
+    incomeTransactionsGroupedByCategory
+  )
+    .map(key => {
+      return {
+        name: key,
+        totalAmount: incomeTransactionsGroupedByCategory[key].reduce(
+          (a, b) => a + b.amount,
+          0
+        ),
+        totalTransactions: incomeTransactionsGroupedByCategory[key].length,
+      };
+    })
+    .sort((a, b) => b.totalAmount - a.totalAmount);
+  console.log(incomeTransactionsInfo);
 
   useEffect(() => {
     if (wallets.length > 0 && !walletsIsLoading) {
@@ -74,41 +134,18 @@ const Wallet = () => {
   const tabsRef = useRef();
   const { width } = useContainerDimensions(tabsRef);
 
-  const data = [
-    { name: 'Group A', value: 400 },
-    { name: 'Group B', value: 300 },
-    { name: 'Group C', value: 300 },
-    { name: 'Group D', value: 200 },
+  const COLORS = [
+    '#0088FE',
+    '#00C49F',
+    '#FFBB28',
+    '#FF8042',
+    '#FF0000',
+    '#0000FF',
+    '#00FF00',
+    '#FFFF00',
+    '#FF00FF',
+    '#000000',
   ];
-
-  const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
-
-  const RADIAN = Math.PI / 180;
-  const renderCustomizedLabel = ({
-    cx,
-    cy,
-    midAngle,
-    innerRadius,
-    outerRadius,
-    percent,
-    index,
-  }) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="white"
-        textAnchor={x > cx ? 'start' : 'end'}
-        dominantBaseline="central"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
 
   return (
     <Layout>
@@ -133,22 +170,29 @@ const Wallet = () => {
                   <ResponsiveContainer width={width} height={300}>
                     <PieChart width="100%" height="100%">
                       <Pie
-                        data={data}
+                        data={incomeTransactionsInfo}
                         cx="50%"
                         cy="50%"
-                        labelLine={true}
-                        label={renderCustomizedLabel}
+                        // labelLine={true}
+                        // labelKey="name"
+                        // label
+                        // label={renderCustomizedLabel}
                         innerRadius={40}
                         outerRadius={80}
                         fill="#8884d8"
-                        dataKey="value"
+                        dataKey="totalAmount"
                       >
-                        {data.map((entry, index) => (
+                        {incomeTransactionsInfo.map((entry, index) => (
                           <Cell
                             key={`cell-${index}`}
                             fill={COLORS[index % COLORS.length]}
                           />
                         ))}
+                        <LabelList
+                          dataKey="name"
+                          position="outside"
+                          offset={15}
+                        />
                       </Pie>
                     </PieChart>
                   </ResponsiveContainer>
@@ -162,27 +206,71 @@ const Wallet = () => {
                         </Tr>
                       </Thead>
                       <Tbody>
-                        {/* group transactions by category and create a row for each category and sort by highest number of transactions */}
-                        {/* {CATEGORIES_DATA.map(category => (
-                        <Tr key={category.id}>
-                          <Td>{category.name}</Td>
-                          <Td>{} */}
-                        <Tr>
-                          <Td>Food</Td>
-                          <Td>6</Td>
-                          <Td isNumeric>25.4</Td>
-                        </Tr>
-                        <Tr>
-                          <Td>Transport</Td>
-                          <Td>9</Td>
-                          <Td isNumeric>30.48</Td>
-                        </Tr>
+                        {incomeTransactionsInfo.map(transaction => (
+                          <Tr key={transaction.name}>
+                            <Td>{transaction.name}</Td>
+                            <Td>{transaction.totalTransactions}</Td>
+                            <Td isNumeric>
+                              {transaction.totalAmount.toFixed(2)}
+                            </Td>
+                          </Tr>
+                        ))}
                       </Tbody>
                     </Table>
                   </TableContainer>
                 </TabPanel>
                 <TabPanel>
-                  <p>two!</p>
+                  <ResponsiveContainer width={width} height={300}>
+                    <PieChart width="100%" height="100%">
+                      <Pie
+                        data={expenseTransactionsInfo}
+                        cx="50%"
+                        cy="50%"
+                        // labelLine={true}
+                        // labelKey="name"
+                        // label
+                        // label={renderCustomizedLabel}
+                        innerRadius={40}
+                        outerRadius={80}
+                        fill="#8884d8"
+                        dataKey="totalAmount"
+                      >
+                        {expenseTransactionsInfo.map((entry, index) => (
+                          <Cell
+                            key={`cell-${index}`}
+                            fill={COLORS[index % COLORS.length]}
+                          />
+                        ))}
+                        <LabelList
+                          dataKey="name"
+                          position="outside"
+                          offset={10}
+                        />
+                      </Pie>
+                    </PieChart>
+                  </ResponsiveContainer>
+                  <TableContainer>
+                    <Table variant="simple">
+                      <Thead>
+                        <Tr>
+                          <Th>Category</Th>
+                          <Th># of Transactions</Th>
+                          <Th isNumeric>Total</Th>
+                        </Tr>
+                      </Thead>
+                      <Tbody>
+                        {expenseTransactionsInfo.map(transaction => (
+                          <Tr key={transaction.name}>
+                            <Td>{transaction.name}</Td>
+                            <Td>{transaction.totalTransactions}</Td>
+                            <Td isNumeric>
+                              {transaction.totalAmount.toFixed(2)}
+                            </Td>
+                          </Tr>
+                        ))}
+                      </Tbody>
+                    </Table>
+                  </TableContainer>
                 </TabPanel>
               </TabPanels>
             </Tabs>
@@ -217,7 +305,7 @@ const Wallet = () => {
                   <CardBody>
                     <StatLabel>Total Balance</StatLabel>
                     <StatNumber>{`MYR ${totalBalance.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                   </CardBody>
                 </Stat>
               </Card>
@@ -226,7 +314,7 @@ const Wallet = () => {
                   <CardBody>
                     <StatLabel>Nett Change</StatLabel>
                     <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                   </CardBody>
                 </Stat>
               </Card>
@@ -238,7 +326,7 @@ const Wallet = () => {
                   <CardBody>
                     <StatLabel>Income</StatLabel>
                     <StatNumber>{`MYR ${totalIncome.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                   </CardBody>
                 </Stat>
               </Card>
@@ -247,7 +335,7 @@ const Wallet = () => {
                   <CardBody>
                     <StatLabel>Expense</StatLabel>
                     <StatNumber>{`MYR ${totalExpense.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Feb 12 - Feb 28</StatHelpText>
+                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                   </CardBody>
                 </Stat>
               </Card>
@@ -257,29 +345,40 @@ const Wallet = () => {
               <TableContainer>
                 <Table variant="simple">
                   <Thead>
-                    <Tr>
+                    <Tr bg="gray.200">
                       <Th>Category</Th>
-                      <Th>Date</Th>
                       <Th>Description</Th>
                       <Th isNumeric>Amount</Th>
                     </Tr>
                   </Thead>
                   <Tbody>
-                    {transactions.map(transaction => (
-                      <Tr key={transaction.id}>
-                        <Td>{transaction.categories.name}</Td>
-                        <Td>
-                          {transaction.date.split('-').reverse().join('/')}
-                        </Td>
-                        <Td>{transaction.description}</Td>
-                        <Td isNumeric>
-                          {parseAmount(
-                            transaction.amount,
-                            transaction.categories.type
+                    {dateKeysSorted.map(dateKey => {
+                      return (
+                        <>
+                        <Tr bg="gray.100">
+                            <Th>
+                              {dateKey.split('-').reverse().join('/')}
+                            </Th>
+                            <Th></Th>
+                            <Th></Th>
+                          </Tr>
+                          {transactionsGroupedByDate[dateKey].map(
+                            transaction => (
+                              <Tr>
+                                <Td>{transaction.categories.name}</Td>
+                                <Td>{transaction.description}</Td>
+                                <Td isNumeric>
+                                  {parseAmount(
+                                    transaction.amount,
+                                    transaction.categories.type
+                                  )}
+                                </Td>
+                              </Tr>
+                            )
                           )}
-                        </Td>
-                      </Tr>
-                    ))}
+                        </>
+                      );
+                    })}
                   </Tbody>
                 </Table>
               </TableContainer>

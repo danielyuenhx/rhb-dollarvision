@@ -33,7 +33,11 @@ const UserStatistics = () => {
             <StatGroup w="100%">
               <Stat>
                 <StatLabel>Your spending this month</StatLabel>
-                <StatNumber>RM {data.totalSpend}</StatNumber>
+                <StatNumber
+                  color={data.totalSpend > data.averageSpend ? 'red' : 'green'}
+                >
+                  RM {data.totalSpend}
+                </StatNumber>
                 <StatHelpText>
                   <Flex align="center">
                     <StatArrow
