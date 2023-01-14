@@ -29,6 +29,7 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  Spinner,
 } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layout';
@@ -149,7 +150,7 @@ const Wallet = () => {
 
   return (
     <Layout>
-      {!walletsIsLoading && !isLoading && (
+      {!walletsIsLoading && !isLoading ? (
         <Flex gap="30px" direction="row">
           <Flex gap="25px" direction="column" w="35%">
             <Select value={selectedWallet.id} onChange={handleWalletChange}>
@@ -350,19 +351,19 @@ const Wallet = () => {
                 <Table variant="simple">
                   <Thead>
                     <Tr bg="gray.200">
-                      <Th>Category</Th>
+                      <Th borderRadius="0.375rem 0 0 0">Category</Th>
                       <Th>Description</Th>
-                      <Th isNumeric>Amount</Th>
+                      <Th isNumeric borderRadius="0 0.375rem 0 0">
+                        Amount
+                      </Th>
                     </Tr>
                   </Thead>
                   <Tbody>
                     {dateKeysSorted.map(dateKey => {
                       return (
                         <>
-                        <Tr bg="gray.100">
-                            <Th>
-                              {dateKey.split('-').reverse().join('/')}
-                            </Th>
+                          <Tr bg="gray.100">
+                            <Th>{dateKey.split('-').reverse().join('/')}</Th>
                             <Th></Th>
                             <Th></Th>
                           </Tr>
@@ -388,6 +389,21 @@ const Wallet = () => {
               </TableContainer>
             </Card>
           </Flex>
+        </Flex>
+      ) : (
+        <Flex
+          w="100%"
+          marginTop="30vh"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Spinner
+            size="xl"
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="secondaryBlue"
+          />
         </Flex>
       )}
     </Layout>

@@ -1,10 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Box, Text, Alert, AlertIcon, Flex, Button } from '@chakra-ui/react';
 import Tables from './tables';
 import Layout from '../../components/layout';
 import Icons from './icons';
 
+import { useWallets } from '../../hooks/useWallets';
+import { useTransactions } from '../../hooks/useTransactions';
+import { useCalculations } from '../../hooks/useCalculations';
+
 const dashboard = () => {
+
   return (
     <Layout>
       <Flex

@@ -31,6 +31,7 @@ import {
   Thead,
   Tr,
   useDisclosure,
+  Spinner,
 } from '@chakra-ui/react';
 import React, { useRef } from 'react';
 import Layout from '../../components/layout';
@@ -135,14 +136,14 @@ const Overview = () => {
 
   return (
     <Layout>
-      {!isLoading && (
+      {!isLoading ? (
         <Flex gap="30px" direction="column">
           <Flex gap="25px" direction="row" w="100%">
             <Alert status="error">
               <AlertIcon />
               <AlertTitle>You're spending too much on cafes!</AlertTitle>
               <AlertDescription>
-                Do not indulge in expensive cafes or restaurant all the time.
+                Do not indulge in expensive cafes or restaurants all the time.
               </AlertDescription>
             </Alert>
             <Button
@@ -325,20 +326,22 @@ const Overview = () => {
                 <TableContainer>
                   <Table variant="simple">
                     <Thead>
-                      <Tr>
-                        <Th>Category</Th>
+                      <Tr bg="gray.200">
+                        <Th borderRadius="0.375rem 0 0 0">Category</Th>
                         <Th>Description</Th>
-                        <Th isNumeric>Amount</Th>
+                        <Th isNumeric borderRadius="0 0.375rem 0 0">
+                          Amount
+                        </Th>
                       </Tr>
                     </Thead>
                     <Tbody>
                       {dateKeysSorted.map(dateKey => {
                         return (
                           <>
-                            <Tr>
-                              <Th fontSize={16}>
-                                {dateKey.split('-').reverse().join('/')}
-                              </Th>
+                            <Tr bg="gray.100">
+                              <Th>{dateKey.split('-').reverse().join('/')}</Th>
+                              <Th></Th>
+                              <Th></Th>
                             </Tr>
                             {transactionsGroupedByDate[dateKey].map(
                               transaction => (
@@ -363,6 +366,21 @@ const Overview = () => {
               </Card>
             </Flex>
           </Flex>
+        </Flex>
+      ) : (
+        <Flex
+          w="100%"
+          marginTop="30vh"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Spinner
+            size="xl"
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="secondaryBlue"
+          />
         </Flex>
       )}
     </Layout>

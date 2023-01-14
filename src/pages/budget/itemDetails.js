@@ -118,9 +118,9 @@ const itemDetails = ({
           <Table variant="simple">
             <Thead>
               <Tr bg="gray.200">
-                <Th>Category</Th>
+                <Th borderRadius="0.375rem 0 0 0">Category</Th>
                 <Th>Description</Th>
-                <Th isNumeric>Amount</Th>
+                <Th isNumeric borderRadius="0 0.375rem 0 0">Amount</Th>
               </Tr>
             </Thead>
             <Tbody>
