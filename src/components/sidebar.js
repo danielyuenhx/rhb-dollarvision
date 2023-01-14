@@ -211,7 +211,7 @@ export const Sidebar = () => {
                       as="b"
                       pl="15%"
                       color="white"
-                      width={expand ? '100px' : '0px'}
+                      width={expand ? '150px' : '0px'}
                       overflow="hidden"
                       textOverflow="clip"
                       whiteSpace="nowrap"

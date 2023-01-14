@@ -58,7 +58,7 @@ const Wrapper = () => {
         <Flex direction="column" width="100%">
           <Header />
           <Box paddingLeft="0%" paddingTop="50px" width="80%" marginX="auto">
-            <Box maxWidth="1200px" marginX="auto">
+            <Box maxWidth="1300px" marginX="auto">
               <Text fontSize="4xl" mb="20px" fontWeight="extrabold">
                 {title}
               </Text>
