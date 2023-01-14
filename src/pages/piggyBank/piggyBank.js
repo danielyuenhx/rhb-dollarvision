@@ -402,7 +402,7 @@ const PiggyBank = () => {
                           2
                         )}{' '}
                         will be automatically transferred to this piggy bank
-                        account.
+                        account at the end of every month.
                       </Text>
                     </Flex>
                   </Flex>
