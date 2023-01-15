@@ -282,14 +282,16 @@ const Wallet = () => {
           </Flex>
           <Flex gap="25px" direction="column" wrap={true} w="60%">
             <Flex gap="25px" direction="column" w="100%">
-              <Button
-                onClick={onOpen}
-                colorScheme="blue"
-                variant="solid"
-                alignSelf="self-end"
-              >
-                Add New Wallet
-              </Button>
+              <Flex gap="25px" direction="row" alignSelf="self-end">
+                <Button>Add Transaction</Button>
+                <Button
+                  onClick={onOpen}
+                  colorScheme="blue"
+                  variant="solid"
+                >
+                  Add Wallet
+                </Button>
+              </Flex>
             </Flex>
 
             <Modal onClose={onClose} isOpen={isOpen} isCentered>
