@@ -66,7 +66,7 @@ const PiggyBank = () => {
     },
     {
       name: 'Education Fund',
-      desc: "Ensure your children's future education",
+      desc: "Manage your funds to save for future education",
       image: 'https://www.wilkes.edu/_images/wilkes-university.jpg',
     },
     {
