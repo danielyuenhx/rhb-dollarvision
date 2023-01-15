@@ -59,14 +59,14 @@ const Tables = () => {
                 SAVINGS ACCOUNT-I
               </Td>
               <Td>MYR</Td>
-              <Td isNumeric>{totalBalance}</Td>
+              <Td isNumeric>{totalBalance.toFixed(2)}</Td>
             </Tr>
             <Tr fontWeight="bold">
               <Td color="secondaryBlue" fontWeight="bold">
                 Total
               </Td>
               <Td>MYR</Td>
-              <Td isNumeric>{totalBalance}</Td>
+              <Td isNumeric>{totalBalance.toFixed(2)}</Td>
             </Tr>
           </Tbody>
         </Table>
