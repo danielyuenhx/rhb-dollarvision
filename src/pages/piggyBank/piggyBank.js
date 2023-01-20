@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import ReactCanvasConfetti from 'react-canvas-confetti';
+// import ReactCanvasConfetti from 'react-canvas-confetti';
 import Layout from '../../components/layout';
 import {
   Button,
@@ -121,7 +121,7 @@ const PiggyBank = () => {
 
   return (
     <Layout>
-      <ReactCanvasConfetti />
+      {/* <ReactCanvasConfetti /> */}
       {items ? (
         <>
           <Flex gap="30px" direction="row">
