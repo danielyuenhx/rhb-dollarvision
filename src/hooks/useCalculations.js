@@ -11,7 +11,7 @@ export const useCalculations = (initialBalance, transactions) => {
     let expense = 0;
     let nett = 0;
 
-    transactions.forEach((transaction) => {
+    transactions?.forEach((transaction) => {
       if (transaction.categories.type === "income") {
         income += transaction.amount;
       } else {

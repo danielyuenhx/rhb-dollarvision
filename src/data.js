@@ -151,7 +151,7 @@ const TRANSACTIONS_DATA = [
     description: 'from parents',
     entry_date: '2023-01-14',
     amount: 250.0,
-  }
+  },
 ];
 
 const OLD_TRANSACTIONS_DATA = [
@@ -240,7 +240,8 @@ const OLD_TRANSACTIONS_DATA = [
 const REWARD_DATA = [
   {
     label: 'Budget! Budget! Budget!',
-    description: 'Stay within your budget for any one of the categories for a single month.',
+    description:
+      'Stay within your budget for any one of the categories for a single month.',
     expired: '11/10/2023',
     lottie: 'https://assets4.lottiefiles.com/packages/lf20_yZpLO2.json',
     earned: true,
@@ -249,7 +250,7 @@ const REWARD_DATA = [
   {
     label: 'Turn Around',
     description:
-      'Spend at least 10% lesser compared to your previous month\'s expenses.',
+      "Spend at least 10% lesser compared to your previous month's expenses.",
     expired: '11/10/2023',
     lottie: 'https://assets4.lottiefiles.com/packages/lf20_ep1tn2ew.json',
     earned: true,
@@ -265,7 +266,8 @@ const REWARD_DATA = [
   },
   {
     label: 'Sleep is Better',
-    description: 'Spend less than RM200 in the Entertainment category for a single month.',
+    description:
+      'Spend less than RM200 in the Entertainment category for a single month.',
     expired: '11/10/2023',
     lottie: 'https://assets4.lottiefiles.com/packages/lf20_lFRXJJKwS5.json',
     earned: false,
@@ -308,10 +310,37 @@ const SUMMARY_DATA = [
   },
 ];
 
+const PIGGYBANK_OPTIONS = [
+  {
+    name: 'Assets',
+    desc: 'Save up for a new house or car',
+    image:
+      'https://kdvr.com/wp-content/uploads/sites/11/2022/03/best-piggy-bank-16f62d.jpg',
+  },
+  {
+    name: 'Education Fund',
+    desc: 'Manage your funds to save for future education',
+    image: 'https://www.wilkes.edu/_images/wilkes-university.jpg',
+  },
+  {
+    name: 'Investments',
+    desc: 'Grow your wealth by setting aside funds for investing',
+    image: 'https://i.kym-cdn.com/photos/images/newsfeed/001/499/826/2f0.png',
+  },
+  {
+    name: 'Custom Fund',
+    desc: 'Save up for anything',
+    image:
+      'https://images.unsplash.com/photo-1473186578172-c141e6798cf4?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1073&q=80',
+  },
+];
+
 export {
   WALLETS_DATA,
   CATEGORIES_DATA,
   TRANSACTIONS_DATA,
   REWARD_DATA,
   SUMMARY_DATA,
+  PIGGYBANK_OPTIONS,
+  OLD_TRANSACTIONS_DATA,
 };

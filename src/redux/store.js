@@ -1,8 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer  from './actions';
+import walletReducer from './walletSlice';
+import transactionReducer from './transactionSlice';
+import modalReducer from './modalSlice';
 
 export const store = configureStore({
   reducer: {
-    counter: counterReducer,
+    wallet: walletReducer,
+    transaction: transactionReducer,
+    modal: modalReducer,
   },
-})
+});
