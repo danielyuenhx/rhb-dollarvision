@@ -15,15 +15,17 @@ import {
   InputLeftAddon,
   InputGroup,
 } from '@chakra-ui/react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
 
 const CustomModal = () => {
   const [sliderValue, setSliderValue] = useState(10);
   const [amount, setAmount] = useState(80000);
   const [customItem, setCustomItem] = useState('iPhone 14');
-  const current = useSelector(state => state.modal.currentModalName);
+  // const current = useSelector(state => state.modal.currentModalName);
   const dispatch = useDispatch();
+
+  let recommended = 1000;
 
   const handleAmountChange = event => {
     setAmount(event.target.value);
@@ -116,13 +118,28 @@ const CustomModal = () => {
               />
             </InputGroup>
           </Flex>
+
+          <Flex direction="column">
+            <Text as="b" fontSize="15px">
+              Important Tips!
+            </Text>
+            <Text>
+              Based on the balance on your account, it is recommended to not
+              save more than{' '}
+              <span
+                style={{
+                  fontSize: '20px',
+                  fontWeight: 'bold',
+                }}
+              >
+                RM {recommended}
+              </span>{' '}
+              for better sustainability.
+            </Text>
+          </Flex>
           {/* Calculations */}
           <Flex direction="column" gap="20px">
             <Flex direction="column">
-              {/* <Text>
-        RM {amount - amount * (15 / 100)} is the remaining
-        amount to be paid
-      </Text> */}
               <Text>
                 You have selected {sliderValue} years to achieve your target,
                 therefore, you will need to save&nbsp;

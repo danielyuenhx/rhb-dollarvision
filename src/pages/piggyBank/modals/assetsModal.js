@@ -21,7 +21,7 @@ import { updateModalName } from '../../../redux/modalSlice';
 import { useDispatch } from 'react-redux';
 
 const AssetsModal = () => {
-  const [sliderValue, setSliderValue] = useState(10);
+  const [sliderValue, setSliderValue] = useState(5);
   const [insuranceActivate, setInsuranceActivate] = useState(false);
 
   const [asset, setAssets] = useState('Car');
@@ -141,6 +141,7 @@ const AssetsModal = () => {
               max={10}
               marginTop="40px"
               min={1}
+              defaultValue={5}
             >
               <SliderMark
                 value={sliderValue}

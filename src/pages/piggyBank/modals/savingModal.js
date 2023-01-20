@@ -99,7 +99,7 @@ const SavingModal = () => {
                 color="white"
                 mt="-10"
                 ml="-5"
-                w="12"
+                w="10"
               >
                 {sliderValue}
               </SliderMark>
@@ -112,13 +112,22 @@ const SavingModal = () => {
 
           {/* Calculations */}
           <Flex direction="column" gap="20px">
-            <Flex direction="column" variants="">
+            <Flex direction="column">
               <Text as="b" fontSize="15px">
                 Important Tips!
               </Text>
               <Text>
                 Based on the balance on your account, it is recommended to not
-                save more than RM {recommended} for better sustainability.
+                save more than{' '}
+                <span
+                  style={{
+                    fontSize: '20px',
+                    fontWeight: 'bold',
+                  }}
+                >
+                  RM {recommended}
+                </span>{' '}
+                for better sustainability.
               </Text>
 
               {piggyBankActive >= 3 ? (

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactCanvasConfetti from 'react-canvas-confetti';
 import Layout from '../../components/layout';
 import {
@@ -20,25 +20,26 @@ import SavingModal from './modals/savingModal';
 import { updateModalName } from '../../redux/modalSlice';
 import CustomModal from './modals/customModal';
 import WarningModal from './modals/warningModal';
+import WithdrawModal from './modals/withdrawModal';
 
-const canvasStyles = {
-  position: 'fixed',
-  pointerEvents: 'none',
-  width: '100%',
-  height: '100%',
-  top: 0,
-  left: 0,
-  zIndex: '1000',
-};
+// const canvasStyles = {
+//   position: 'fixed',
+//   pointerEvents: 'none',
+//   width: '100%',
+//   height: '100%',
+//   top: 0,
+//   left: 0,
+//   zIndex: '1000',
+// };
 
-function getAnimationSettings(angle, originX) {
-  return {
-    particleCount: 3,
-    angle,
-    spread: 55,
-    origin: { x: originX },
-  };
-}
+// function getAnimationSettings(angle, originX) {
+//   return {
+//     particleCount: 3,
+//     angle,
+//     spread: 55,
+//     origin: { x: originX },
+//   };
+// }
 
 const PiggyBank = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -61,12 +62,19 @@ const PiggyBank = () => {
       return <SelectionModal />;
     } else if (current === 'Warning') {
       return <WarningModal />;
+    } else if (current === 'Withdraw') {
+      return <WithdrawModal onClose={onClose} />;
     }
   };
 
   const AddPiggyBankHandler = () => {
     onOpen();
     dispatch(updateModalName('Selection'));
+  };
+
+  const WithdrawHandler = () => {
+    onOpen();
+    dispatch(updateModalName('Withdraw'));
   };
 
   useEffect(() => {
@@ -79,41 +87,41 @@ const PiggyBank = () => {
     getPiggybank();
   }, []);
 
-  const refAnimationInstance = useRef(null);
-  const [intervalId, setIntervalId] = useState();
+  // const refAnimationInstance = useRef(null);
+  // const [intervalId, setIntervalId] = useState();
 
-  const getInstance = useCallback(instance => {
-    refAnimationInstance.current = instance;
-  }, []);
+  // const getInstance = useCallback(instance => {
+  //   refAnimationInstance.current = instance;
+  // }, []);
 
-  const nextTickAnimation = useCallback(() => {
-    if (refAnimationInstance.current) {
-      refAnimationInstance.current(getAnimationSettings(60, 0));
-      refAnimationInstance.current(getAnimationSettings(120, 1));
-    }
-  }, []);
+  // const nextTickAnimation = useCallback(() => {
+  //   if (refAnimationInstance.current) {
+  //     refAnimationInstance.current(getAnimationSettings(60, 0));
+  //     refAnimationInstance.current(getAnimationSettings(120, 1));
+  //   }
+  // }, []);
 
-  const startAnimation = useCallback(() => {
-    if (!intervalId) {
-      setIntervalId(setInterval(nextTickAnimation, 16));
-    }
-  }, [nextTickAnimation, intervalId]);
+  // const startAnimation = useCallback(() => {
+  //   if (!intervalId) {
+  //     setIntervalId(setInterval(nextTickAnimation, 16));
+  //   }
+  // }, [nextTickAnimation, intervalId]);
 
-  const stopAnimation = useCallback(() => {
-    clearInterval(intervalId);
-    setIntervalId(null);
-    refAnimationInstance.current && refAnimationInstance.current.reset();
-  }, [intervalId]);
+  // const stopAnimation = useCallback(() => {
+  //   clearInterval(intervalId);
+  //   setIntervalId(null);
+  //   refAnimationInstance.current && refAnimationInstance.current.reset();
+  // }, [intervalId]);
 
-  useEffect(() => {
-    return () => {
-      clearInterval(intervalId);
-    };
-  }, [intervalId]);
+  // useEffect(() => {
+  //   return () => {
+  //     clearInterval(intervalId);
+  //   };
+  // }, [intervalId]);
 
   return (
     <Layout>
-      <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} />
+      <ReactCanvasConfetti />
       {items ? (
         <>
           <Flex gap="30px" direction="row">
@@ -138,6 +146,16 @@ const PiggyBank = () => {
                 onClick={AddPiggyBankHandler}
               >
                 Add Piggy Bank
+              </Button>
+              <Button
+                variant="outline"
+                colorScheme="red"
+                w="auto"
+                _hover={{ transform: '' }}
+                float="right"
+                onClick={WithdrawHandler}
+              >
+                Withdraw From Piggy Banks
               </Button>
             </Flex>
             {items && <ItemDetails selectedItem={items[selectedItem]} />}
