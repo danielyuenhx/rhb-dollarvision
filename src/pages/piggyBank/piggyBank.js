@@ -19,6 +19,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import SavingModal from './modals/savingModal';
 import { updateModalName } from '../../redux/modalSlice';
 import CustomModal from './modals/customModal';
+import WarningModal from './modals/warningModal';
 
 const canvasStyles = {
   position: 'fixed',
@@ -58,6 +59,8 @@ const PiggyBank = () => {
       return <CreatedModal />;
     } else if (current === 'Selection') {
       return <SelectionModal />;
+    } else if (current === 'Warning') {
+      return <WarningModal />;
     }
   };
 
