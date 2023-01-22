@@ -113,17 +113,17 @@ export const Sidebar = () => {
         />
       ),
     },
-    {
-      path: '/rewards',
-      name: 'Rewards',
-      icon: (
-        <FontAwesomeIcon
-          icon={faAward}
-          color={selected === '/rewards' ? 'white' : '#3dbbf5'}
-          size="xl"
-        />
-      ),
-    },
+    // {
+    //   path: '/rewards',
+    //   name: 'Rewards',
+    //   icon: (
+    //     <FontAwesomeIcon
+    //       icon={faAward}
+    //       color={selected === '/rewards' ? 'white' : '#3dbbf5'}
+    //       size="xl"
+    //     />
+    //   ),
+    // },
     {
       path: '/summary',
       name: 'Summary',

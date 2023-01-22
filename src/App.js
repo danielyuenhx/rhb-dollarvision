@@ -21,7 +21,7 @@ function App() {
           <Route path="piggybank" element={<PiggyBank />} />
           <Route path="wallet" element={<Wallet />} />
           <Route path="budget" element={<Budget />} />
-          <Route path="rewards" element={<Gamification />} />
+          {/* <Route path="rewards" element={<Gamification />} /> */}
           <Route path="summary" element={<Profile />} />
         </Route>
       </Routes>
