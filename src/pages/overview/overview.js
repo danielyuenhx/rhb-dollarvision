@@ -40,6 +40,7 @@ import {
   Input,
   NumberInput,
   NumberInputField,
+  Tag,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
@@ -49,6 +50,7 @@ import { useCalculations } from '../../hooks/useCalculations';
 import _ from 'lodash';
 import { useAllTransactions } from '../../hooks/useAllTransactions';
 import supabase from '../../supabaseClient';
+import { useSelector } from 'react-redux';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -59,6 +61,8 @@ const parseAmount = (amount, categoryType) => {
 };
 
 const Overview = () => {
+  const categories = useSelector(state => state.category);
+
   const {
     allTransactions: transactions,
     totalBalance: initialBalance,
@@ -493,7 +497,25 @@ const Overview = () => {
                             {transactionsGroupedByDate[dateKey].map(
                               transaction => (
                                 <Tr>
-                                  <Td>{transaction.categories.name}</Td>
+                                  <Td>
+                                    <Tag
+                                      colorScheme={
+                                        categories.data.filter(
+                                          category =>
+                                            category.name ===
+                                            transaction.categories.name
+                                        )[0]
+                                          ? categories.data.filter(
+                                              category =>
+                                                category.name ===
+                                                transaction.categories.name
+                                            )[0].color
+                                          : 'red'
+                                      }
+                                    >
+                                      {transaction.categories.name}
+                                    </Tag>
+                                  </Td>
                                   <Td>{transaction.wallets.name}</Td>
                                   <Td>{transaction.description}</Td>
                                   <Td isNumeric>

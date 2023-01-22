@@ -33,7 +33,7 @@ const UserCategory = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [data, setData] = useState();
 
-  const categories = useSelector(state => state).category;
+  const categories = useSelector(state => state.category);
   const incomeColorSchemes = [
     'gray',
     'green',

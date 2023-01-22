@@ -30,6 +30,7 @@ import {
   Tr,
   useDisclosure,
   Spinner,
+  Tag,
 } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layout';
@@ -41,6 +42,7 @@ import { useCalculations } from '../../hooks/useCalculations';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useWallets } from '../../hooks/useWallets';
 import _ from 'lodash';
+import { useSelector } from 'react-redux';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -51,6 +53,8 @@ const parseAmount = (amount, categoryType) => {
 };
 
 const Wallet = () => {
+  const categories = useSelector(state => state.category);
+
   const { wallets, isLoading: walletsIsLoading } = useWallets();
   const [selectedWallet, setSelectedWallet] = useState({});
   const initialBalance =
@@ -284,11 +288,7 @@ const Wallet = () => {
             <Flex gap="25px" direction="column" w="100%">
               <Flex gap="25px" direction="row" alignSelf="self-end">
                 <Button>Add Transaction</Button>
-                <Button
-                  onClick={onOpen}
-                  colorScheme="blue"
-                  variant="solid"
-                >
+                <Button onClick={onOpen} colorScheme="blue" variant="solid">
                   Add Wallet
                 </Button>
               </Flex>
@@ -372,7 +372,28 @@ const Wallet = () => {
                           {transactionsGroupedByDate[dateKey].map(
                             transaction => (
                               <Tr>
-                                <Td>{transaction.categories.name}</Td>
+                                <Td>
+                                  <Tag
+                                    colorScheme={
+                                      categories.data.filter(
+                                        category =>
+                                          category.name ===
+                                          transaction.categories.name
+                                      )[0]
+                                        ? categories.data.filter(
+                                            category =>
+                                              category.name ===
+                                              transaction.categories.name
+                                          )[0].color
+                                        : transaction.categories.type ===
+                                          'expense'
+                                        ? 'red'
+                                        : 'green'
+                                    }
+                                  >
+                                    {transaction.categories.name}
+                                  </Tag>
+                                </Td>
                                 <Td>{transaction.description}</Td>
                                 <Td isNumeric>
                                   {parseAmount(
