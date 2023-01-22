@@ -18,10 +18,16 @@ import {
   UnorderedList,
   CardHeader,
   ModalFooter,
+  SlideFade,
+  Button,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
+import FirstPage from './modals/firstPage';
+import SecondPage from './modals/secondPage';
+import { useSelector, useDispatch } from 'react-redux';
+import { updateModalName } from '../../redux/modalSlice';
 
-const UserCard = () => {
+const UserCard = props => {
   // FOR AURORA EFFECT
   const [first, setFirst] = useState(30);
   const [second, setSecond] = useState(70);
@@ -97,15 +103,22 @@ const UserCard = () => {
   }, [aDigit, bDigit, degree, reverse, reverseDeg, turnA, turnB]);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const current = useSelector(state => state.modal.currentModalName);
+  const dispatch = useDispatch();
 
-  const colors = [
-    { type: 'Food', color: 'purple' },
-    { type: 'Entertainment', color: 'red' },
-    { type: 'Shopping', color: 'teal' },
-    { type: 'Transportation', color: 'yellow' },
-    { type: 'Electronics', color: 'green' },
-    { type: 'Travel', color: 'blue' },
-  ];
+  const renderModal = () => {
+    // console.log(current === 'First');
+    if (current === 'First') {
+      return <FirstPage isOpen={isOpen}/>;
+    } else if (current === 'Second') {
+      return <SecondPage isOpen={isOpen}/>;
+    }
+  };
+
+  const cardHandler = () => {
+    onOpen();
+    dispatch(updateModalName('First'));
+  };
 
   return (
     <Flex
@@ -116,68 +129,13 @@ const UserCard = () => {
     >
       <Modal isOpen={isOpen} onClose={onClose} isCentered size="xl">
         <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Your Behaviour Card</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            {/* <Flex gap="15px" flexWrap="wrap">
-              {colors.map(color => {
-                return (
-                  <Tag
-                    key={color.type}
-                    variant="solid"
-                    colorScheme={color.color}
-                    size="lg"
-                  >
-                    {color.type}
-                  </Tag>
-                );
-              })}
-            </Flex> */}
-            <Flex dir="column" flexWrap="wrap">
-              <Text fontWeight="bold">Based on your spending habits</Text>
-              <UnorderedList>
-                <ListItem>You spent a lot on food.</ListItem>
-                <ListItem>
-                  Almost 25% of your budget are spent in shopping.
-                </ListItem>
-                <ListItem>
-                  Transportation the category that you spent the least money on.
-                </ListItem>
-                <ListItem>
-                  Entertainment is a big part of your spending habit as well.
-                </ListItem>
-              </UnorderedList>
-            </Flex>
-
-            <Text fontWeight="bold" marginTop="20px">
-              Your top category is
-            </Text>
-            <Flex gap="15px" marginBottom="20px" marginTop="5px">
-              <Tag variant="solid" colorScheme="purple" size="lg">
-                Food
-              </Tag>
-              <Tag variant="solid" colorScheme="teal" size="lg">
-                Shopping
-              </Tag>
-            </Flex>
-
-            <Text textAlign="justify">
-              There are a total of 6 different colours and each of them
-              represents different meaning. The algorithm will select and
-              combine the two most significant colours based on your spending
-              behaviour and create your very own personal unique card. The card
-              will auto regenerate at the end of every month.
-            </Text>
-          </ModalBody>
-          <ModalFooter />
-        </ModalContent>
+        {renderModal()}
       </Modal>
 
       <Card
         height="400px"
         width="320px"
-        onClick={onOpen}
+        onClick={cardHandler}
         _hover={{ cursor: 'pointer' }}
       >
         <CardBody>
@@ -207,46 +165,53 @@ const UserCard = () => {
         </CardFooter>
       </Card>
 
-      <Card
-        w={['100%', '100%', '100%', '100%', '90%']}
-        height={['100%', '100%', '100%', '100%', '400px']}
-      >
-        <CardHeader
-          fontSize="2xl"
-          color="white"
-          fontWeight="bold"
-          bgColor="secondaryBlue"
-          borderTopLeftRadius="inherit"
-          borderTopRightRadius="inherit"
+      {props.wrapped ? null : (
+        <Card
+          w={['100%', '100%', '100%', '100%', '90%']}
+          height={['100%', '100%', '100%', '100%', '400px']}
         >
-          Tips
-        </CardHeader>
-        <CardBody p="3%">
-          <Box width="85%">
-            <Text color="gray.500">
-              We noticed that you have been going above your budget lately.
-              Remember: a dollar saved is a dollar earned.
-            </Text>
-          </Box>
+          <CardHeader
+            fontSize="2xl"
+            color="white"
+            fontWeight="bold"
+            bgColor="secondaryBlue"
+            borderTopLeftRadius="inherit"
+            borderTopRightRadius="inherit"
+          >
+            Tips
+          </CardHeader>
+          <CardBody p="3%">
+            <Box width="85%">
+              <Text color="gray.500">
+                We noticed that you have been going above your budget lately.
+                Remember: a dollar saved is a dollar earned.
+              </Text>
+            </Box>
 
-          <Box width="85%">
-            <UnorderedList spacing="10px" mt={['5%', '5%', '2%', '2%%', '2%']}>
-              <ListItem color="green.500">Only buy necessities.</ListItem>
-              <ListItem color="green.500">
-                Subscribe to a Netflix account rather than spending money on
-                entertainment.
-              </ListItem>
-              <ListItem color="green.500">Eat out less and cook more.</ListItem>
-              <ListItem color="red.500">
-                Do not buy an expensive item under peer pressure.
-              </ListItem>
-              <ListItem color="red.500">
-                Do not indulge in expensive cafes or restaurants all the time.
-              </ListItem>
-            </UnorderedList>
-          </Box>
-        </CardBody>
-      </Card>
+            <Box width="85%">
+              <UnorderedList
+                spacing="10px"
+                mt={['5%', '5%', '2%', '2%%', '2%']}
+              >
+                <ListItem color="green.500">Only buy necessities.</ListItem>
+                <ListItem color="green.500">
+                  Subscribe to a Netflix account rather than spending money on
+                  entertainment.
+                </ListItem>
+                <ListItem color="green.500">
+                  Eat out less and cook more.
+                </ListItem>
+                <ListItem color="red.500">
+                  Do not buy an expensive item under peer pressure.
+                </ListItem>
+                <ListItem color="red.500">
+                  Do not indulge in expensive cafes or restaurants all the time.
+                </ListItem>
+              </UnorderedList>
+            </Box>
+          </CardBody>
+        </Card>
+      )}
     </Flex>
   );
 };

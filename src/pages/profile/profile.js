@@ -7,6 +7,7 @@ import UserSummary from './userSummary';
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementAsync } from '../../redux/walletSlice';
 import { transactionIncrement } from '../../redux/transactionSlice';
+import UserWrapped from './userWrapped';
 // import UserDetails from './userDetails';
 
 const Profile = () => {
@@ -22,20 +23,6 @@ const Profile = () => {
   return (
     <Layout>
       <Flex gap="30px" direction="column">
-        <Button
-          onClick={() => {
-            dispatch(transactionIncrement(10));
-          }}
-        >
-          Add
-        </Button>
-        <Button
-          onClick={() => {
-            dispatch(incrementAsync(10));
-          }}
-        >
-          Add Async
-        </Button>
         <UserCard />
         <UserSummary />
         {/* <UserDetails /> */}
