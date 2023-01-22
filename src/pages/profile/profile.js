@@ -18,7 +18,7 @@ const Profile = () => {
     // dispatch(incrementByAmount(10))
     console.log(count);
   }, [count]);
-
+  
   return (
     <Layout>
       <Flex gap="30px" direction="column">

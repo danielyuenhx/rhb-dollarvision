@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import Overview from './pages/overview/overview';
 import PiggyBank from './pages/piggyBank/piggyBank';
@@ -9,8 +9,16 @@ import Budget from './pages/budget/budget';
 import Gamification from './pages/gamification/gamification';
 import Profile from './pages/profile/profile';
 import Dashboard from './pages/dashboard/dashboard';
+import { getCategories } from './redux/categorySlice';
+import { useDispatch } from 'react-redux';
 
 function App() {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getCategories());
+  }, []);
+
   return (
     <Box bgColor="backgroundColor">
       {/* Routes */}
