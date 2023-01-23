@@ -4,7 +4,7 @@ import { Button, Flex, Box, Spinner } from '@chakra-ui/react';
 
 import ItemCard from './itemCard';
 import ItemDetails from './itemDetails';
-import { useBudgets } from '../../hooks/useBudgets';
+import { useOldBudgets } from '../../hooks/useOldBudgets';
 import { useOldCategories } from '../../hooks/useCategories';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCalculations } from '../../hooks/useCalculations';
@@ -15,7 +15,7 @@ const Budget = () => {
   const [fetchedItems, setFetchedItems] = useState();
   const [selectedCategories, setSelectedCategories] = useState([]);
 
-  const { budget, isLoading: budgetsIsLoading } = useBudgets();
+  const { budget, isLoading: budgetsIsLoading } = useOldBudgets();
 
   const { transactions, allTransactions } = useTransactions(
     undefined,
@@ -58,7 +58,7 @@ const Budget = () => {
 
   return (
     <Layout>
-      {(totalExpense && categories) ? (
+      {totalExpense && categories ? (
         <Flex gap="30px" direction="row">
           <Flex gap="25px" direction="column" w="50%">
             {fetchedItems &&

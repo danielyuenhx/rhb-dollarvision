@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
+import { api } from '../api';
 import supabase from '../supabaseClient';
 
 export const useWallets = () => {
@@ -16,4 +18,29 @@ export const useWallets = () => {
   }, []);
 
   return { wallets, isLoading };
+};
+
+const getWallets = async () => {
+  try {
+    const response = await api.get('/wallets');
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const useCategories = () => {
+  const { data, ...others } = useQuery({
+    queryKey: ['wallets'],
+    queryFn: () => getWallets(),
+  });
+
+  // all attributes in data
+  // data (all wallets), count
+
+  return {
+    ...data,
+    ...others,
+  };
 };
