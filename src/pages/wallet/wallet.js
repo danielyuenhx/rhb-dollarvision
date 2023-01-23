@@ -164,11 +164,11 @@ const Wallet = () => {
                 </option>
               ))}
             </Select>
-            {selectedWallet.id === 1 ? (
+            {/* {selectedWallet.id === 1 ? (
               <Image src={DebitCard} alt="rhb debit card" />
             ) : selectedWallet.id === 2 ? (
               <Image src={CreditCard} alt="rhb credit card" />
-            ) : null}
+            ) : null} */}
             <Tabs isFitted variant="enclosed" ref={tabsRef}>
               <TabList mb="1em">
                 <Tab>Income</Tab>

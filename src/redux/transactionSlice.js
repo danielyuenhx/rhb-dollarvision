@@ -1,24 +1,51 @@
 import { createSlice } from '@reduxjs/toolkit';
+import * as api from '../api';
 
 const initialState = {
-  transaction: 100,
+  transaction: {},
 };
 
 export const transactionSlice = createSlice({
-  name: 'transaction',
+  name: 'transactions',
   initialState,
   reducers: {
-    transactionIncrement: state => {
-      state.transaction += 1;
+    getTransactions: (state, action) => {
+      return action.payload;
     },
-    decrement: state => {
-      state.transaction -= 1;
-    },
-    incrementByAmount: (state, action) => {
-      state.transaction += action.payload;
+    updateTransactions: (state, action) => {
+      console.log(action.payload);
+      return action.payload;
     },
   },
 });
+
+// use this for getting data from backend
+// try and catch
+export const getTransactions = () => async dispatch => {
+  try {
+    const { data } = await api.getTransactions();
+
+    dispatch(transactionSlice.actions.getTransactions(data));
+  } catch (e) {
+    console.log(e);
+  }
+};
+export const createTransaction =
+  (walletId, date, categoryId, description, amount) => async dispatch => {
+    try {
+      const { data } = await api.getTransactions(
+        walletId,
+        date,
+        categoryId,
+        description,
+        amount
+      );
+
+      dispatch(transactionSlice.actions.updateTransactions(data));
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
 export const { transactionIncrement, decrement, incrementByAmount } =
   transactionSlice.actions;

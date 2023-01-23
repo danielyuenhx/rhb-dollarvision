@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import * as api from '../api';
 
 const initialState = {
-  categories: [],
+  categories: {},
 };
 
 export const categorySlice = createSlice({

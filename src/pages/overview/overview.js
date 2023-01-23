@@ -51,6 +51,9 @@ import _ from 'lodash';
 import { useAllTransactions } from '../../hooks/useAllTransactions';
 import supabase from '../../supabaseClient';
 import { useSelector } from 'react-redux';
+import { useEffect } from 'react';
+import { useDispatch } from 'react-redux';
+import { createTransaction } from '../../redux/transactionSlice';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -62,15 +65,24 @@ const parseAmount = (amount, categoryType) => {
 
 const Overview = () => {
   const categories = useSelector(state => state.category);
+  const transactionData = useSelector(state => state.transaction);
 
-  const {
-    allTransactions: transactions,
-    totalBalance: initialBalance,
-    isLoading,
-    setAllTransactions,
-  } = useAllTransactions();
-  const { totalBalance, totalIncome, totalExpense, nettChange } =
-    useCalculations(initialBalance, transactions);
+  const transactions = transactionData.data;
+  const totalBalance = transactionData.nettChange;
+  const totalIncome = transactionData.totalIncome;
+  const totalExpense = transactionData.totalExpense;
+  const nettChange = transactionData.nettChange;
+
+  const dispatch = useDispatch();
+
+  // const {
+  //   allTransactions: transactions,
+  //   totalBalance: initialBalance,
+  //   isLoading,
+  //   setAllTransactions,
+  // } = useAllTransactions();
+  // const { totalBalance, totalIncome, totalExpense, nettChange } =
+  //   useCalculations(initialBalance, transactions);
 
   const transactionsGroupedByDate = _.groupBy(
     transactions,
@@ -157,22 +169,18 @@ const Overview = () => {
   const [amount, setAmount] = useState(0.0);
 
   const handleDate = e => {
-    console.log(e.target.value);
     setDate(e.target.value);
   };
 
   const handleWallet = e => {
-    console.log(e.target.value);
     setWallet(e.target.value);
   };
 
   const handleSelectType = e => {
-    console.log(e.target.value);
     setSelectType(e.target.value);
   };
 
   const handleSelectCategory = e => {
-    console.log(e.target.value);
     setSelectCategory(e.target.value);
   };
 
@@ -203,15 +211,20 @@ const Overview = () => {
     setSelectCategory('1');
     setDescription('');
     setAmount(0.0);
-    setAllTransactions([data[0], ...transactions]);
+    // setAllTransactions([data[0], ...transactions]);
+    dispatch(createTransaction())
     onClose();
   };
 
   return (
     <Layout>
-      {!isLoading ? (
+      {transactions ? (
         <Flex gap="30px" direction="column">
           <Flex gap="25px" direction="row" w="100%">
+            <Alert status="info">
+              <AlertIcon />
+              <AlertTitle>You have 5 uncategorised transactions!</AlertTitle>
+            </Alert>
             <Alert status="error">
               <AlertIcon />
               <AlertTitle>You're spending too much on cafes!</AlertTitle>
@@ -500,7 +513,7 @@ const Overview = () => {
                                   <Td>
                                     <Tag
                                       colorScheme={
-                                        categories.data.filter(
+                                        categories?.data?.filter(
                                           category =>
                                             category.name ===
                                             transaction.categories.name

@@ -10,6 +10,7 @@ import Gamification from './pages/gamification/gamification';
 import Profile from './pages/profile/profile';
 import Dashboard from './pages/dashboard/dashboard';
 import { getCategories } from './redux/categorySlice';
+import { getTransactions } from './redux/transactionSlice';
 import { useDispatch } from 'react-redux';
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
 
   useEffect(() => {
     dispatch(getCategories());
+    dispatch(getTransactions());
   }, []);
 
   return (
