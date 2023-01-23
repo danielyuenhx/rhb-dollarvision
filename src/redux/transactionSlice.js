@@ -13,8 +13,22 @@ export const transactionSlice = createSlice({
       return action.payload;
     },
     updateTransactions: (state, action) => {
-      console.log(action.payload);
       return action.payload;
+    },
+    updateTransaction: (state, action) => {
+      return {
+        ...state,
+        data: [...state.data].map(item => {
+          if (item.id === action.payload.data[0].id) {
+            return action.payload.data[0];
+          } else {
+            return item;
+          }
+        }),
+        uncategorizedTransactions: [...state.uncategorizedTransactions].filter(
+          item => item.id !== action.payload.data[0].id
+        ),
+      };
     },
   },
 });
@@ -42,6 +56,20 @@ export const createTransaction =
       );
 
       dispatch(transactionSlice.actions.updateTransactions(data));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+export const categoriseTransaction =
+  (transactionId, categoryId) => async dispatch => {
+    try {
+      const { data } = await api.categoriseTransaction(
+        transactionId,
+        categoryId
+      );
+
+      dispatch(transactionSlice.actions.updateTransaction(data));
     } catch (e) {
       console.log(e);
     }

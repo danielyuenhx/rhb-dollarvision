@@ -15,3 +15,5 @@ export const getTransactions = (
   amount
 ) =>
   api.get('/transactions', { walletId, date, categoryId, description, amount });
+export const categoriseTransaction = (transactionId, categoryId) =>
+  api.put(`/transactions/${transactionId}`, { categoryId });

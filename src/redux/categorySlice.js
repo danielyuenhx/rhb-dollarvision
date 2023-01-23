@@ -15,6 +15,7 @@ export const categorySlice = createSlice({
     createCategory: (state, action) => {
       if (action.payload.type === 'income') {
         return {
+          ...state,
           data: [...state.data, action.payload.data[0]],
           incomeCategories: [...state.incomeCategories, action.payload.data[0]],
         };

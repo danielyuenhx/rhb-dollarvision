@@ -53,7 +53,10 @@ import supabase from '../../supabaseClient';
 import { useSelector } from 'react-redux';
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { createTransaction } from '../../redux/transactionSlice';
+import {
+  categoriseTransaction,
+  createTransaction,
+} from '../../redux/transactionSlice';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -66,12 +69,16 @@ const parseAmount = (amount, categoryType) => {
 const Overview = () => {
   const categories = useSelector(state => state.category);
   const transactionData = useSelector(state => state.transaction);
+  console.log(transactionData)
 
   const transactions = transactionData.data;
   const totalBalance = transactionData.nettChange;
   const totalIncome = transactionData.totalIncome;
   const totalExpense = transactionData.totalExpense;
   const nettChange = transactionData.nettChange;
+
+  const uncategorisedTransactions = transactionData.uncategorizedTransactions;
+  console.log(transactionData.uncategorizedTransactions)
 
   const dispatch = useDispatch();
 
@@ -212,19 +219,153 @@ const Overview = () => {
     setDescription('');
     setAmount(0.0);
     // setAllTransactions([data[0], ...transactions]);
-    dispatch(createTransaction())
+    dispatch(createTransaction());
     onClose();
+  };
+
+  const {
+    isOpen: isOpenUncategorised,
+    onOpen: onOpenUncategorised,
+    onClose: onCloseUncategorised,
+  } = useDisclosure();
+
+  const handleSave = e => {
+    e.preventDefault();
+    const select = [...e.target.elements].filter(
+      element => element.nodeName === 'SELECT'
+    );
+    select.map(item => {
+      dispatch(categoriseTransaction(item.id, item.value));
+    });
+    onCloseUncategorised();
   };
 
   return (
     <Layout>
+      {uncategorisedTransactions && (
+        <Modal
+          isOpen={isOpenUncategorised}
+          onClose={onCloseUncategorised}
+          scrollBehavior="inside"
+          motionPreset="slideInBottom"
+          size="5xl"
+        >
+          <ModalOverlay />
+          <ModalContent>
+            <form onSubmit={handleSave}>
+              <ModalHeader>Uncategorised Transactions</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <TableContainer>
+                  <Table variant="simple">
+                    <Thead>
+                      <Tr bg="gray.200">
+                        <Th borderRadius="0.375rem 0 0 0">Date</Th>
+                        <Th>Wallet</Th>
+                        <Th>Description</Th>
+                        <Th isNumeric>Amount</Th>
+                        <Th borderRadius="0 0.375rem 0 0">Category</Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {uncategorisedTransactions &&
+                        uncategorisedTransactions.map((transaction, index) => {
+                          return (
+                            <>
+                              <Tr>
+                                <Td>
+                                  {transaction.date
+                                    .split('-')
+                                    .reverse()
+                                    .join('/')}
+                                </Td>
+                                <Td>{transaction.wallets.name}</Td>
+                                <Td>{transaction.description}</Td>
+                                <Td isNumeric>
+                                  {parseAmount(
+                                    transaction.amount,
+                                    transaction.categories.type
+                                  )}
+                                </Td>
+                                <Td>
+                                  <Select id={transaction.id}>
+                                    {transaction.categories.type === 'expense'
+                                      ? categories.expenseCategories.map(
+                                          category => (
+                                            <option
+                                              value={
+                                                categories.data.find(
+                                                  obj =>
+                                                    obj.name === category.name
+                                                ).id
+                                              }
+                                            >
+                                              {category.name}
+                                            </option>
+                                          )
+                                        )
+                                      : categories.incomeCategories.map(
+                                          category => (
+                                            <option
+                                              value={
+                                                categories.data.find(
+                                                  obj =>
+                                                    obj.name === category.name
+                                                ).id
+                                              }
+                                            >
+                                              {category.name}
+                                            </option>
+                                          )
+                                        )}
+                                  </Select>
+                                </Td>
+                              </Tr>
+                            </>
+                          );
+                        })}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  colorScheme="blue"
+                  mr={3}
+                  onClick={onCloseUncategorised}
+                >
+                  Close without Saving
+                </Button>
+                <Button
+                  type="submit"
+                  colorScheme="blue"
+                  variant="solid"
+                  alignSelf="self-end"
+                >
+                  Save
+                </Button>
+              </ModalFooter>
+            </form>
+          </ModalContent>
+        </Modal>
+      )}
       {transactions ? (
         <Flex gap="30px" direction="column">
           <Flex gap="25px" direction="row" w="100%">
-            <Alert status="info">
-              <AlertIcon />
-              <AlertTitle>You have 5 uncategorised transactions!</AlertTitle>
-            </Alert>
+            {uncategorisedTransactions.length !== 0 && (
+              <Alert
+                status="info"
+                cursor="pointer"
+                onClick={onOpenUncategorised}
+              >
+                <AlertIcon />
+                <AlertTitle>{`You have ${
+                  uncategorisedTransactions.length
+                } uncategorised transaction${
+                  uncategorisedTransactions.length !== 1 ? 's' : ''
+                }!`}</AlertTitle>
+              </Alert>
+            )}
             <Alert status="error">
               <AlertIcon />
               <AlertTitle>You're spending too much on cafes!</AlertTitle>
