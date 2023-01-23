@@ -4,7 +4,7 @@ import { Button, Flex, Box, Spinner } from '@chakra-ui/react';
 
 import ItemCard from './itemCard';
 import ItemDetails from './itemDetails';
-import { useOldBudgets } from '../../hooks/useOldBudgets';
+import { useOldBudgets } from '../../hooks/useBudgets';
 import { useOldCategories } from '../../hooks/useCategories';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCalculations } from '../../hooks/useCalculations';
