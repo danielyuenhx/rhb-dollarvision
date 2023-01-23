@@ -46,17 +46,12 @@ import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
 import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
-import { useCalculations } from '../../hooks/useCalculations';
 import _ from 'lodash';
-import { useAllTransactions } from '../../hooks/useAllTransactions';
 import supabase from '../../supabaseClient';
 import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import {
-  categoriseTransaction,
-  createTransaction,
-} from '../../redux/transactionSlice';
+import { createTransaction } from '../../redux/transactionSlice';
+import CategoriseModal from '../../components/categoriseModal';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -69,7 +64,6 @@ const parseAmount = (amount, categoryType) => {
 const Overview = () => {
   const categories = useSelector(state => state.category);
   const transactionData = useSelector(state => state.transaction);
-  console.log(transactionData)
 
   const transactions = transactionData.data;
   const totalBalance = transactionData.nettChange;
@@ -78,7 +72,6 @@ const Overview = () => {
   const nettChange = transactionData.nettChange;
 
   const uncategorisedTransactions = transactionData.uncategorizedTransactions;
-  console.log(transactionData.uncategorizedTransactions)
 
   const dispatch = useDispatch();
 
@@ -223,167 +216,46 @@ const Overview = () => {
     onClose();
   };
 
-  const {
-    isOpen: isOpenUncategorised,
-    onOpen: onOpenUncategorised,
-    onClose: onCloseUncategorised,
-  } = useDisclosure();
-
-  const handleSave = e => {
-    e.preventDefault();
-    const select = [...e.target.elements].filter(
-      element => element.nodeName === 'SELECT'
-    );
-    select.map(item => {
-      dispatch(categoriseTransaction(item.id, item.value));
-    });
-    onCloseUncategorised();
-  };
-
   return (
     <Layout>
-      {uncategorisedTransactions && (
-        <Modal
-          isOpen={isOpenUncategorised}
-          onClose={onCloseUncategorised}
-          scrollBehavior="inside"
-          motionPreset="slideInBottom"
-          size="5xl"
-        >
-          <ModalOverlay />
-          <ModalContent>
-            <form onSubmit={handleSave}>
-              <ModalHeader>Uncategorised Transactions</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <TableContainer>
-                  <Table variant="simple">
-                    <Thead>
-                      <Tr bg="gray.200">
-                        <Th borderRadius="0.375rem 0 0 0">Date</Th>
-                        <Th>Wallet</Th>
-                        <Th>Description</Th>
-                        <Th isNumeric>Amount</Th>
-                        <Th borderRadius="0 0.375rem 0 0">Category</Th>
-                      </Tr>
-                    </Thead>
-                    <Tbody>
-                      {uncategorisedTransactions &&
-                        uncategorisedTransactions.map((transaction, index) => {
-                          return (
-                            <>
-                              <Tr>
-                                <Td>
-                                  {transaction.date
-                                    .split('-')
-                                    .reverse()
-                                    .join('/')}
-                                </Td>
-                                <Td>{transaction.wallets.name}</Td>
-                                <Td>{transaction.description}</Td>
-                                <Td isNumeric>
-                                  {parseAmount(
-                                    transaction.amount,
-                                    transaction.categories.type
-                                  )}
-                                </Td>
-                                <Td>
-                                  <Select id={transaction.id}>
-                                    {transaction.categories.type === 'expense'
-                                      ? categories.expenseCategories.map(
-                                          category => (
-                                            <option
-                                              value={
-                                                categories.data.find(
-                                                  obj =>
-                                                    obj.name === category.name
-                                                ).id
-                                              }
-                                            >
-                                              {category.name}
-                                            </option>
-                                          )
-                                        )
-                                      : categories.incomeCategories.map(
-                                          category => (
-                                            <option
-                                              value={
-                                                categories.data.find(
-                                                  obj =>
-                                                    obj.name === category.name
-                                                ).id
-                                              }
-                                            >
-                                              {category.name}
-                                            </option>
-                                          )
-                                        )}
-                                  </Select>
-                                </Td>
-                              </Tr>
-                            </>
-                          );
-                        })}
-                    </Tbody>
-                  </Table>
-                </TableContainer>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  colorScheme="blue"
-                  mr={3}
-                  onClick={onCloseUncategorised}
-                >
-                  Close without Saving
-                </Button>
-                <Button
-                  type="submit"
-                  colorScheme="blue"
-                  variant="solid"
-                  alignSelf="self-end"
-                >
-                  Save
-                </Button>
-              </ModalFooter>
-            </form>
-          </ModalContent>
-        </Modal>
-      )}
       {transactions ? (
         <Flex gap="30px" direction="column">
-          <Flex gap="25px" direction="row" w="100%">
-            {uncategorisedTransactions.length !== 0 && (
-              <Alert
-                status="info"
-                cursor="pointer"
-                onClick={onOpenUncategorised}
-              >
-                <AlertIcon />
-                <AlertTitle>{`You have ${
-                  uncategorisedTransactions.length
-                } uncategorised transaction${
-                  uncategorisedTransactions.length !== 1 ? 's' : ''
-                }!`}</AlertTitle>
-              </Alert>
-            )}
-            <Alert status="error">
-              <AlertIcon />
-              <AlertTitle>You're spending too much on cafes!</AlertTitle>
-              <AlertDescription>
-                Do not indulge in expensive cafes or restaurants all the time.
-              </AlertDescription>
-            </Alert>
-            <Button
-              onClick={onOpen}
-              colorScheme="blue"
-              variant="solid"
-              alignSelf="self-end"
+          <Flex direction="column" gap="1rem">
+            <CategoriseModal
+              uncategorisedTransactions={uncategorisedTransactions}
+              categories={categories}
+            />
+            <Flex
+              gap="25px"
+              direction="row"
+              w="100%"
+              justifyContent="center"
+              alignItems="center"
             >
-              Add Transaction
-            </Button>
+              <Alert status="error">
+                <AlertIcon />
+                <AlertTitle>You have exceeded your budget for Food!</AlertTitle>
+                <AlertDescription>
+                  Do not indulge in expensive cafes or restaurants all the time.
+                </AlertDescription>
+              </Alert>
+              <Button
+                onClick={onOpen}
+                colorScheme="blue"
+                variant="solid"
+                alignSelf="self-end"
+              >
+                Add Transaction
+              </Button>
+            </Flex>
           </Flex>
           <Flex gap="25px" direction="row" wrap={true} w="100%">
-            <Card w="25%">
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="purple.300"
+            >
               <Stat>
                 <CardBody>
                   <StatLabel>Total Balance</StatLabel>
@@ -392,7 +264,12 @@ const Overview = () => {
                 </CardBody>
               </Stat>
             </Card>
-            <Card w="25%">
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="blue.300"
+            >
               <Stat>
                 <CardBody>
                   <StatLabel>Nett Change</StatLabel>
@@ -401,20 +278,34 @@ const Overview = () => {
                 </CardBody>
               </Stat>
             </Card>
-            <Card w="25%">
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="green"
+            >
               <Stat>
                 <CardBody>
                   <StatLabel>Total Income</StatLabel>
-                  <StatNumber>{`MYR ${totalIncome.toFixed(2)}`}</StatNumber>
+                  <StatNumber color="green">{`MYR ${totalIncome.toFixed(
+                    2
+                  )}`}</StatNumber>
                   <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                 </CardBody>
               </Stat>
             </Card>
-            <Card w="25%">
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="red.500"
+            >
               <Stat>
                 <CardBody>
                   <StatLabel>Total Expense</StatLabel>
-                  <StatNumber>{`MYR ${totalExpense.toFixed(2)}`}</StatNumber>
+                  <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
+                    2
+                  )}`}</StatNumber>
                   <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                 </CardBody>
               </Stat>
@@ -574,21 +465,18 @@ const Overview = () => {
                           onChange={handleSelectCategory}
                           value={selectCategory}
                         >
-                          {selectType === 'expense' ? (
-                            <>
-                              <option value="1">Food</option>
-                              <option value="2">Transport</option>
-                              <option value="3">Entertainment</option>
-                              <option value="4">Shopping</option>
-                              <option value="5">Others</option>
-                            </>
-                          ) : (
-                            <>
-                              <option value="6">Salary</option>
-                              <option value="7">Allowance</option>
-                              <option value="8">Others</option>
-                            </>
-                          )}
+                          {selectType === 'expense'
+                            ? categories.expenseCategories.map(category => (
+                                <option value={category.id}>
+                                  {category.name}
+                                </option>
+                              ))
+                            : categories.incomeCategories.map(category => (
+                                <option value={category.id}>
+                                  {category.name}
+                                </option>
+                              ))}
+                          <option value={11}>Uncategorised</option>
                         </Select>
                       </Box>
                       <Box alignItems="left" width="100%">

@@ -31,6 +31,7 @@ import {
   useDisclosure,
   Spinner,
   Tag,
+  Icon,
 } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layout';
@@ -43,6 +44,9 @@ import { useTransactions } from '../../hooks/useTransactions';
 import { useWallets } from '../../hooks/useWallets';
 import _ from 'lodash';
 import { useSelector } from 'react-redux';
+import CategoriseModal from '../../components/categoriseModal';
+import { FaCog } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -54,6 +58,9 @@ const parseAmount = (amount, categoryType) => {
 
 const Wallet = () => {
   const categories = useSelector(state => state.category);
+  const transactionData = useSelector(state => state.transaction);
+
+  const uncategorisedTransactions = transactionData.uncategorizedTransactions;
 
   const { wallets, isLoading: walletsIsLoading } = useWallets();
   const [selectedWallet, setSelectedWallet] = useState({});
@@ -66,6 +73,17 @@ const Wallet = () => {
   );
   const { totalBalance, totalIncome, totalExpense, nettChange } =
     useCalculations(initialBalance, transactions);
+
+  // const transactions = transactionData.data.filter(
+  //   transaction =>
+  //     transaction.wallet_id === selectedWallet.id &&
+  //     filteredCategories.includes(transaction.category_id)
+  // );
+
+  // const totalBalance = transactionData.nettChange;
+  // const totalIncome = transactionData.totalIncome;
+  // const totalExpense = transactionData.totalExpense;
+  // const nettChange = transactionData.nettChange;
 
   const handleWalletChange = e => {
     setSelectedWallet(wallets.find(w => w.id === parseInt(e.target.value)));
@@ -155,262 +173,292 @@ const Wallet = () => {
   return (
     <Layout>
       {!walletsIsLoading && !isLoading ? (
-        <Flex gap="30px" direction="row">
-          <Flex gap="25px" direction="column" w="40%">
-            <Select value={selectedWallet.id} onChange={handleWalletChange}>
-              {wallets.map(wallet => (
-                <option key={wallet.id} value={wallet.id}>
-                  {wallet.name}
-                </option>
-              ))}
-            </Select>
-            {/* {selectedWallet.id === 1 ? (
+        <Flex direction="column" gap="30px">
+          <CategoriseModal
+            uncategorisedTransactions={uncategorisedTransactions}
+            categories={categories}
+          />
+          <Flex gap="30px" direction="row">
+            <Flex gap="25px" direction="column" w="40%">
+              <Select value={selectedWallet.id} onChange={handleWalletChange}>
+                {wallets.map(wallet => (
+                  <option key={wallet.id} value={wallet.id}>
+                    {wallet.name}
+                  </option>
+                ))}
+              </Select>
+              {/* {selectedWallet.id === 1 ? (
               <Image src={DebitCard} alt="rhb debit card" />
             ) : selectedWallet.id === 2 ? (
               <Image src={CreditCard} alt="rhb credit card" />
             ) : null} */}
-            <Tabs isFitted variant="enclosed" ref={tabsRef}>
-              <TabList mb="1em">
-                <Tab>Income</Tab>
-                <Tab>Expense</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel>
-                  <ResponsiveContainer width={width} height={300}>
-                    <PieChart width="100%" height="100%">
-                      <Pie
-                        data={incomeTransactionsInfo}
-                        cx="50%"
-                        cy="50%"
-                        // labelLine={true}
-                        // labelKey="name"
-                        // label
-                        // label={renderCustomizedLabel}
-                        innerRadius={40}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="totalAmount"
-                      >
-                        {incomeTransactionsInfo.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
+              <Tabs isFitted variant="enclosed" ref={tabsRef}>
+                <TabList mb="1em">
+                  <Tab>Income</Tab>
+                  <Tab>Expense</Tab>
+                </TabList>
+                <TabPanels>
+                  <TabPanel>
+                    <ResponsiveContainer width={width} height={300}>
+                      <PieChart width="100%" height="100%">
+                        <Pie
+                          data={incomeTransactionsInfo}
+                          cx="50%"
+                          cy="50%"
+                          // labelLine={true}
+                          // labelKey="name"
+                          // label
+                          // label={renderCustomizedLabel}
+                          innerRadius={40}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="totalAmount"
+                        >
+                          {incomeTransactionsInfo.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[index % COLORS.length]}
+                            />
+                          ))}
+                          <LabelList
+                            dataKey="name"
+                            position="outside"
+                            offset={15}
                           />
-                        ))}
-                        <LabelList
-                          dataKey="name"
-                          position="outside"
-                          offset={15}
-                        />
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <TableContainer>
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>Category</Th>
-                          <Th># of Transactions</Th>
-                          <Th isNumeric>Total</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {incomeTransactionsInfo.map(transaction => (
-                          <Tr key={transaction.name}>
-                            <Td>{transaction.name}</Td>
-                            <Td>{transaction.totalTransactions}</Td>
-                            <Td isNumeric>
-                              {transaction.totalAmount.toFixed(2)}
-                            </Td>
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>Category</Th>
+                            <Th># of Transactions</Th>
+                            <Th isNumeric>Total</Th>
                           </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </TabPanel>
-                <TabPanel>
-                  <ResponsiveContainer width={width} height={300}>
-                    <PieChart width="100%" height="100%">
-                      <Pie
-                        data={expenseTransactionsInfo}
-                        cx="50%"
-                        cy="50%"
-                        // labelLine={true}
-                        // labelKey="name"
-                        // label
-                        // label={renderCustomizedLabel}
-                        innerRadius={40}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="totalAmount"
-                      >
-                        {expenseTransactionsInfo.map((entry, index) => (
-                          <Cell
-                            key={`cell-${index}`}
-                            fill={COLORS[index % COLORS.length]}
+                        </Thead>
+                        <Tbody>
+                          {incomeTransactionsInfo.map(transaction => (
+                            <Tr key={transaction.name}>
+                              <Td>{transaction.name}</Td>
+                              <Td>{transaction.totalTransactions}</Td>
+                              <Td isNumeric>
+                                {transaction.totalAmount.toFixed(2)}
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </TabPanel>
+                  <TabPanel>
+                    <ResponsiveContainer width={width} height={300}>
+                      <PieChart width="100%" height="100%">
+                        <Pie
+                          data={expenseTransactionsInfo}
+                          cx="50%"
+                          cy="50%"
+                          // labelLine={true}
+                          // labelKey="name"
+                          // label
+                          // label={renderCustomizedLabel}
+                          innerRadius={40}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="totalAmount"
+                        >
+                          {expenseTransactionsInfo.map((entry, index) => (
+                            <Cell
+                              key={`cell-${index}`}
+                              fill={COLORS[index % COLORS.length]}
+                            />
+                          ))}
+                          <LabelList
+                            dataKey="name"
+                            position="outside"
+                            offset={10}
                           />
-                        ))}
-                        <LabelList
-                          dataKey="name"
-                          position="outside"
-                          offset={10}
-                        />
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <TableContainer>
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>Category</Th>
-                          <Th># of Transactions</Th>
-                          <Th isNumeric>Total</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {expenseTransactionsInfo.map(transaction => (
-                          <Tr key={transaction.name}>
-                            <Td>{transaction.name}</Td>
-                            <Td>{transaction.totalTransactions}</Td>
-                            <Td isNumeric>
-                              {transaction.totalAmount.toFixed(2)}
-                            </Td>
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>Category</Th>
+                            <Th># of Transactions</Th>
+                            <Th isNumeric>Total</Th>
                           </Tr>
-                        ))}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </Flex>
-          <Flex gap="25px" direction="column" wrap={true} w="60%">
-            <Flex gap="25px" direction="column" w="100%">
-              <Flex gap="25px" direction="row" alignSelf="self-end">
-                <Button>Add Transaction</Button>
-                <Button onClick={onOpen} colorScheme="blue" variant="solid">
-                  Add Wallet
-                </Button>
+                        </Thead>
+                        <Tbody>
+                          {expenseTransactionsInfo.map(transaction => (
+                            <Tr key={transaction.name}>
+                              <Td>{transaction.name}</Td>
+                              <Td>{transaction.totalTransactions}</Td>
+                              <Td isNumeric>
+                                {transaction.totalAmount.toFixed(2)}
+                              </Td>
+                            </Tr>
+                          ))}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </Flex>
+            <Flex gap="25px" direction="column" wrap={true} w="60%">
+              <Flex gap="25px" direction="column" w="100%">
+                <Flex gap="25px" direction="row" alignSelf="self-end" alignItems="center">
+                  <Button>Add Transaction</Button>
+                  <Icon onClick={onOpen} as={FaCog} w="2rem" h="2rem" cursor="pointer" padding="0.25rem" marginRight="1rem" />
+                </Flex>
               </Flex>
+
+              <Modal onClose={onClose} isOpen={isOpen} isCentered>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Wallet Settings</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>Favourite</ModalBody>
+                  <ModalFooter>
+                    <Button onClick={onClose}>Close</Button>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+
+              <Flex gap="25px" direction="row" wrap={true} w="100%">
+                <Card
+                  w="50%"
+                  borderRadius="0 0 0.375rem 0.375rem"
+                  borderTop="3px solid"
+                  borderTopColor="purple.300"
+                >
+                  <Stat>
+                    <CardBody>
+                      <StatLabel>Total Balance</StatLabel>
+                      <StatNumber>{`MYR ${totalBalance.toFixed(
+                        2
+                      )}`}</StatNumber>
+                      <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                    </CardBody>
+                  </Stat>
+                </Card>
+                <Card
+                  w="50%"
+                  borderRadius="0 0 0.375rem 0.375rem"
+                  borderTop="3px solid"
+                  borderTopColor="blue.300"
+                >
+                  <Stat>
+                    <CardBody>
+                      <StatLabel>Nett Change</StatLabel>
+                      <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
+                      <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                    </CardBody>
+                  </Stat>
+                </Card>
+              </Flex>
+
+              <Flex gap="25px" direction="row" wrap={true} w="100%">
+                <Card
+                  w="50%"
+                  borderRadius="0 0 0.375rem 0.375rem"
+                  borderTop="3px solid"
+                  borderTopColor="green"
+                >
+                  <Stat>
+                    <CardBody>
+                      <StatLabel>Income</StatLabel>
+                      <StatNumber color="green">{`MYR ${totalIncome.toFixed(
+                        2
+                      )}`}</StatNumber>
+                      <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                    </CardBody>
+                  </Stat>
+                </Card>
+                <Card
+                  w="50%"
+                  borderRadius="0 0 0.375rem 0.375rem"
+                  borderTop="3px solid"
+                  borderTopColor="red.500"
+                >
+                  <Stat>
+                    <CardBody>
+                      <StatLabel>Expense</StatLabel>
+                      <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
+                        2
+                      )}`}</StatNumber>
+                      <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                    </CardBody>
+                  </Stat>
+                </Card>
+              </Flex>
+
+              <Card mb={10}>
+                <TableContainer>
+                  <Table variant="simple">
+                    <Thead>
+                      <Tr bg="gray.200">
+                        <Th borderRadius="0.375rem 0 0 0">Category</Th>
+                        <Th>Description</Th>
+                        <Th isNumeric borderRadius="0 0.375rem 0 0">
+                          Amount
+                        </Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {dateKeysSorted.map(dateKey => {
+                        return (
+                          <>
+                            <Tr bg="gray.100">
+                              <Th>{dateKey.split('-').reverse().join('/')}</Th>
+                              <Th></Th>
+                              <Th></Th>
+                            </Tr>
+                            {transactionsGroupedByDate[dateKey].map(
+                              transaction => (
+                                <Tr>
+                                  <Td>
+                                    <Tag
+                                      colorScheme={
+                                        categories.data.filter(
+                                          category =>
+                                            category.name ===
+                                            transaction.categories.name
+                                        )[0]
+                                          ? categories.data.filter(
+                                              category =>
+                                                category.name ===
+                                                transaction.categories.name
+                                            )[0].color
+                                          : transaction.categories.type ===
+                                            'expense'
+                                          ? 'red'
+                                          : 'green'
+                                      }
+                                    >
+                                      {transaction.categories.name}
+                                    </Tag>
+                                  </Td>
+                                  <Td>{transaction.description}</Td>
+                                  <Td isNumeric>
+                                    {parseAmount(
+                                      transaction.amount,
+                                      transaction.categories.type
+                                    )}
+                                  </Td>
+                                </Tr>
+                              )
+                            )}
+                          </>
+                        );
+                      })}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </Card>
             </Flex>
-
-            <Modal onClose={onClose} isOpen={isOpen} isCentered>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Modal Title</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>Add new transaction</ModalBody>
-                <ModalFooter>
-                  <Button onClick={onClose}>Close</Button>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-
-            <Flex gap="25px" direction="row" wrap={true} w="100%">
-              <Card w="50%">
-                <Stat>
-                  <CardBody>
-                    <StatLabel>Total Balance</StatLabel>
-                    <StatNumber>{`MYR ${totalBalance.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
-                  </CardBody>
-                </Stat>
-              </Card>
-              <Card w="50%">
-                <Stat>
-                  <CardBody>
-                    <StatLabel>Nett Change</StatLabel>
-                    <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
-                  </CardBody>
-                </Stat>
-              </Card>
-            </Flex>
-
-            <Flex gap="25px" direction="row" wrap={true} w="100%">
-              <Card w="50%">
-                <Stat>
-                  <CardBody>
-                    <StatLabel>Income</StatLabel>
-                    <StatNumber>{`MYR ${totalIncome.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
-                  </CardBody>
-                </Stat>
-              </Card>
-              <Card w="50%">
-                <Stat>
-                  <CardBody>
-                    <StatLabel>Expense</StatLabel>
-                    <StatNumber>{`MYR ${totalExpense.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
-                  </CardBody>
-                </Stat>
-              </Card>
-            </Flex>
-
-            <Card mb={10}>
-              <TableContainer>
-                <Table variant="simple">
-                  <Thead>
-                    <Tr bg="gray.200">
-                      <Th borderRadius="0.375rem 0 0 0">Category</Th>
-                      <Th>Description</Th>
-                      <Th isNumeric borderRadius="0 0.375rem 0 0">
-                        Amount
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {dateKeysSorted.map(dateKey => {
-                      return (
-                        <>
-                          <Tr bg="gray.100">
-                            <Th>{dateKey.split('-').reverse().join('/')}</Th>
-                            <Th></Th>
-                            <Th></Th>
-                          </Tr>
-                          {transactionsGroupedByDate[dateKey].map(
-                            transaction => (
-                              <Tr>
-                                <Td>
-                                  <Tag
-                                    colorScheme={
-                                      categories.data.filter(
-                                        category =>
-                                          category.name ===
-                                          transaction.categories.name
-                                      )[0]
-                                        ? categories.data.filter(
-                                            category =>
-                                              category.name ===
-                                              transaction.categories.name
-                                          )[0].color
-                                        : transaction.categories.type ===
-                                          'expense'
-                                        ? 'red'
-                                        : 'green'
-                                    }
-                                  >
-                                    {transaction.categories.name}
-                                  </Tag>
-                                </Td>
-                                <Td>{transaction.description}</Td>
-                                <Td isNumeric>
-                                  {parseAmount(
-                                    transaction.amount,
-                                    transaction.categories.type
-                                  )}
-                                </Td>
-                              </Tr>
-                            )
-                          )}
-                        </>
-                      );
-                    })}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Card>
           </Flex>
         </Flex>
       ) : (
