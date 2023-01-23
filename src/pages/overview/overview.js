@@ -46,17 +46,15 @@ import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
 import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
-import { useCalculations } from '../../hooks/useCalculations';
 import _ from 'lodash';
-import { useAllTransactions } from '../../hooks/useAllTransactions';
 import supabase from '../../supabaseClient';
-import { useSelector } from 'react-redux';
-import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import {
   categoriseTransaction,
   createTransaction,
 } from '../../redux/transactionSlice';
+import { useTransactions } from '../../hooks/useTransactions';
+import { useCategories } from '../../hooks/useCategories';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -67,29 +65,26 @@ const parseAmount = (amount, categoryType) => {
 };
 
 const Overview = () => {
-  const categories = useSelector(state => state.category);
-  const transactionData = useSelector(state => state.transaction);
-  console.log(transactionData)
-
-  const transactions = transactionData.data;
-  const totalBalance = transactionData.nettChange;
-  const totalIncome = transactionData.totalIncome;
-  const totalExpense = transactionData.totalExpense;
-  const nettChange = transactionData.nettChange;
-
-  const uncategorisedTransactions = transactionData.uncategorizedTransactions;
-  console.log(transactionData.uncategorizedTransactions)
-
   const dispatch = useDispatch();
 
-  // const {
-  //   allTransactions: transactions,
-  //   totalBalance: initialBalance,
-  //   isLoading,
-  //   setAllTransactions,
-  // } = useAllTransactions();
-  // const { totalBalance, totalIncome, totalExpense, nettChange } =
-  //   useCalculations(initialBalance, transactions);
+  // pass in parameters like this https://masteringjs.io/tutorials/fundamentals/parameters
+  const {
+    data: transactions,
+    totalIncome,
+    totalExpense,
+    nettChange,
+    incomeTransactionsGroupedByCategoryAndSorted,
+    expenseTransactionsGroupedByCategoryAndSorted,
+    uncategorizedTransactions,
+    isLoading: transactionsAreLoading,
+  } = useTransactions();
+  const {
+    data: categories,
+    incomeCategories,
+    expenseCategories,
+    isLoading: categoriesAreLoading,
+  } = useCategories();
+  const isLoading = transactionsAreLoading || categoriesAreLoading;
 
   const transactionsGroupedByDate = _.groupBy(
     transactions,
@@ -101,49 +96,6 @@ const Overview = () => {
   ) {
     return b - a;
   });
-
-  const transactionsGroupedByExpenseOrIncome = _.groupBy(
-    transactions,
-    transaction => transaction.categories.type
-  );
-
-  const expenseTransactionsGroupedByCategory = _.groupBy(
-    transactionsGroupedByExpenseOrIncome.expense,
-    transaction => transaction.categories.name
-  );
-  const incomeTransactionsGroupedByCategory = _.groupBy(
-    transactionsGroupedByExpenseOrIncome.income,
-    transaction => transaction.categories.name
-  );
-  const expenseTransactionsInfo = Object.keys(
-    expenseTransactionsGroupedByCategory
-  )
-    .map(key => {
-      return {
-        name: key,
-        totalAmount: expenseTransactionsGroupedByCategory[key].reduce(
-          (a, b) => a + b.amount,
-          0
-        ),
-        totalTransactions: expenseTransactionsGroupedByCategory[key].length,
-      };
-    })
-    .sort((a, b) => b.totalAmount - a.totalAmount);
-
-  const incomeTransactionsInfo = Object.keys(
-    incomeTransactionsGroupedByCategory
-  )
-    .map(key => {
-      return {
-        name: key,
-        totalAmount: incomeTransactionsGroupedByCategory[key].reduce(
-          (a, b) => a + b.amount,
-          0
-        ),
-        totalTransactions: incomeTransactionsGroupedByCategory[key].length,
-      };
-    })
-    .sort((a, b) => b.totalAmount - a.totalAmount);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const tabsRef = useRef();
@@ -240,9 +192,29 @@ const Overview = () => {
     onCloseUncategorised();
   };
 
+  if (isLoading)
+    return (
+      <Layout>
+        <Flex
+          w="100%"
+          marginTop="30vh"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Spinner
+            size="xl"
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="secondaryBlue"
+          />
+        </Flex>
+      </Layout>
+    );
+
   return (
     <Layout>
-      {uncategorisedTransactions && (
+      {uncategorizedTransactions && (
         <Modal
           isOpen={isOpenUncategorised}
           onClose={onCloseUncategorised}
@@ -268,8 +240,9 @@ const Overview = () => {
                       </Tr>
                     </Thead>
                     <Tbody>
-                      {uncategorisedTransactions &&
-                        uncategorisedTransactions.map((transaction, index) => {
+                      {uncategorizedTransactions &&
+                        categories &&
+                        uncategorizedTransactions.map((transaction, index) => {
                           return (
                             <>
                               <Tr>
@@ -290,34 +263,16 @@ const Overview = () => {
                                 <Td>
                                   <Select id={transaction.id}>
                                     {transaction.categories.type === 'expense'
-                                      ? categories.expenseCategories.map(
-                                          category => (
-                                            <option
-                                              value={
-                                                categories.data.find(
-                                                  obj =>
-                                                    obj.name === category.name
-                                                ).id
-                                              }
-                                            >
-                                              {category.name}
-                                            </option>
-                                          )
-                                        )
-                                      : categories.incomeCategories.map(
-                                          category => (
-                                            <option
-                                              value={
-                                                categories.data.find(
-                                                  obj =>
-                                                    obj.name === category.name
-                                                ).id
-                                              }
-                                            >
-                                              {category.name}
-                                            </option>
-                                          )
-                                        )}
+                                      ? expenseCategories.map(category => (
+                                          <option value={category.id}>
+                                            {category.name}
+                                          </option>
+                                        ))
+                                      : incomeCategories.map(category => (
+                                          <option value={category.id}>
+                                            {category.name}
+                                          </option>
+                                        ))}
                                   </Select>
                                 </Td>
                               </Tr>
@@ -352,7 +307,7 @@ const Overview = () => {
       {transactions ? (
         <Flex gap="30px" direction="column">
           <Flex gap="25px" direction="row" w="100%">
-            {uncategorisedTransactions.length !== 0 && (
+            {uncategorizedTransactions.length !== 0 && (
               <Alert
                 status="info"
                 cursor="pointer"
@@ -360,9 +315,9 @@ const Overview = () => {
               >
                 <AlertIcon />
                 <AlertTitle>{`You have ${
-                  uncategorisedTransactions.length
+                  uncategorizedTransactions.length
                 } uncategorised transaction${
-                  uncategorisedTransactions.length !== 1 ? 's' : ''
+                  uncategorizedTransactions.length !== 1 ? 's' : ''
                 }!`}</AlertTitle>
               </Alert>
             )}
@@ -387,7 +342,7 @@ const Overview = () => {
               <Stat>
                 <CardBody>
                   <StatLabel>Total Balance</StatLabel>
-                  <StatNumber>{`MYR ${totalBalance.toFixed(2)}`}</StatNumber>
+                  <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
                   <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                 </CardBody>
               </Stat>
@@ -432,7 +387,7 @@ const Overview = () => {
                     <ResponsiveContainer width={width} height={300}>
                       <PieChart width="100%" height="100%">
                         <Pie
-                          data={incomeTransactionsInfo}
+                          data={incomeTransactionsGroupedByCategoryAndSorted}
                           cx="50%"
                           cy="50%"
                           // labelLine={true}
@@ -442,14 +397,16 @@ const Overview = () => {
                           innerRadius={40}
                           outerRadius={80}
                           fill="#8884d8"
-                          dataKey="totalAmount"
+                          dataKey="amount"
                         >
-                          {incomeTransactionsInfo.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
-                            />
-                          ))}
+                          {incomeTransactionsGroupedByCategoryAndSorted.map(
+                            (entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                              />
+                            )
+                          )}
                           <LabelList
                             dataKey="name"
                             position="outside"
@@ -468,15 +425,17 @@ const Overview = () => {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {incomeTransactionsInfo.map(transaction => (
-                            <Tr key={transaction.name}>
-                              <Td>{transaction.name}</Td>
-                              <Td>{transaction.totalTransactions}</Td>
-                              <Td isNumeric>
-                                {transaction.totalAmount.toFixed(2)}
-                              </Td>
-                            </Tr>
-                          ))}
+                          {incomeTransactionsGroupedByCategoryAndSorted.map(
+                            transaction => (
+                              <Tr key={transaction.name}>
+                                <Td>{transaction.name}</Td>
+                                <Td>{transaction.count}</Td>
+                                <Td isNumeric>
+                                  {transaction.amount.toFixed(2)}
+                                </Td>
+                              </Tr>
+                            )
+                          )}
                         </Tbody>
                       </Table>
                     </TableContainer>
@@ -485,7 +444,7 @@ const Overview = () => {
                     <ResponsiveContainer width={width} height={300}>
                       <PieChart width="100%" height="100%">
                         <Pie
-                          data={expenseTransactionsInfo}
+                          data={expenseTransactionsGroupedByCategoryAndSorted}
                           cx="50%"
                           cy="50%"
                           // labelLine={true}
@@ -495,14 +454,16 @@ const Overview = () => {
                           innerRadius={40}
                           outerRadius={80}
                           fill="#8884d8"
-                          dataKey="totalAmount"
+                          dataKey="amount"
                         >
-                          {expenseTransactionsInfo.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
-                            />
-                          ))}
+                          {expenseTransactionsGroupedByCategoryAndSorted.map(
+                            (entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                              />
+                            )
+                          )}
                           <LabelList
                             dataKey="name"
                             position="outside"
@@ -521,15 +482,17 @@ const Overview = () => {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {expenseTransactionsInfo.map(transaction => (
-                            <Tr key={transaction.name}>
-                              <Td>{transaction.name}</Td>
-                              <Td>{transaction.totalTransactions}</Td>
-                              <Td isNumeric>
-                                {transaction.totalAmount.toFixed(2)}
-                              </Td>
-                            </Tr>
-                          ))}
+                          {expenseTransactionsGroupedByCategoryAndSorted.map(
+                            transaction => (
+                              <Tr key={transaction.name}>
+                                <Td>{transaction.name}</Td>
+                                <Td>{transaction.count}</Td>
+                                <Td isNumeric>
+                                  {transaction.amount.toFixed(2)}
+                                </Td>
+                              </Tr>
+                            )
+                          )}
                         </Tbody>
                       </Table>
                     </TableContainer>
@@ -653,19 +616,7 @@ const Overview = () => {
                                 <Tr>
                                   <Td>
                                     <Tag
-                                      colorScheme={
-                                        categories?.data?.filter(
-                                          category =>
-                                            category.name ===
-                                            transaction.categories.name
-                                        )[0]
-                                          ? categories.data.filter(
-                                              category =>
-                                                category.name ===
-                                                transaction.categories.name
-                                            )[0].color
-                                          : 'red'
-                                      }
+                                      colorScheme={transaction.categories.color}
                                     >
                                       {transaction.categories.name}
                                     </Tag>

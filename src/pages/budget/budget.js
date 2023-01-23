@@ -5,7 +5,7 @@ import { Button, Flex, Box, Spinner } from '@chakra-ui/react';
 import ItemCard from './itemCard';
 import ItemDetails from './itemDetails';
 import { useBudgets } from '../../hooks/useBudgets';
-import { useCategories } from '../../hooks/useCategories';
+import { useOldCategories } from '../../hooks/useCategories';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCalculations } from '../../hooks/useCalculations';
 import _ from 'lodash';
@@ -24,7 +24,7 @@ const Budget = () => {
 
   const { totalExpense } = useCalculations(0, transactions);
 
-  const { categories } = useCategories(selectedCategories);
+  const { categories } = useOldCategories(selectedCategories);
 
   useEffect(() => {
     if (budget && !budgetsIsLoading) {
