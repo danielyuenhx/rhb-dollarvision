@@ -55,6 +55,7 @@ import {
 } from '../../redux/transactionSlice';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCategories } from '../../hooks/useCategories';
+import { useTotalBalance } from '../../hooks/useTotalBalance';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -84,7 +85,11 @@ const Overview = () => {
     expenseCategories,
     isLoading: categoriesAreLoading,
   } = useCategories();
-  const isLoading = transactionsAreLoading || categoriesAreLoading;
+  const { data: totalBalance, isLoading: totalBalanceIsLoading } =
+    useTotalBalance();
+
+  const isLoading =
+    transactionsAreLoading || categoriesAreLoading || totalBalanceIsLoading;
 
   const transactionsGroupedByDate = _.groupBy(
     transactions,
@@ -165,6 +170,7 @@ const Overview = () => {
         amount: amount,
       })
       .select(`*, categories (*), wallets (*)`);
+    console.log(data);
     setWallet('1');
     setSelectType('expense');
     setSelectCategory('1');
@@ -342,7 +348,7 @@ const Overview = () => {
               <Stat>
                 <CardBody>
                   <StatLabel>Total Balance</StatLabel>
-                  <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
+                  <StatNumber>{`MYR ${totalBalance.toFixed(2)}`}</StatNumber>
                   <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                 </CardBody>
               </Stat>
