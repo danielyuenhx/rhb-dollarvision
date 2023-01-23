@@ -34,7 +34,11 @@ const parseAmount = (amount, categoryType) => {
   }
 };
 
-const CategoriseModal = ({ uncategorisedTransactions, categories }) => {
+const CategoriseModal = ({
+  uncategorisedTransactions,
+  expenseCategories,
+  incomeCategories,
+}) => {
   const {
     isOpen: isOpenUncategorised,
     onOpen: onOpenUncategorised,
@@ -106,34 +110,16 @@ const CategoriseModal = ({ uncategorisedTransactions, categories }) => {
                                     id={transaction.id ? transaction.id : ''}
                                   >
                                     {transaction.categories.type === 'expense'
-                                      ? categories.expenseCategories.map(
-                                          category => (
-                                            <option
-                                              value={
-                                                categories.data.find(
-                                                  obj =>
-                                                    obj.name === category.name
-                                                ).id
-                                              }
-                                            >
-                                              {category.name}
-                                            </option>
-                                          )
-                                        )
-                                      : categories.incomeCategories.map(
-                                          category => (
-                                            <option
-                                              value={
-                                                categories.data.find(
-                                                  obj =>
-                                                    obj.name === category.name
-                                                ).id
-                                              }
-                                            >
-                                              {category.name}
-                                            </option>
-                                          )
-                                        )}
+                                      ? expenseCategories.map(category => (
+                                          <option value={category.id}>
+                                            {category.name}
+                                          </option>
+                                        ))
+                                      : incomeCategories.map(category => (
+                                          <option value={category.id}>
+                                            {category.name}
+                                          </option>
+                                        ))}
                                   </Select>
                                 </Td>
                               </Tr>
