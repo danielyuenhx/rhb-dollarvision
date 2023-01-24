@@ -38,6 +38,7 @@ const CategoriseModal = ({
   uncategorisedTransactions,
   expenseCategories,
   incomeCategories,
+  refetchData,
 }) => {
   const {
     isOpen: isOpenUncategorised,
@@ -55,6 +56,7 @@ const CategoriseModal = ({
     select.map(item => {
       dispatch(categoriseTransaction(item.id, item.value));
     });
+    refetchData();
     onCloseUncategorised();
   };
 

@@ -76,6 +76,7 @@ const Overview = () => {
     expenseTransactionsGroupedByCategoryAndSorted,
     uncategorizedTransactions,
     isLoading: transactionsAreLoading,
+    refetch: refetchTransactions,
   } = useTransactions();
   const {
     data: categories,
@@ -83,8 +84,11 @@ const Overview = () => {
     expenseCategories,
     isLoading: categoriesAreLoading,
   } = useCategories();
-  const { data: totalBalance, isLoading: totalBalanceIsLoading } =
-    useTotalBalance();
+  const {
+    data: totalBalance,
+    isLoading: totalBalanceIsLoading,
+    refetch: refetchTotalBalance,
+  } = useTotalBalance();
 
   const isLoading =
     transactionsAreLoading || categoriesAreLoading || totalBalanceIsLoading;
@@ -208,6 +212,7 @@ const Overview = () => {
               uncategorisedTransactions={uncategorizedTransactions}
               expenseCategories={expenseCategories}
               incomeCategories={incomeCategories}
+              refetchData={refetchTransactions}
             />
             <Flex
               gap="25px"
