@@ -10,22 +10,16 @@ import {
   useDisclosure,
   Modal,
   ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalCloseButton,
   ListItem,
   UnorderedList,
   CardHeader,
-  ModalFooter,
-  SlideFade,
-  Button,
 } from '@chakra-ui/react';
 import React, { useEffect, useState } from 'react';
 import FirstPage from './modals/firstPage';
 import SecondPage from './modals/secondPage';
 import { useSelector, useDispatch } from 'react-redux';
 import { updateModalName } from '../../redux/modalSlice';
+import ThirdPage from './modals/thirdPage';
 
 const UserCard = props => {
   // FOR AURORA EFFECT
@@ -109,9 +103,11 @@ const UserCard = props => {
   const renderModal = () => {
     // console.log(current === 'First');
     if (current === 'First') {
-      return <FirstPage isOpen={isOpen}/>;
+      return <FirstPage isOpen={isOpen} />;
     } else if (current === 'Second') {
-      return <SecondPage isOpen={isOpen}/>;
+      return <SecondPage isOpen={isOpen} />;
+    } else if (current === 'Third') {
+      return <ThirdPage isOpen={isOpen} onClose={onClose}/>;
     }
   };
 

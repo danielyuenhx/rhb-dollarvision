@@ -1,19 +1,13 @@
-import React, { Fragment } from 'react';
+import React from 'react';
 import {
-  Modal,
-  ModalOverlay,
   ModalContent,
-  ModalHeader,
   ModalFooter,
   ModalBody,
   ModalCloseButton,
-  useDisclosure,
   Button,
   Text,
   Flex,
-  Slide,
   SlideFade,
-  Tag,
 } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
@@ -26,59 +20,53 @@ const FirstPage = props => {
   };
 
   return (
-    <ModalContent>
+    <ModalContent height="600px">
       {/* <ModalHeader>
       <Text opacity="0">dummy text</Text>
     </ModalHeader> */}
       <ModalCloseButton />
-      <ModalBody>
-        <Flex direction="column">
+      <ModalBody minHeight="500px">
+        <Flex
+          direction="column"
+          textAlign="center"
+          justifyContent="center"
+          alignItems="center"
+          height="100%"
+        >
           {/* first section */}
-          <SlideFade direction="left" in={props.isOpen} delay={0.5} offsetX={500}>
-            <Flex
-              marginTop="80px"
-              width="30%"
-              bgColor="teal"
-              // height="200px"
-              transitionDuration={3000}
-            >
-              test
-            </Flex>
-          </SlideFade>
-
-          {/* second section */}
-          <SlideFade direction="left" in={props.isOpen} delay={0.8}>
-            <Flex marginTop="20px" width="100%" direction="column">
-              <Text fontSize="4xl" fontWeight="bold">
-                This Year
-              </Text>
-              <Text fontSize="2xl">You have spent a total of RM 12000</Text>
-              <Text fontSize="2xl">
-                Averagely RM 1000 each month which is pretty decent!
+          <SlideFade
+            direction="left"
+            in={props.isOpen}
+            delay={0.5}
+            offsetY={-200}
+          >
+            <Flex width="100%" direction="column">
+              <Text fontSize="6xl" fontWeight="bold">
+                2023
               </Text>
             </Flex>
           </SlideFade>
 
-          {/* third section */}
           <SlideFade direction="left" in={props.isOpen} delay={1.2}>
-            <Flex marginTop="20px" width="100%" direction="column">
-              <Text fontSize="4xl" fontWeight="bold">
-                Your top categories are
+            <Flex width="100%" direction="column" marginY="5%">
+              <Text fontSize="2xl">
+                We have tracked your spending behavour throughout the year, and
+                we are about to show you your spending behaviour!
               </Text>
-              <Flex gap="15px" marginBottom="20px" marginTop="5px">
-                <Tag variant="solid" colorScheme="purple" size="lg">
-                  Food
-                </Tag>
-                <Tag variant="solid" colorScheme="teal" size="lg">
-                  Shopping
-                </Tag>
-              </Flex>
+            </Flex>
+          </SlideFade>
+
+          <SlideFade in={props.isOpen} delay={0.5} offsetY={200}>
+            <Flex width="100%" direction="column">
+              <Text fontSize="6xl" fontWeight="bold">
+                2023
+              </Text>
             </Flex>
           </SlideFade>
         </Flex>
       </ModalBody>
       <ModalFooter>
-        <Button onClick={nextHandler}>Next</Button>
+        <Button onClick={nextHandler}>Discover</Button>
       </ModalFooter>
     </ModalContent>
   );

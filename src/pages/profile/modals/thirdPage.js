@@ -16,16 +16,8 @@ import {
   StatArrow,
   StatGroup,
 } from '@chakra-ui/react';
-import { useDispatch } from 'react-redux';
-import { updateModalName } from '../../../redux/modalSlice';
 
-const SecondPage = props => {
-  const dispatch = useDispatch();
-
-  const nextHandler = () => {
-    dispatch(updateModalName('Third'));
-  };
-
+const ThirdPage = props => {
   return (
     <ModalContent>
       {/* <ModalHeader>
@@ -44,11 +36,11 @@ const SecondPage = props => {
               textAlign="center"
             >
               <Text fontSize="3xl" fontWeight="bold">
-                Expenses
+                Budgeting
               </Text>
               <Text fontSize="20px">
-                You have spent a total of RM 12000, and almost 30% of it are
-                spent on food.
+                You are very good with your budgeting as well despite all of the
+                spendings you had.
               </Text>
             </Flex>
           </SlideFade>
@@ -56,22 +48,26 @@ const SecondPage = props => {
           {/* second section */}
           <SlideFade direction="left" in={props.isOpen} delay={1.2}>
             <Flex
-              marginTop="40px"
-              width="100%"
               direction="column"
               justify="center"
               alignItems="center"
+              textAlign="center"
             >
-              <Text fontSize="20px" fontWeight="bold">
-                Your top categories are
-              </Text>
-              <Flex gap="15px" marginBottom="20px" marginTop="5px">
-                <Tag variant="solid" colorScheme="purple" size="lg">
-                  Food
-                </Tag>
-                <Tag variant="solid" colorScheme="teal" size="lg">
-                  Shopping
-                </Tag>
+              <Flex marginTop="40px" width="70%" direction="column">
+                <Text fontSize="20px" fontWeight="bold">
+                  Catogories that you are least likely to go over budget
+                </Text>
+              </Flex>
+
+              <Flex gap="100px" justify="flex-start" textAlign="flex-start">
+                <Flex gap="15px" marginBottom="20px" marginTop="5px">
+                  <Tag variant="solid" colorScheme="blue" size="lg">
+                    Transport
+                  </Tag>
+                  <Tag variant="solid" colorScheme="red" size="lg">
+                    Entertainment
+                  </Tag>
+                </Flex>
               </Flex>
             </Flex>
           </SlideFade>
@@ -79,27 +75,26 @@ const SecondPage = props => {
           {/* third section */}
           <SlideFade direction="left" in={props.isOpen} delay={1.6}>
             <Flex
+              marginTop="40px"
+              width="80%"
               direction="column"
-              justify="center"
-              alignItems="center"
               textAlign="center"
+              marginX="auto"
+              justify="center"
             >
-              <Flex marginTop="40px" width="100%" direction="column">
-                <Text fontSize="20px">
-                  You have spent the most on March, With a total spending of{' '}
-                  <span style={{ color: 'red', fontWeight: 'bold' }}>
-                    RM 3500
-                  </span>
-                  !
-                </Text>
-              </Flex>
-
-              <StatGroup mt="20px" gap="100px" width="70%">
+              <Text fontSize="20px">
+                You have spent the least on July, With a total spending of{' '}
+                <span style={{ color: 'green', fontWeight: 'bold' }}>
+                  RM 1800
+                </span>
+                !
+              </Text>
+              <StatGroup mt="20px" gap="100px" width="80%" marginX="auto">
                 <Stat>
-                  <StatLabel>Shopping Category</StatLabel>
+                  <StatLabel>Food Category</StatLabel>
                   <StatNumber>RM 700</StatNumber>
                   <StatHelpText>
-                    <StatArrow type="increase" color="red" />
+                    <StatArrow type="decrease" color="green" />
                     23.36%
                   </StatHelpText>
                 </Stat>
@@ -108,7 +103,7 @@ const SecondPage = props => {
                   <StatLabel>Food Category</StatLabel>
                   <StatNumber>RM 600</StatNumber>
                   <StatHelpText>
-                    <StatArrow type="increase" color="red" />
+                    <StatArrow type="decrease" color="green" />
                     9.05%
                   </StatHelpText>
                 </Stat>
@@ -118,10 +113,10 @@ const SecondPage = props => {
         </Flex>
       </ModalBody>
       <ModalFooter>
-        <Button onClick={nextHandler}>Next</Button>
+        <Button onClick={() => props.onClose()}>Close</Button>
       </ModalFooter>
     </ModalContent>
   );
 };
 
-export default SecondPage;
+export default ThirdPage;
