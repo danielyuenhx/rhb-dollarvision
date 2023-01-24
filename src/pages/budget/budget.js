@@ -1,114 +1,85 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Layout from '../../components/layout';
-import { Button, Flex, Box, Spinner } from '@chakra-ui/react';
+import { Button, Flex, Spinner } from '@chakra-ui/react';
 
 import ItemCard from './itemCard';
 import ItemDetails from './itemDetails';
-import { useOldBudgets } from '../../hooks/useBudgets';
-import { useOldCategories } from '../../hooks/useCategories';
-import { useTransactions } from '../../hooks/useTransactions';
-import { useCalculations } from '../../hooks/useCalculations';
-import _ from 'lodash';
+import { useBudgets } from '../../hooks/useBudgets';
+import { useBudgetById } from '../../hooks/useBudgetById';
 
 const Budget = () => {
-  const [selectedItem, setSelectedItem] = useState(0);
-  const [fetchedItems, setFetchedItems] = useState();
-  const [selectedCategories, setSelectedCategories] = useState([]);
+  let today = new Date();
+  const offset = today.getTimezoneOffset();
+  today = new Date(today.getTime() - offset * 60 * 1000);
+  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
+    .toISOString()
+    .split('T')[0];
+  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
+    .toISOString()
+    .split('T')[0];
+  const [selectedStartDate, setSelectedStartDate] = useState(firstDayOfMonth);
+  const [selectedEndDate, setSelectedEndDate] = useState(lastDayOfMonth);
 
-  const { budget, isLoading: budgetsIsLoading } = useOldBudgets();
-
-  const { transactions, allTransactions } = useTransactions(
-    undefined,
-    selectedCategories
+  const { data: budgets, isLoading: budgetsAreLoading } = useBudgets(
+    selectedStartDate,
+    selectedEndDate
   );
+  const defaultBudgetId = !budgetsAreLoading && budgets ? budgets[0].id : 1;
+  const [selectedBudgetId, setSelectedBudgetId] = useState(defaultBudgetId);
 
-  const { totalExpense } = useCalculations(0, transactions);
-
-  const { categories } = useOldCategories(selectedCategories);
-
-  useEffect(() => {
-    if (budget && !budgetsIsLoading) {
-      const categories = budget[selectedItem].budgets_categories.map(
-        object => object.category_id
-      );
-      setFetchedItems(budget);
-      setSelectedCategories(categories);
-    }
-  }, [budget, budgetsIsLoading, selectedItem]);
-
-  const parseAmount = (amount, categoryType) => {
-    if (categoryType === 'expense') {
-      return `-${amount.toFixed(2)}`;
-    } else {
-      return `+${amount.toFixed(2)}`;
-    }
-  };
-
-  const transactionsGroupedByDate = _.groupBy(
-    transactions,
-    transaction => transaction.date
+  const { data: budget, isLoading: budgetIsLoading } = useBudgetById(
+    selectedBudgetId,
+    selectedStartDate,
+    selectedEndDate
   );
+  const isLoading = budgetsAreLoading || budgetIsLoading;
 
-  const dateKeysSorted = Object.keys(transactionsGroupedByDate).sort(function (
-    a,
-    b
-  ) {
-    return b - a;
-  });
+  if (isLoading) {
+    <Layout>
+      <Flex
+        w="100%"
+        marginTop="30vh"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Spinner
+          size="xl"
+          thickness="4px"
+          speed="0.65s"
+          emptyColor="gray.200"
+          color="secondaryBlue"
+        />
+      </Flex>
+    </Layout>;
+  }
 
   return (
     <Layout>
-      {totalExpense && categories ? (
-        <Flex gap="30px" direction="row">
-          <Flex gap="25px" direction="column" w="50%">
-            {fetchedItems &&
-              fetchedItems.map((item, index) => (
-                <ItemCard
-                  key={index}
-                  index={index}
-                  title={item.name}
-                  desc={item.desc}
-                  total={item.total}
-                  onClick={setSelectedItem.bind(null, index)}
-                />
-              ))}
-            <Button
-              variant="primaryButton"
-              w="auto"
-              _hover={{ transform: '' }}
-              float="right"
-            >
-              {' '}
-              Add Budget
-            </Button>
-          </Flex>
-          {fetchedItems && (
-            <ItemDetails
-              selectedItem={fetchedItems[selectedItem]}
-              spent={totalExpense}
-              dateKeysSorted={dateKeysSorted}
-              transactionsGroupedByDate={transactionsGroupedByDate}
-              parseAmount={parseAmount}
-              categories={categories}
-            />
-          )}
+      <Flex gap="30px" direction="row">
+        <Flex gap="25px" direction="column" w="50%">
+          {budgets &&
+            budgets.map((budget, index) => (
+              <ItemCard
+                key={budget.id}
+                index={index}
+                title={budget.name}
+                desc={budget.description}
+                percentage={budget.percentage}
+                onClick={setSelectedBudgetId.bind(null, budget.id)}
+              />
+            ))}
+          <Button
+            variant="primaryButton"
+            w="auto"
+            _hover={{ transform: '' }}
+            float="right"
+          >
+            {' '}
+            Add Budget
+          </Button>
         </Flex>
-      ) : (
-        <Flex
-          w="100%"
-          marginTop="30vh"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Spinner
-            size="xl"
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="secondaryBlue"
-          />
-        </Flex>
-      )}
+        {budget && <ItemDetails budget={budget} />}
+      </Flex>
     </Layout>
   );
 };

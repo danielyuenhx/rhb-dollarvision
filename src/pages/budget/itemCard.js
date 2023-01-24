@@ -1,7 +1,7 @@
 import React from 'react';
 import { Card, CardBody, Progress, Text, Tooltip } from '@chakra-ui/react';
 
-const itemCard = ({ index, title, desc, total, paid, onClick }) => {
+const itemCard = ({ index, title, desc, percentage, onClick }) => {
   return (
     <Card onClick={onClick.bind(null, index)} cursor="pointer">
       <CardBody>
@@ -11,7 +11,7 @@ const itemCard = ({ index, title, desc, total, paid, onClick }) => {
         <Text mb="10px">{desc}</Text>
         <Tooltip
           hasArrow
-          label={`${0.1383 * 100}%`}
+          label={`${percentage}%`}
           bg="gray.300"
           color="black"
           placement="top"
@@ -20,7 +20,7 @@ const itemCard = ({ index, title, desc, total, paid, onClick }) => {
             hasStripe
             colorScheme="blue"
             height="32px"
-            value={0.1383 * 100}
+            value={percentage}
           />
         </Tooltip>
       </CardBody>

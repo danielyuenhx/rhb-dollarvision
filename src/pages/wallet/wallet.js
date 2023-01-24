@@ -67,7 +67,10 @@ const Wallet = () => {
   const defaultWalletId =
     !walletsAreLoading && wallets ? wallets[0].id : undefined;
   const [selectedWalletId, setSelectedWalletId] = useState(defaultWalletId);
-  const selectedWallet = wallets.find(wallet => wallet.id === selectedWalletId);
+  const selectedWallet =
+    !walletsAreLoading && wallets
+      ? wallets.find(wallet => wallet.id === selectedWalletId)
+      : undefined;
   const {
     data: transactions,
     totalIncome,
@@ -285,7 +288,7 @@ const Wallet = () => {
                 alignSelf="self-end"
                 alignItems="center"
               >
-                {selectedWallet.type === 'custom' && (
+                {selectedWallet && selectedWallet.type === 'custom' && (
                   <Button>Add Transaction</Button>
                 )}
                 <Icon
