@@ -41,6 +41,7 @@ import {
   NumberInput,
   NumberInputField,
   Tag,
+  IconButton,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
@@ -54,6 +55,14 @@ import CategoriseModal from '../../components/categoriseModal';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCategories } from '../../hooks/useCategories';
 import { useTotalBalance } from '../../hooks/useTotalBalance';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import {
+  firstDayOfMonth,
+  lastDayOfMonth,
+  setNextMonth,
+  setPreviousMonth,
+  today,
+} from '../../helpers';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -65,6 +74,17 @@ const parseAmount = (amount, categoryType) => {
 
 const Overview = () => {
   const dispatch = useDispatch();
+  const [selectedStartDate, setSelectedStartDate] = useState(firstDayOfMonth);
+  const [selectedEndDate, setSelectedEndDate] = useState(lastDayOfMonth);
+  const rightButtonDisabled =
+    today.getMonth() === new Date(selectedStartDate).getMonth() &&
+    today.getFullYear() === new Date(selectedStartDate).getFullYear();
+  const month = new Date(selectedStartDate).toLocaleString('default', {
+    month: 'short',
+  });
+  const firstDateOfMonth = new Date(selectedStartDate).getDate();
+  const lastDateOfMonth = new Date(selectedEndDate).getDate();
+  const dateRange = `${month} ${firstDateOfMonth} - ${month} ${lastDateOfMonth}`;
 
   // pass in parameters like this https://masteringjs.io/tutorials/fundamentals/parameters
   const {
@@ -77,9 +97,11 @@ const Overview = () => {
     uncategorizedTransactions,
     isLoading: transactionsAreLoading,
     refetch: refetchTransactions,
-  } = useTransactions();
+  } = useTransactions({
+    startDate: selectedStartDate,
+    endDate: selectedEndDate,
+  });
   const {
-    data: categories,
     incomeCategories,
     expenseCategories,
     isLoading: categoriesAreLoading,
@@ -88,7 +110,7 @@ const Overview = () => {
     data: totalBalance,
     isLoading: totalBalanceIsLoading,
     refetch: refetchTotalBalance,
-  } = useTotalBalance();
+  } = useTotalBalance(selectedEndDate);
 
   const isLoading =
     transactionsAreLoading || categoriesAreLoading || totalBalanceIsLoading;
@@ -183,6 +205,18 @@ const Overview = () => {
     onClose();
   };
 
+  const moveToPreviousMonth = () => {
+    setPreviousMonth(
+      selectedStartDate,
+      setSelectedStartDate,
+      setSelectedEndDate
+    );
+  };
+
+  const moveToNextMonth = () => {
+    setNextMonth(selectedStartDate, setSelectedStartDate, setSelectedEndDate);
+  };
+
   if (isLoading)
     return (
       <Layout>
@@ -207,27 +241,49 @@ const Overview = () => {
     <Layout>
       {transactions ? (
         <Flex gap="30px" direction="column">
-          <Flex direction="column" gap="1rem">
+          <Flex direction="column" gap="1rem" alignItems="flex-end">
             <CategoriseModal
               uncategorisedTransactions={uncategorizedTransactions}
               expenseCategories={expenseCategories}
               incomeCategories={incomeCategories}
               refetchData={refetchTransactions}
             />
+            <Alert status="error">
+              <AlertIcon />
+              <AlertTitle>You have exceeded your budget for Food!</AlertTitle>
+              <AlertDescription>
+                Do not indulge in expensive cafes or restaurants all the time.
+              </AlertDescription>
+            </Alert>
             <Flex
               gap="25px"
               direction="row"
-              w="100%"
-              justifyContent="center"
+              w="50%"
+              justifyContent="flex-end"
               alignItems="center"
+              mt={4}
             >
-              <Alert status="error">
-                <AlertIcon />
-                <AlertTitle>You have exceeded your budget for Food!</AlertTitle>
-                <AlertDescription>
-                  Do not indulge in expensive cafes or restaurants all the time.
-                </AlertDescription>
-              </Alert>
+              <Flex gap="10px" w="100%">
+                <IconButton
+                  icon={<FaChevronLeft />}
+                  onClick={moveToPreviousMonth}
+                />
+                <Input
+                  type="text"
+                  value={`${new Date(selectedStartDate).toLocaleString(
+                    'default',
+                    {
+                      month: 'long',
+                    }
+                  )}, ${new Date(selectedStartDate).getFullYear()}`}
+                  readOnly
+                />
+                <IconButton
+                  icon={<FaChevronRight />}
+                  onClick={moveToNextMonth}
+                  disabled={rightButtonDisabled}
+                />
+              </Flex>
               <Button
                 onClick={onOpen}
                 colorScheme="blue"
@@ -249,7 +305,7 @@ const Overview = () => {
                 <CardBody>
                   <StatLabel>Total Balance</StatLabel>
                   <StatNumber>{`MYR ${totalBalance.toFixed(2)}`}</StatNumber>
-                  <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                  <StatHelpText>{dateRange}</StatHelpText>
                 </CardBody>
               </Stat>
             </Card>
@@ -263,7 +319,7 @@ const Overview = () => {
                 <CardBody>
                   <StatLabel>Nett Change</StatLabel>
                   <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
-                  <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                  <StatHelpText>{dateRange}</StatHelpText>
                 </CardBody>
               </Stat>
             </Card>
@@ -279,7 +335,7 @@ const Overview = () => {
                   <StatNumber color="green">{`MYR ${totalIncome.toFixed(
                     2
                   )}`}</StatNumber>
-                  <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                  <StatHelpText>{dateRange}</StatHelpText>
                 </CardBody>
               </Stat>
             </Card>
@@ -295,7 +351,7 @@ const Overview = () => {
                   <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
                     2
                   )}`}</StatNumber>
-                  <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                  <StatHelpText>{dateRange}</StatHelpText>
                 </CardBody>
               </Stat>
             </Card>

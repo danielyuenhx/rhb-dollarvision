@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import Layout from '../../components/layout';
-import { Button, Flex, Spinner } from '@chakra-ui/react';
+import { Button, Flex, IconButton, Input, Spinner } from '@chakra-ui/react';
 
 import ItemCard from './itemCard';
 import ItemDetails from './itemDetails';
 import { useBudgets } from '../../hooks/useBudgets';
 import { useBudgetById } from '../../hooks/useBudgetById';
+import { FaChevronLeft, FaChevronRight } from 'react-icons/fa';
+import {
+  firstDayOfMonth,
+  lastDayOfMonth,
+  setNextMonth,
+  setPreviousMonth,
+  today,
+} from '../../helpers';
 
 const Budget = () => {
-  let today = new Date();
-  const offset = today.getTimezoneOffset();
-  today = new Date(today.getTime() - offset * 60 * 1000);
-  const lastDayOfMonth = new Date(today.getFullYear(), today.getMonth() + 1, 0)
-    .toISOString()
-    .split('T')[0];
-  const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1)
-    .toISOString()
-    .split('T')[0];
   const [selectedStartDate, setSelectedStartDate] = useState(firstDayOfMonth);
   const [selectedEndDate, setSelectedEndDate] = useState(lastDayOfMonth);
+  const rightButtonDisabled =
+    today.getMonth() === new Date(selectedStartDate).getMonth() &&
+    today.getFullYear() === new Date(selectedStartDate).getFullYear();
 
   const { data: budgets, isLoading: budgetsAreLoading } = useBudgets(
     selectedStartDate,
@@ -33,6 +35,18 @@ const Budget = () => {
     selectedEndDate
   );
   const isLoading = budgetsAreLoading || budgetIsLoading;
+
+  const moveToPreviousMonth = () => {
+    setPreviousMonth(
+      selectedStartDate,
+      setSelectedStartDate,
+      setSelectedEndDate
+    );
+  };
+
+  const moveToNextMonth = () => {
+    setNextMonth(selectedStartDate, setSelectedStartDate, setSelectedEndDate);
+  };
 
   if (isLoading) {
     <Layout>
@@ -55,30 +69,63 @@ const Budget = () => {
 
   return (
     <Layout>
-      <Flex gap="30px" direction="row">
-        <Flex gap="25px" direction="column" w="50%">
-          {budgets &&
-            budgets.map((budget, index) => (
-              <ItemCard
-                key={budget.id}
-                index={index}
-                title={budget.name}
-                desc={budget.description}
-                percentage={budget.percentage}
-                onClick={setSelectedBudgetId.bind(null, budget.id)}
-              />
-            ))}
-          <Button
-            variant="primaryButton"
-            w="auto"
-            _hover={{ transform: '' }}
-            float="right"
+      <Flex gap="20px" direction="column">
+        <Flex gap="20px" direction="column" alignItems="flex-end">
+          <Flex
+            gap="25px"
+            direction="row"
+            w="50%"
+            justifyContent="flex-end"
+            alignItems="center"
+            mt={4}
           >
-            {' '}
-            Add Budget
-          </Button>
+            <Flex gap="10px" w="100%">
+              <IconButton
+                icon={<FaChevronLeft />}
+                onClick={moveToPreviousMonth}
+              />
+              <Input
+                type="text"
+                value={`${new Date(selectedStartDate).toLocaleString(
+                  'default',
+                  {
+                    month: 'long',
+                  }
+                )}, ${new Date(selectedStartDate).getFullYear()}`}
+                readOnly
+              />
+              <IconButton
+                icon={<FaChevronRight />}
+                onClick={moveToNextMonth}
+                disabled={rightButtonDisabled}
+              />
+            </Flex>
+            <Button
+              // onClick={onOpen}
+              colorScheme="blue"
+              variant="solid"
+              alignSelf="self-end"
+            >
+              Add Budget
+            </Button>
+          </Flex>
         </Flex>
-        {budget && <ItemDetails budget={budget} />}
+        <Flex gap="30px" direction="row">
+          <Flex gap="25px" direction="column" w="50%">
+            {budgets &&
+              budgets.map((budget, index) => (
+                <ItemCard
+                  key={budget.id}
+                  index={index}
+                  title={budget.name}
+                  desc={budget.description}
+                  percentage={budget.percentage}
+                  onClick={setSelectedBudgetId.bind(null, budget.id)}
+                />
+              ))}
+          </Flex>
+          {budget && <ItemDetails budget={budget} />}
+        </Flex>
       </Flex>
     </Layout>
   );

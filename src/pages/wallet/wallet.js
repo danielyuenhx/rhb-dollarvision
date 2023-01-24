@@ -31,6 +31,8 @@ import {
   Spinner,
   Tag,
   Icon,
+  IconButton,
+  Input,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
@@ -40,9 +42,16 @@ import { useTransactions } from '../../hooks/useTransactions';
 import { useWallets } from '../../hooks/useWallets';
 import _ from 'lodash';
 import CategoriseModal from '../../components/categoriseModal';
-import { FaCog } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaCog } from 'react-icons/fa';
 import { useCategories } from '../../hooks/useCategories';
 import { useTotalBalance } from '../../hooks/useTotalBalance';
+import {
+  firstDayOfMonth,
+  lastDayOfMonth,
+  setNextMonth,
+  setPreviousMonth,
+  today,
+} from '../../helpers';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -53,6 +62,18 @@ const parseAmount = (amount, categoryType) => {
 };
 
 const Wallet = () => {
+  const [selectedStartDate, setSelectedStartDate] = useState(firstDayOfMonth);
+  const [selectedEndDate, setSelectedEndDate] = useState(lastDayOfMonth);
+  const rightButtonDisabled =
+    today.getMonth() === new Date(selectedStartDate).getMonth() &&
+    today.getFullYear() === new Date(selectedStartDate).getFullYear();
+  const month = new Date(selectedStartDate).toLocaleString('default', {
+    month: 'short',
+  });
+  const firstDateOfMonth = new Date(selectedStartDate).getDate();
+  const lastDateOfMonth = new Date(selectedEndDate).getDate();
+  const dateRange = `${month} ${firstDateOfMonth} - ${month} ${lastDateOfMonth}`;
+
   const {
     data: wallets,
     isLoading: walletsAreLoading,
@@ -81,12 +102,16 @@ const Wallet = () => {
     uncategorizedTransactions,
     isLoading: transactionsAreLoading,
     refetch: refetchTransactions,
-  } = useTransactions({ walletId: selectedWalletId });
+  } = useTransactions({
+    walletId: selectedWalletId,
+    startDate: selectedStartDate,
+    endDate: selectedEndDate,
+  });
   const {
     data: totalBalance,
     isLoading: totalBalanceIsLoading,
     refetch: refetchTotalBalance,
-  } = useTotalBalance(undefined, selectedWalletId);
+  } = useTotalBalance(selectedEndDate, selectedWalletId);
   const isLoading =
     walletsAreLoading ||
     categoriesAreLoading ||
@@ -123,6 +148,18 @@ const Wallet = () => {
     '#FF00FF',
     '#000000',
   ];
+
+  const moveToPreviousMonth = () => {
+    setPreviousMonth(
+      selectedStartDate,
+      setSelectedStartDate,
+      setSelectedEndDate
+    );
+  };
+
+  const moveToNextMonth = () => {
+    setNextMonth(selectedStartDate, setSelectedStartDate, setSelectedEndDate);
+  };
 
   if (isLoading) {
     return (
@@ -287,7 +324,29 @@ const Wallet = () => {
                 direction="row"
                 alignSelf="self-end"
                 alignItems="center"
+                w="100%"
               >
+                <Flex gap="10px" w="100%">
+                  <IconButton
+                    icon={<FaChevronLeft />}
+                    onClick={moveToPreviousMonth}
+                  />
+                  <Input
+                    type="text"
+                    value={`${new Date(selectedStartDate).toLocaleString(
+                      'default',
+                      {
+                        month: 'long',
+                      }
+                    )}, ${new Date(selectedStartDate).getFullYear()}`}
+                    readOnly
+                  />
+                  <IconButton
+                    icon={<FaChevronRight />}
+                    onClick={moveToNextMonth}
+                    disabled={rightButtonDisabled}
+                  />
+                </Flex>
                 {selectedWallet && selectedWallet.type === 'custom' && (
                   <Button>Add Transaction</Button>
                 )}
@@ -326,7 +385,7 @@ const Wallet = () => {
                   <CardBody>
                     <StatLabel>Total Balance</StatLabel>
                     <StatNumber>{`MYR ${totalBalance.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                    <StatHelpText>{dateRange}</StatHelpText>
                   </CardBody>
                 </Stat>
               </Card>
@@ -340,7 +399,7 @@ const Wallet = () => {
                   <CardBody>
                     <StatLabel>Nett Change</StatLabel>
                     <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                    <StatHelpText>{dateRange}</StatHelpText>
                   </CardBody>
                 </Stat>
               </Card>
@@ -359,7 +418,7 @@ const Wallet = () => {
                     <StatNumber color="green">{`MYR ${totalIncome.toFixed(
                       2
                     )}`}</StatNumber>
-                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                    <StatHelpText>{dateRange}</StatHelpText>
                   </CardBody>
                 </Stat>
               </Card>
@@ -375,7 +434,7 @@ const Wallet = () => {
                     <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
                       2
                     )}`}</StatNumber>
-                    <StatHelpText>Jan 1 - Jan 31</StatHelpText>
+                    <StatHelpText>{dateRange}</StatHelpText>
                   </CardBody>
                 </Stat>
               </Card>
