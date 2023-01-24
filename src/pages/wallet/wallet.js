@@ -59,7 +59,6 @@ const Wallet = () => {
     refetch: refetchWallets,
   } = useWallets();
   const {
-    data: categories,
     expenseCategories,
     incomeCategories,
     isLoading: categoriesAreLoading,
@@ -68,6 +67,7 @@ const Wallet = () => {
   const defaultWalletId =
     !walletsAreLoading && wallets ? wallets[0].id : undefined;
   const [selectedWalletId, setSelectedWalletId] = useState(defaultWalletId);
+  const selectedWallet = wallets.find(wallet => wallet.id === selectedWalletId);
   const {
     data: transactions,
     totalIncome,
@@ -285,7 +285,9 @@ const Wallet = () => {
                 alignSelf="self-end"
                 alignItems="center"
               >
-                <Button>Add Transaction</Button>
+                {selectedWallet.type === 'custom' && (
+                  <Button>Add Transaction</Button>
+                )}
                 <Icon
                   onClick={onOpen}
                   as={FaCog}
