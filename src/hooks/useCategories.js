@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 import supabase from '../supabaseClient';
+import { api } from '../api';
+import { useQuery } from 'react-query';
 
-export const useCategories = categoryIds => {
+export const useOldCategories = categoryIds => {
   const [categories, setCategories] = useState();
   const [isLoading, setIsLoading] = useState(true);
 
@@ -19,4 +21,29 @@ export const useCategories = categoryIds => {
   }, []);
 
   return { categories, isLoading };
+};
+
+const getCategories = async () => {
+  try {
+    const response = await api.get('/categories');
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const useCategories = () => {
+  const { data, ...others } = useQuery({
+    queryKey: ['categories'],
+    queryFn: () => getCategories(),
+  });
+
+  // all attributes in data
+  // data (all categories), count, incomeCategories, expenseCategories
+
+  return {
+    ...data,
+    ...others,
+  };
 };

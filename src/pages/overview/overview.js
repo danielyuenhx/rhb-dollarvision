@@ -40,15 +40,20 @@ import {
   Input,
   NumberInput,
   NumberInputField,
+  Tag,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
 import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
-import { useCalculations } from '../../hooks/useCalculations';
 import _ from 'lodash';
-import { useAllTransactions } from '../../hooks/useAllTransactions';
 import supabase from '../../supabaseClient';
+import { useDispatch } from 'react-redux';
+import { createTransaction } from '../../redux/transactionSlice';
+import CategoriseModal from '../../components/categoriseModal';
+import { useTransactions } from '../../hooks/useTransactions';
+import { useCategories } from '../../hooks/useCategories';
+import { useTotalBalance } from '../../hooks/useTotalBalance';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -59,14 +64,30 @@ const parseAmount = (amount, categoryType) => {
 };
 
 const Overview = () => {
+  const dispatch = useDispatch();
+
+  // pass in parameters like this https://masteringjs.io/tutorials/fundamentals/parameters
   const {
-    allTransactions: transactions,
-    totalBalance: initialBalance,
-    isLoading,
-    setAllTransactions,
-  } = useAllTransactions();
-  const { totalBalance, totalIncome, totalExpense, nettChange } =
-    useCalculations(initialBalance, transactions);
+    data: transactions,
+    totalIncome,
+    totalExpense,
+    nettChange,
+    incomeTransactionsGroupedByCategoryAndSorted,
+    expenseTransactionsGroupedByCategoryAndSorted,
+    uncategorizedTransactions,
+    isLoading: transactionsAreLoading,
+  } = useTransactions();
+  const {
+    data: categories,
+    incomeCategories,
+    expenseCategories,
+    isLoading: categoriesAreLoading,
+  } = useCategories();
+  const { data: totalBalance, isLoading: totalBalanceIsLoading } =
+    useTotalBalance();
+
+  const isLoading =
+    transactionsAreLoading || categoriesAreLoading || totalBalanceIsLoading;
 
   const transactionsGroupedByDate = _.groupBy(
     transactions,
@@ -78,49 +99,6 @@ const Overview = () => {
   ) {
     return b - a;
   });
-
-  const transactionsGroupedByExpenseOrIncome = _.groupBy(
-    transactions,
-    transaction => transaction.categories.type
-  );
-
-  const expenseTransactionsGroupedByCategory = _.groupBy(
-    transactionsGroupedByExpenseOrIncome.expense,
-    transaction => transaction.categories.name
-  );
-  const incomeTransactionsGroupedByCategory = _.groupBy(
-    transactionsGroupedByExpenseOrIncome.income,
-    transaction => transaction.categories.name
-  );
-  const expenseTransactionsInfo = Object.keys(
-    expenseTransactionsGroupedByCategory
-  )
-    .map(key => {
-      return {
-        name: key,
-        totalAmount: expenseTransactionsGroupedByCategory[key].reduce(
-          (a, b) => a + b.amount,
-          0
-        ),
-        totalTransactions: expenseTransactionsGroupedByCategory[key].length,
-      };
-    })
-    .sort((a, b) => b.totalAmount - a.totalAmount);
-
-  const incomeTransactionsInfo = Object.keys(
-    incomeTransactionsGroupedByCategory
-  )
-    .map(key => {
-      return {
-        name: key,
-        totalAmount: incomeTransactionsGroupedByCategory[key].reduce(
-          (a, b) => a + b.amount,
-          0
-        ),
-        totalTransactions: incomeTransactionsGroupedByCategory[key].length,
-      };
-    })
-    .sort((a, b) => b.totalAmount - a.totalAmount);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const tabsRef = useRef();
@@ -153,22 +131,18 @@ const Overview = () => {
   const [amount, setAmount] = useState(0.0);
 
   const handleDate = e => {
-    console.log(e.target.value);
     setDate(e.target.value);
   };
 
   const handleWallet = e => {
-    console.log(e.target.value);
     setWallet(e.target.value);
   };
 
   const handleSelectType = e => {
-    console.log(e.target.value);
     setSelectType(e.target.value);
   };
 
   const handleSelectCategory = e => {
-    console.log(e.target.value);
     setSelectCategory(e.target.value);
   };
 
@@ -194,38 +168,78 @@ const Overview = () => {
         amount: amount,
       })
       .select(`*, categories (*), wallets (*)`);
+    console.log(data);
     setWallet('1');
     setSelectType('expense');
     setSelectCategory('1');
     setDescription('');
     setAmount(0.0);
-    setAllTransactions([data[0], ...transactions]);
+    // setAllTransactions([data[0], ...transactions]);
+    dispatch(createTransaction());
     onClose();
   };
 
+  if (isLoading)
+    return (
+      <Layout>
+        <Flex
+          w="100%"
+          marginTop="30vh"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Spinner
+            size="xl"
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="secondaryBlue"
+          />
+        </Flex>
+      </Layout>
+    );
+
   return (
     <Layout>
-      {!isLoading ? (
+      {transactions ? (
         <Flex gap="30px" direction="column">
-          <Flex gap="25px" direction="row" w="100%">
-            <Alert status="error">
-              <AlertIcon />
-              <AlertTitle>You're spending too much on cafes!</AlertTitle>
-              <AlertDescription>
-                Do not indulge in expensive cafes or restaurants all the time.
-              </AlertDescription>
-            </Alert>
-            <Button
-              onClick={onOpen}
-              colorScheme="blue"
-              variant="solid"
-              alignSelf="self-end"
+          <Flex direction="column" gap="1rem">
+            <CategoriseModal
+              uncategorisedTransactions={uncategorizedTransactions}
+              expenseCategories={expenseCategories}
+              incomeCategories={incomeCategories}
+            />
+            <Flex
+              gap="25px"
+              direction="row"
+              w="100%"
+              justifyContent="center"
+              alignItems="center"
             >
-              Add Transaction
-            </Button>
+              <Alert status="error">
+                <AlertIcon />
+                <AlertTitle>You have exceeded your budget for Food!</AlertTitle>
+                <AlertDescription>
+                  Do not indulge in expensive cafes or restaurants all the time.
+                </AlertDescription>
+              </Alert>
+              <Button
+                onClick={onOpen}
+                colorScheme="blue"
+                variant="solid"
+                alignSelf="self-end"
+              >
+                Add Transaction
+              </Button>
+            </Flex>
           </Flex>
           <Flex gap="25px" direction="row" wrap={true} w="100%">
-            <Card w="25%">
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="purple.300"
+            >
               <Stat>
                 <CardBody>
                   <StatLabel>Total Balance</StatLabel>
@@ -234,7 +248,12 @@ const Overview = () => {
                 </CardBody>
               </Stat>
             </Card>
-            <Card w="25%">
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="blue.300"
+            >
               <Stat>
                 <CardBody>
                   <StatLabel>Nett Change</StatLabel>
@@ -243,20 +262,34 @@ const Overview = () => {
                 </CardBody>
               </Stat>
             </Card>
-            <Card w="25%">
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="green"
+            >
               <Stat>
                 <CardBody>
                   <StatLabel>Total Income</StatLabel>
-                  <StatNumber>{`MYR ${totalIncome.toFixed(2)}`}</StatNumber>
+                  <StatNumber color="green">{`MYR ${totalIncome.toFixed(
+                    2
+                  )}`}</StatNumber>
                   <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                 </CardBody>
               </Stat>
             </Card>
-            <Card w="25%">
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="red.500"
+            >
               <Stat>
                 <CardBody>
                   <StatLabel>Total Expense</StatLabel>
-                  <StatNumber>{`MYR ${totalExpense.toFixed(2)}`}</StatNumber>
+                  <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
+                    2
+                  )}`}</StatNumber>
                   <StatHelpText>Jan 1 - Jan 31</StatHelpText>
                 </CardBody>
               </Stat>
@@ -274,7 +307,7 @@ const Overview = () => {
                     <ResponsiveContainer width={width} height={300}>
                       <PieChart width="100%" height="100%">
                         <Pie
-                          data={incomeTransactionsInfo}
+                          data={incomeTransactionsGroupedByCategoryAndSorted}
                           cx="50%"
                           cy="50%"
                           // labelLine={true}
@@ -284,14 +317,16 @@ const Overview = () => {
                           innerRadius={40}
                           outerRadius={80}
                           fill="#8884d8"
-                          dataKey="totalAmount"
+                          dataKey="amount"
                         >
-                          {incomeTransactionsInfo.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
-                            />
-                          ))}
+                          {incomeTransactionsGroupedByCategoryAndSorted.map(
+                            (entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                              />
+                            )
+                          )}
                           <LabelList
                             dataKey="name"
                             position="outside"
@@ -310,15 +345,17 @@ const Overview = () => {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {incomeTransactionsInfo.map(transaction => (
-                            <Tr key={transaction.name}>
-                              <Td>{transaction.name}</Td>
-                              <Td>{transaction.totalTransactions}</Td>
-                              <Td isNumeric>
-                                {transaction.totalAmount.toFixed(2)}
-                              </Td>
-                            </Tr>
-                          ))}
+                          {incomeTransactionsGroupedByCategoryAndSorted.map(
+                            transaction => (
+                              <Tr key={transaction.name}>
+                                <Td>{transaction.name}</Td>
+                                <Td>{transaction.count}</Td>
+                                <Td isNumeric>
+                                  {transaction.amount.toFixed(2)}
+                                </Td>
+                              </Tr>
+                            )
+                          )}
                         </Tbody>
                       </Table>
                     </TableContainer>
@@ -327,7 +364,7 @@ const Overview = () => {
                     <ResponsiveContainer width={width} height={300}>
                       <PieChart width="100%" height="100%">
                         <Pie
-                          data={expenseTransactionsInfo}
+                          data={expenseTransactionsGroupedByCategoryAndSorted}
                           cx="50%"
                           cy="50%"
                           // labelLine={true}
@@ -337,14 +374,16 @@ const Overview = () => {
                           innerRadius={40}
                           outerRadius={80}
                           fill="#8884d8"
-                          dataKey="totalAmount"
+                          dataKey="amount"
                         >
-                          {expenseTransactionsInfo.map((entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
-                            />
-                          ))}
+                          {expenseTransactionsGroupedByCategoryAndSorted.map(
+                            (entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                              />
+                            )
+                          )}
                           <LabelList
                             dataKey="name"
                             position="outside"
@@ -363,15 +402,17 @@ const Overview = () => {
                           </Tr>
                         </Thead>
                         <Tbody>
-                          {expenseTransactionsInfo.map(transaction => (
-                            <Tr key={transaction.name}>
-                              <Td>{transaction.name}</Td>
-                              <Td>{transaction.totalTransactions}</Td>
-                              <Td isNumeric>
-                                {transaction.totalAmount.toFixed(2)}
-                              </Td>
-                            </Tr>
-                          ))}
+                          {expenseTransactionsGroupedByCategoryAndSorted.map(
+                            transaction => (
+                              <Tr key={transaction.name}>
+                                <Td>{transaction.name}</Td>
+                                <Td>{transaction.count}</Td>
+                                <Td isNumeric>
+                                  {transaction.amount.toFixed(2)}
+                                </Td>
+                              </Tr>
+                            )
+                          )}
                         </Tbody>
                       </Table>
                     </TableContainer>
@@ -416,21 +457,18 @@ const Overview = () => {
                           onChange={handleSelectCategory}
                           value={selectCategory}
                         >
-                          {selectType === 'expense' ? (
-                            <>
-                              <option value="1">Food</option>
-                              <option value="2">Transport</option>
-                              <option value="3">Entertainment</option>
-                              <option value="4">Shopping</option>
-                              <option value="5">Others</option>
-                            </>
-                          ) : (
-                            <>
-                              <option value="6">Salary</option>
-                              <option value="7">Allowance</option>
-                              <option value="8">Others</option>
-                            </>
-                          )}
+                          {selectType === 'expense'
+                            ? expenseCategories.map(category => (
+                                <option value={category.id}>
+                                  {category.name}
+                                </option>
+                              ))
+                            : incomeCategories.map(category => (
+                                <option value={category.id}>
+                                  {category.name}
+                                </option>
+                              ))}
+                          <option value={11}>Uncategorised</option>
                         </Select>
                       </Box>
                       <Box alignItems="left" width="100%">
@@ -493,7 +531,13 @@ const Overview = () => {
                             {transactionsGroupedByDate[dateKey].map(
                               transaction => (
                                 <Tr>
-                                  <Td>{transaction.categories.name}</Td>
+                                  <Td>
+                                    <Tag
+                                      colorScheme={transaction.categories.color}
+                                    >
+                                      {transaction.categories.name}
+                                    </Tag>
+                                  </Td>
                                   <Td>{transaction.wallets.name}</Td>
                                   <Td>{transaction.description}</Td>
                                   <Td isNumeric>

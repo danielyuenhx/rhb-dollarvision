@@ -7,7 +7,6 @@ import UserSummary from './userSummary';
 // import UserDetails from './userDetails';
 
 const Profile = () => {
-
   return (
     <Layout>
       <Flex gap="30px" direction="column">

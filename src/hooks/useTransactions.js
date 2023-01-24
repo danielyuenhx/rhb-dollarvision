@@ -1,54 +1,41 @@
-import { useEffect, useState } from 'react';
-import supabase from '../supabaseClient';
+import { api } from '../api';
+import { useQuery } from 'react-query';
+import { searchParamsToString } from '../api/utils';
 
-// NOTE: Make sure categoryIds is an array from a useState hook!
-export const useTransactions = (
+const getTransactions = async (walletId, categoryIds, startDate, endDate) => {
+  let query = {};
+  if (walletId) query.walletId = walletId;
+  if (categoryIds) query.categoryIds = categoryIds;
+  if (startDate) query.startDate = startDate;
+  if (endDate) query.endDate = endDate;
+
+  try {
+    const response = await api.get(
+      '/transactions' + searchParamsToString(query)
+    );
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error;
+  }
+};
+
+export const useTransactions = ({
   walletId = undefined,
-  categoryIds,
+  categoryIds = undefined,
   startDate = undefined,
-  endDate = undefined
-) => {
-  const [allTransactionsByWallet, setAllTransactionsByWallet] = useState([]);
-  const [transactions, setTransactions] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
+  endDate = undefined,
+} = {}) => {
+  const { data, ...others } = useQuery({
+    queryKey: ['transactions', walletId, categoryIds, startDate, endDate],
+    queryFn: () => getTransactions(walletId, categoryIds, startDate, endDate),
+  });
 
-  // [1, 2, 3]
-  const getTransactions = async (walletId, categoryIds, startDate, endDate) => {
-    setIsLoading(true);
-    let query = supabase.from('transactions').select(`*, categories (*)`);
+  // all attributes in data
+  // data (all transactions), count, totalIncome, totalExpense, nettChange, incomeTransactionsGroupedByCategoryAndSorted, expenseTransactionsGroupedByCategoryAndSorted, uncategorizedTransactions
 
-    if (walletId) {
-      query.eq('wallet_id', walletId);
-    }
-
-    if (categoryIds && categoryIds.length !== 0) {
-      query = query.in('category_id', categoryIds);
-    }
-    if (startDate && endDate) {
-      query = query.lte('date', endDate).gte('date', startDate);
-    }
-    query = query
-      .order('date', { ascending: false })
-      .order('created_at', { ascending: false });
-
-    const { data: transactions } = await query;
-    setTransactions(transactions);
-
-    // get all transactions based on wallet id
-    let { data: allTransactionsByWallet } = await supabase
-      .from('transactions')
-      .select(`*, categories (*)`)
-      .eq('wallet_id', walletId)
-      .order('date', { ascending: false })
-      .order('created_at', { ascending: false });
-
-    setAllTransactionsByWallet(allTransactionsByWallet);
-    setIsLoading(false);
+  return {
+    ...data,
+    ...others,
   };
-
-  useEffect(() => {
-    getTransactions(walletId, categoryIds, startDate, endDate);
-  }, [walletId, categoryIds, startDate, endDate]);
-
-  return { transactions, allTransactionsByWallet, isLoading };
 };
