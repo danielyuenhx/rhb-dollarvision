@@ -48,10 +48,10 @@ const FirstPage = props => {
           </SlideFade>
 
           <SlideFade direction="left" in={props.isOpen} delay={1.2}>
-            <Flex width="100%" direction="column" marginY="5%">
+            <Flex width="80%" direction="column" marginY="5%" marginX="auto">
               <Text fontSize="2xl">
-                We have tracked your spending behavour throughout the year, and
-                we are about to show you your spending behaviour!
+                We have tracked your spending behaviour and expenses throughout
+                the year.
               </Text>
             </Flex>
           </SlideFade>
