@@ -21,7 +21,6 @@ import {
   Tr,
   useDisclosure,
   Select,
-  Tag,
 } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
 import { categoriseTransaction } from '../redux/transactionSlice';

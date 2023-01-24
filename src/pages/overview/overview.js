@@ -41,10 +41,20 @@ import {
   NumberInput,
   NumberInputField,
   Tag,
+  CloseButton,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
-import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from 'recharts';
+import {
+  ToolTip,
+  Sankey,
+  PieChart,
+  Pie,
+  Cell,
+  ResponsiveContainer,
+  LabelList,
+  Tooltip,
+} from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
 import _ from 'lodash';
 import supabase from '../../supabaseClient';
@@ -54,6 +64,7 @@ import CategoriseModal from '../../components/categoriseModal';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCategories } from '../../hooks/useCategories';
 import { useTotalBalance } from '../../hooks/useTotalBalance';
+import Node from '../../components/node';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -179,8 +190,37 @@ const Overview = () => {
     setDescription('');
     setAmount(0.0);
     // setAllTransactions([data[0], ...transactions]);
-    dispatch(createTransaction());
+    // dispatch(createTransaction());
+    refetchTransactions();
+    refetchTotalBalance();
     onClose();
+  };
+
+  const {
+    isOpen: isOpenSankey,
+    onOpen: onOpenSankey,
+    onClose: onCloseSankey,
+  } = useDisclosure();
+
+  const data0 = {
+    nodes: [
+      { name: 'Income' },
+      { name: 'Expenses' },
+      { name: 'Food' },
+      { name: 'Shopping' },
+      { name: 'Piggy-bank' },
+      { name: 'Balance' },
+      { name: 'Previous balance' },
+      { name: 'Total assets'},
+    ],
+    links: [
+      { source: 0, target: 7, value: 1000.7 },
+      { source: 1, target: 2, value: 300.7 },
+      { source: 1, target: 3, value: 300.7 },
+      { source: 7, target: 4, value: 1000 },
+      { source: 7, target: 1, value: 399.3 },
+      { source: 6, target: 7, value: 399.3 },
+    ],
   };
 
   if (isLoading)
@@ -238,12 +278,57 @@ const Overview = () => {
               </Button>
             </Flex>
           </Flex>
+
+          <Modal
+            isOpen={isOpenSankey}
+            onClose={onCloseSankey}
+            scrollBehavior="inside"
+            motionPreset="slideInBottom"
+            size="5xl"
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Overview</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <Sankey
+                  width={960}
+                  height={500}
+                  data={data0}
+                  node={<Node />}
+                  nodePadding={50}
+                  margin={{
+                    left:100,
+                    right:100,
+                    top: 100,
+                    bottom: 100,
+                  }}
+                  iterations={0}
+                  link={{ stroke: '#77c878' }}
+                >
+                  <Tooltip />
+                </Sankey>
+              </ModalBody>
+              <ModalFooter>
+                <Button
+                  colorScheme="blue"
+                  variant="solid"
+                  alignSelf="self-end"
+                  onClick={onCloseSankey}
+                >
+                  Close
+                </Button>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
           <Flex gap="25px" direction="row" wrap={true} w="100%">
             <Card
               w="25%"
               borderRadius="0 0 0.375rem 0.375rem"
               borderTop="3px solid"
               borderTopColor="purple.300"
+              onClick={onOpenSankey}
+              cursor="pointer"
             >
               <Stat>
                 <CardBody>
