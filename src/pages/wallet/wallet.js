@@ -33,6 +33,7 @@ import {
   Icon,
   IconButton,
   Input,
+  IconButton,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
@@ -42,7 +43,7 @@ import { useTransactions } from '../../hooks/useTransactions';
 import { useWallets } from '../../hooks/useWallets';
 import _ from 'lodash';
 import CategoriseModal from '../../components/categoriseModal';
-import { FaChevronLeft, FaChevronRight, FaCog } from 'react-icons/fa';
+import { FaChevronLeft, FaChevronRight, FaRegStar, FaStar } from 'react-icons/fa';
 import { useCategories } from '../../hooks/useCategories';
 import { useTotalBalance } from '../../hooks/useTotalBalance';
 import {
@@ -149,6 +150,14 @@ const Wallet = () => {
     '#000000',
   ];
 
+  const getChangedPos = (currentPos, newPos) => {
+    console.log(currentPos, newPos);
+  };
+
+  const favouriteWalletHandler = () => {
+    console.log('favourited');
+  };
+
   const moveToPreviousMonth = () => {
     setPreviousMonth(
       selectedStartDate,
@@ -191,13 +200,29 @@ const Wallet = () => {
         />
         <Flex gap="30px" direction="row">
           <Flex gap="25px" direction="column" w="40%">
-            <Select value={selectedWalletId} onChange={handleWalletChange}>
-              {wallets.map(wallet => (
-                <option key={wallet.id} value={wallet.id}>
-                  {wallet.name}
-                </option>
-              ))}
-            </Select>
+            <Flex gap="2rem" alignItems="center">
+              <Select value={selectedWalletId} onChange={handleWalletChange}>
+                {wallets.map(wallet => (
+                  <option key={wallet.id} value={wallet.id}>
+                    {wallet.name}
+                  </option>
+                ))}
+              </Select>
+              <IconButton
+                onClick={favouriteWalletHandler}
+                icon={
+                  selectedWallet?.isFav ? (
+                    <FaStar color="yellow" stroke="black" strokeWidth="10px" />
+                  ) : (
+                    <FaRegStar stroke="gray" strokeWidth="0.1px" />
+                  )
+                }
+                w="2rem"
+                h="100%"
+                cursor="pointer"
+                padding="0rem"
+              />
+            </Flex>
             <Tabs isFitted variant="enclosed" ref={tabsRef}>
               <TabList mb="1em">
                 <Tab>Income</Tab>
@@ -350,24 +375,25 @@ const Wallet = () => {
                 {selectedWallet && selectedWallet.type === 'custom' && (
                   <Button>Add Transaction</Button>
                 )}
-                <Icon
-                  onClick={onOpen}
-                  as={FaCog}
-                  w="2rem"
-                  h="2rem"
-                  cursor="pointer"
-                  padding="0.25rem"
-                  marginRight="1rem"
-                />
               </Flex>
             </Flex>
 
             <Modal onClose={onClose} isOpen={isOpen} isCentered>
               <ModalOverlay />
               <ModalContent>
-                <ModalHeader>Wallet Settings</ModalHeader>
+                <ModalHeader>Wallets Settings</ModalHeader>
                 <ModalCloseButton />
-                <ModalBody>Favourite</ModalBody>
+                <ModalBody>
+                  <Draggable onPosChange={getChangedPos}>
+                    {['Hello', 'Hi', 'How are you', 'Cool'].map((word, idx) => {
+                      return (
+                        <div key={idx} className="flex-item">
+                          {word}
+                        </div>
+                      );
+                    })}
+                  </Draggable>
+                </ModalBody>
                 <ModalFooter>
                   <Button onClick={onClose}>Close</Button>
                 </ModalFooter>
