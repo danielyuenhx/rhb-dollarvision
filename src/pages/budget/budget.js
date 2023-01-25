@@ -1,13 +1,17 @@
 import React, { useState } from 'react';
 import Layout from '../../components/layout';
-import { Button, Flex, Spinner } from '@chakra-ui/react';
-
+import { Button, Flex, Spinner, useDisclosure, Modal, ModalOverlay } from '@chakra-ui/react';
 import ItemCard from './itemCard';
 import ItemDetails from './itemDetails';
 import { useBudgets } from '../../hooks/useBudgets';
 import { useBudgetById } from '../../hooks/useBudgetById';
+import { useDispatch, useSelector } from 'react-redux';
+import { updateModalName } from '../../redux/modalSlice';
+import AddModal from './modals/addModals';
 
 const Budget = () => {
+  const dispatch = useDispatch();
+  const { isOpen, onOpen, onClose } = useDisclosure();
   let today = new Date();
   const offset = today.getTimezoneOffset();
   today = new Date(today.getTime() - offset * 60 * 1000);
@@ -55,6 +59,17 @@ const Budget = () => {
 
   return (
     <Layout>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        isCentered
+        size="xl"
+        scrollBehavior={'inside'}
+        closeOnOverlayClick={false}
+      >
+        <ModalOverlay />
+        <AddModal />
+      </Modal>
       <Flex gap="30px" direction="row">
         <Flex gap="25px" direction="column" w="50%">
           {budgets &&
@@ -73,6 +88,7 @@ const Budget = () => {
             w="auto"
             _hover={{ transform: '' }}
             float="right"
+            onClick={onOpen}
           >
             {' '}
             Add Budget
