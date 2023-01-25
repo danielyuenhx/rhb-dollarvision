@@ -43,12 +43,10 @@ import {
   NumberInputField,
   Tag,
   IconButton,
-  CloseButton,
 } from '@chakra-ui/react';
 import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
 import {
-  ToolTip,
   Sankey,
   PieChart,
   Pie,
@@ -60,8 +58,6 @@ import {
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
 import _ from 'lodash';
 import supabase from '../../supabaseClient';
-import { useDispatch } from 'react-redux';
-import { createTransaction } from '../../redux/transactionSlice';
 import CategoriseModal from '../../components/categoriseModal';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCategories } from '../../hooks/useCategories';
@@ -85,7 +81,6 @@ const parseAmount = (amount, categoryType) => {
 };
 
 const Overview = () => {
-  const dispatch = useDispatch();
   const [selectedStartDate, setSelectedStartDate] = useState(firstDayOfMonth);
   const [selectedEndDate, setSelectedEndDate] = useState(lastDayOfMonth);
   const rightButtonDisabled =
@@ -122,7 +117,7 @@ const Overview = () => {
     data: totalBalance,
     isLoading: totalBalanceIsLoading,
     refetch: refetchTotalBalance,
-  } = useTotalBalance(selectedEndDate);
+  } = useTotalBalance(selectedStartDate, selectedEndDate);
 
   const isLoading =
     transactionsAreLoading || categoriesAreLoading || totalBalanceIsLoading;

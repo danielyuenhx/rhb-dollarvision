@@ -31,7 +31,6 @@ import {
   Spinner,
   Text,
   Tag,
-  Icon,
   IconButton,
   Input,
   FormControl,
@@ -126,7 +125,7 @@ const Wallet = () => {
     data: totalBalance,
     isLoading: totalBalanceIsLoading,
     refetch: refetchTotalBalance,
-  } = useTotalBalance(selectedEndDate, selectedWalletId);
+  } = useTotalBalance(selectedStartDate, selectedEndDate, selectedWalletId);
   const isLoading =
     walletsAreLoading ||
     categoriesAreLoading ||
