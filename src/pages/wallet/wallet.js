@@ -33,7 +33,6 @@ import {
   Icon,
   IconButton,
   Input,
-  IconButton,
 } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layout';
