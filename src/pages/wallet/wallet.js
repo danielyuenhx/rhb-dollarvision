@@ -33,6 +33,14 @@ import {
   Icon,
   IconButton,
   Input,
+  FormControl,
+  Box,
+  FormLabel,
+  VStack,
+  NumberInput,
+  NumberInputField,
+  Image,
+  useToast,
 } from '@chakra-ui/react';
 import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layout';
@@ -179,7 +187,7 @@ const Wallet = () => {
             refetchWallets();
           });
         }
-      }, 250)
+      }, 150)
     );
   };
 
@@ -193,6 +201,45 @@ const Wallet = () => {
 
   const moveToNextMonth = () => {
     setNextMonth(selectedStartDate, setSelectedStartDate, setSelectedEndDate);
+  };
+  const [name, setName] = useState('');
+  const [balance, setBalance] = useState(0);
+
+  const handleName = e => {
+    setName(e.target.value);
+  };
+
+  const handleBalance = async e => {
+    setBalance(e.target.value);
+  };
+
+  const toast = useToast();
+
+  const handleSubmit = async e => {
+    e.preventDefault();
+    try {
+      const data = await api.createWallet(name, balance);
+      refetchWallets();
+      toast({
+        title: 'Wallet created!',
+        description: `Custom wallet ${name} created with an initial balance of RM${balance}.`,
+        status: 'success',
+        duration: 5000,
+        isClosable: true,
+      });
+      setName('');
+      setBalance(0);
+      onClose();
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: 'Failed',
+        description: `An error occured.`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
   };
 
   if (isLoading) {
@@ -400,17 +447,79 @@ const Wallet = () => {
                 {selectedWallet && selectedWallet.type === 'custom' && (
                   <Button>Add Transaction</Button>
                 )}
+                <Button colorScheme="blue" variant="solid" onClick={onOpen}>
+                  Add Wallet
+                </Button>
               </Flex>
             </Flex>
 
             <Modal onClose={onClose} isOpen={isOpen} isCentered>
               <ModalOverlay />
               <ModalContent>
-                <ModalHeader>Wallets Settings</ModalHeader>
+                <ModalHeader>Add Wallet</ModalHeader>
                 <ModalCloseButton />
-                <ModalBody></ModalBody>
+                <ModalBody>
+                  <FormControl>
+                    <VStack spacing={6}>
+                      <Box alignItems="left" width="100%">
+                        <FormLabel fontSize="sm">Wallet Name</FormLabel>
+                        <Input
+                          placeholder="Name"
+                          onChange={handleName}
+                          value={name}
+                        />
+                      </Box>
+                      <Box alignItems="left" width="100%">
+                        <FormLabel fontSize="sm">Initial balance</FormLabel>
+                        <NumberInput defaultValue={0} min={0} precision={2}>
+                          <NumberInputField
+                            onChange={handleBalance}
+                            value={balance}
+                          />
+                        </NumberInput>
+                      </Box>
+                      <Flex direction="column" gap={3} w="100%">
+                        <Button
+                          w="100%"
+                          backgroundColor="#f1592a"
+                          color="white"
+                          _hover={{ background: '#f1592a !important' }}
+                        >
+                          <Image
+                            w="1.5rem"
+                            h="1.5rem"
+                            src="https://static.vecteezy.com/system/resources/previews/012/223/540/non_2x/shopee-element-symbol-shopee-food-shopee-icon-free-vector.jpg"
+                          />
+                          &nbsp;Import from ShopeePay
+                        </Button>
+                        <Button
+                          w="100%"
+                          backgroundColor="#245dab"
+                          color="white"
+                          _hover={{ background: '#245dab !important' }}
+                        >
+                          <Image
+                            w="1.25rem"
+                            h="1.25rem"
+                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Touch_%27n_Go_eWallet_logo.svg/768px-Touch_%27n_Go_eWallet_logo.svg.png?20200518080317"
+                          />
+                          &nbsp;&nbsp;Import from TnG
+                        </Button>
+                      </Flex>
+                    </VStack>
+                  </FormControl>
+                </ModalBody>
                 <ModalFooter>
-                  <Button onClick={onClose}>Close</Button>
+                  <Flex gap="1rem">
+                    <Button onClick={onClose}>Close</Button>
+                    <Button
+                      onClick={handleSubmit}
+                      colorScheme="blue"
+                      variant="solid"
+                    >
+                      Add Wallet
+                    </Button>
+                  </Flex>
                 </ModalFooter>
               </ModalContent>
             </Modal>

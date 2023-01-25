@@ -18,5 +18,7 @@ export const getTransactions = (
 export const categoriseTransaction = (transactionId, categoryId) =>
   api.put(`/transactions/${transactionId}`, { categoryId });
 
+export const createWallet = (name, initialBalance) =>
+  api.post(`/wallets`, { name, initialBalance });
 export const favouriteWallet = (walletId, isFav) =>
   api.put(`/wallets/${walletId}`, { isFav });
