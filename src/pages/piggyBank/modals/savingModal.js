@@ -21,6 +21,7 @@ import { updateModalName } from '../../../redux/modalSlice';
 const SavingModal = () => {
   const [sliderValue, setSliderValue] = useState(10);
   const [amount, setAmount] = useState(10000);
+  const [initialDesposit, setInitialDeposit] = useState(3000);
   const current = useSelector(state => state.modal.currentModalName);
   const dispatch = useDispatch();
 
@@ -44,6 +45,10 @@ const SavingModal = () => {
     } else {
       dispatch(updateModalName('Completed'));
     }
+  };
+
+  const handleDepositChange = event => {
+    setInitialDeposit(event.target.value);
   };
 
   return (
@@ -78,6 +83,20 @@ const SavingModal = () => {
                 placeholder="10000"
                 defaultValue={amount}
                 onChange={handleChange}
+              />
+            </InputGroup>
+          </Flex>
+
+          {/* Initial deposit */}
+          <Flex direction="column" gap="20px" justifyContent="space-between">
+            <Text as="b">Initial deposit?</Text>
+            <InputGroup>
+              <InputLeftAddon children="RM" />
+              <Input
+                type="number"
+                placeholder="5000"
+                defaultValue={initialDesposit}
+                onChange={handleDepositChange}
               />
             </InputGroup>
           </Flex>

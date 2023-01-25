@@ -1,6 +1,15 @@
 import React, { useState } from 'react';
 import Layout from '../../components/layout';
-import { Button, Flex, IconButton, Input, Spinner } from '@chakra-ui/react';
+import {
+  Button,
+  Flex,
+  IconButton,
+  Input,
+  Spinner,
+  useDisclosure,
+  Modal,
+  ModalOverlay
+} from '@chakra-ui/react';
 
 import ItemCard from './itemCard';
 import ItemDetails from './itemDetails';
@@ -14,8 +23,10 @@ import {
   setPreviousMonth,
   today,
 } from '../../helpers';
+import AddModal from './modals/addModals';
 
 const Budget = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
   const [selectedStartDate, setSelectedStartDate] = useState(firstDayOfMonth);
   const [selectedEndDate, setSelectedEndDate] = useState(lastDayOfMonth);
   const rightButtonDisabled =
@@ -69,6 +80,17 @@ const Budget = () => {
 
   return (
     <Layout>
+      <Modal
+        isOpen={isOpen}
+        onClose={onClose}
+        isCentered
+        size="xl"
+        scrollBehavior={'inside'}
+        closeOnOverlayClick={false}
+      >
+        <ModalOverlay />
+        <AddModal />
+      </Modal>
       <Flex gap="20px" direction="column">
         <Flex gap="20px" direction="column" alignItems="flex-end">
           <Flex
@@ -101,7 +123,7 @@ const Budget = () => {
               />
             </Flex>
             <Button
-              // onClick={onOpen}
+              onClick={onOpen}
               colorScheme="blue"
               variant="solid"
               alignSelf="self-end"

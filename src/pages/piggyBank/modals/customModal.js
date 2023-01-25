@@ -22,6 +22,7 @@ const CustomModal = () => {
   const [sliderValue, setSliderValue] = useState(10);
   const [amount, setAmount] = useState(80000);
   const [customItem, setCustomItem] = useState('iPhone 14');
+  const [initialDesposit, setInitialDeposit] = useState(3000);
   // const current = useSelector(state => state.modal.currentModalName);
   const dispatch = useDispatch();
 
@@ -42,6 +43,10 @@ const CustomModal = () => {
 
   const proceedHandler = async () => {
     dispatch(updateModalName('Completed'));
+  };
+
+  const handleDepositChange = event => {
+    setInitialDeposit(event.target.value);
   };
 
   return (
@@ -78,6 +83,36 @@ const CustomModal = () => {
             </InputGroup>
           </Flex>
           {/* How long */}
+
+          {/* How much */}
+          <Flex direction="column" gap="20px">
+            <Text as="b">How much?</Text>
+            <InputGroup>
+              <InputLeftAddon children="RM" />
+              <Input
+                type="number"
+                placeholder="80000"
+                defaultValue={amount}
+                onChange={handleAmountChange}
+              />
+            </InputGroup>
+          </Flex>
+
+
+          {/* Initial deposit */}
+          <Flex direction="column" gap="20px" justifyContent="space-between">
+            <Text as="b">Initial deposit?</Text>
+            <InputGroup>
+              <InputLeftAddon children="RM" />
+              <Input
+                type="number"
+                placeholder="5000"
+                defaultValue={initialDesposit}
+                onChange={handleDepositChange}
+              />
+            </InputGroup>
+          </Flex>
+
           <Flex direction="column">
             <Text as="b">How many years do you want to save this for?</Text>
             <Slider
@@ -104,19 +139,6 @@ const CustomModal = () => {
               </SliderTrack>
               <SliderThumb />
             </Slider>
-          </Flex>
-          {/* How much */}
-          <Flex direction="column" gap="20px">
-            <Text as="b">How much?</Text>
-            <InputGroup>
-              <InputLeftAddon children="RM" />
-              <Input
-                type="number"
-                placeholder="80000"
-                defaultValue={amount}
-                onChange={handleAmountChange}
-              />
-            </InputGroup>
           </Flex>
 
           <Flex direction="column">
