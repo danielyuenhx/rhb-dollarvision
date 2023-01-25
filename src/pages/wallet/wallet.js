@@ -35,7 +35,7 @@ import {
   Input,
   IconButton,
 } from '@chakra-ui/react';
-import React, { useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../../components/layout';
 import { PieChart, Pie, Cell, ResponsiveContainer, LabelList } from 'recharts';
 import { useContainerDimensions } from '../../hooks/useContainerDimensions';
@@ -150,12 +150,24 @@ const Wallet = () => {
     '#000000',
   ];
 
-  const getChangedPos = (currentPos, newPos) => {
-    console.log(currentPos, newPos);
-  };
+  const [isFav, setIsFav] = useState(selectedWallet?.isFav);
+  const [timeoutId, setTimeoutId] = useState();
+
+  useEffect(() => {
+    setIsFav(selectedWallet.isFav);
+  }, [selectedWallet]);
 
   const favouriteWalletHandler = () => {
-    console.log('favourited');
+    setIsFav(!isFav);
+    if (timeoutId) {
+      clearTimeout(timeoutId);
+    }
+
+    setTimeoutId(
+      setTimeout(() => {
+        console.log(!isFav + 'updated');
+      }, 1000)
+    );
   };
 
   const moveToPreviousMonth = () => {
@@ -211,10 +223,10 @@ const Wallet = () => {
               <IconButton
                 onClick={favouriteWalletHandler}
                 icon={
-                  selectedWallet?.isFav ? (
+                  isFav ? (
                     <FaStar color="yellow" stroke="black" strokeWidth="10px" />
                   ) : (
-                    <FaRegStar stroke="gray" strokeWidth="0.1px" />
+                    <FaRegStar fill="gray" strokeWidth="0.1px" />
                   )
                 }
                 w="2rem"
@@ -383,17 +395,7 @@ const Wallet = () => {
               <ModalContent>
                 <ModalHeader>Wallets Settings</ModalHeader>
                 <ModalCloseButton />
-                <ModalBody>
-                  <Draggable onPosChange={getChangedPos}>
-                    {['Hello', 'Hi', 'How are you', 'Cool'].map((word, idx) => {
-                      return (
-                        <div key={idx} className="flex-item">
-                          {word}
-                        </div>
-                      );
-                    })}
-                  </Draggable>
-                </ModalBody>
+                <ModalBody></ModalBody>
                 <ModalFooter>
                   <Button onClick={onClose}>Close</Button>
                 </ModalFooter>
