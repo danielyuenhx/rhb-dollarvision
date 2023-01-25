@@ -8,7 +8,8 @@ import {
   Spinner,
   useDisclosure,
   Modal,
-  ModalOverlay
+  ModalOverlay,
+  Text,
 } from '@chakra-ui/react';
 
 import ItemCard from './itemCard';
@@ -80,6 +81,47 @@ const Budget = () => {
 
   return (
     <Layout>
+      <Flex
+        gap="25px"
+        direction="row"
+        w="100%"
+        justifyContent="space-between"
+        alignItems="center"
+        mt={4}
+        mb="20px"
+      >
+        <Text fontSize="4xl" fontWeight="extrabold">
+          Wallets
+        </Text>
+        <Flex gap="1rem">
+          <Flex gap="10px" w="100%">
+            <IconButton
+              icon={<FaChevronLeft />}
+              onClick={moveToPreviousMonth}
+            />
+            <Input
+              type="text"
+              value={`${new Date(selectedStartDate).toLocaleString('default', {
+                month: 'long',
+              })}, ${new Date(selectedStartDate).getFullYear()}`}
+              readOnly
+            />
+            <IconButton
+              icon={<FaChevronRight />}
+              onClick={moveToNextMonth}
+              disabled={rightButtonDisabled}
+            />
+          </Flex>
+          <Button
+            onClick={onOpen}
+            colorScheme="blue"
+            variant="solid"
+            alignSelf="self-end"
+          >
+            Add Budget
+          </Button>
+        </Flex>
+      </Flex>
       <Modal
         isOpen={isOpen}
         onClose={onClose}
@@ -92,46 +134,6 @@ const Budget = () => {
         <AddModal />
       </Modal>
       <Flex gap="20px" direction="column">
-        <Flex gap="20px" direction="column" alignItems="flex-end">
-          <Flex
-            gap="25px"
-            direction="row"
-            w="50%"
-            justifyContent="flex-end"
-            alignItems="center"
-            mt={4}
-          >
-            <Flex gap="10px" w="100%">
-              <IconButton
-                icon={<FaChevronLeft />}
-                onClick={moveToPreviousMonth}
-              />
-              <Input
-                type="text"
-                value={`${new Date(selectedStartDate).toLocaleString(
-                  'default',
-                  {
-                    month: 'long',
-                  }
-                )}, ${new Date(selectedStartDate).getFullYear()}`}
-                readOnly
-              />
-              <IconButton
-                icon={<FaChevronRight />}
-                onClick={moveToNextMonth}
-                disabled={rightButtonDisabled}
-              />
-            </Flex>
-            <Button
-              onClick={onOpen}
-              colorScheme="blue"
-              variant="solid"
-              alignSelf="self-end"
-            >
-              Add Budget
-            </Button>
-          </Flex>
-        </Flex>
         <Flex gap="30px" direction="row">
           <Flex gap="25px" direction="column" w="50%">
             {budgets &&

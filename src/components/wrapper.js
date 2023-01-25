@@ -59,9 +59,9 @@ const Wrapper = () => {
           <Header />
           <Box paddingLeft="0%" paddingTop="50px" width="80%" marginX="auto">
             <Box maxWidth="1300px" marginX="auto">
-              <Text fontSize="4xl" mb="20px" fontWeight="extrabold">
+              {/* <Text fontSize="4xl" mb="20px" fontWeight="extrabold">
                 {title}
-              </Text>
+              </Text> */}
             </Box>
 
             <Outlet />

@@ -34,6 +34,7 @@ import {
   Spinner,
   Select,
   FormControl,
+  Text,
   FormLabel,
   VStack,
   Box,
@@ -279,6 +280,48 @@ const Overview = () => {
 
   return (
     <Layout>
+      <Flex
+        gap="25px"
+        direction="row"
+        w="100%"
+        justifyContent="space-between"
+        alignItems="center"
+        mt={4}
+        mb="20px"
+      >
+        <Text fontSize="4xl" fontWeight="extrabold">
+          Overview
+        </Text>
+        <Flex gap="1rem">
+          <Flex gap="10px" w="100%">
+            <IconButton
+              icon={<FaChevronLeft />}
+              onClick={moveToPreviousMonth}
+            />
+            <Input
+              type="text"
+              value={`${new Date(selectedStartDate).toLocaleString('default', {
+                month: 'long',
+              })}, ${new Date(selectedStartDate).getFullYear()}`}
+              readOnly
+            />
+            <IconButton
+              icon={<FaChevronRight />}
+              onClick={moveToNextMonth}
+              disabled={rightButtonDisabled}
+            />
+          </Flex>
+          <Button
+            onClick={onOpen}
+            colorScheme="blue"
+            variant="solid"
+            alignSelf="self-end"
+            px="3rem"
+          >
+            Add Transaction
+          </Button>
+        </Flex>
+      </Flex>
       {transactions ? (
         <Flex gap="30px" direction="column">
           <Flex direction="column" gap="1rem" alignItems="flex-end">
@@ -295,45 +338,6 @@ const Overview = () => {
                 Do not indulge in expensive cafes or restaurants all the time.
               </AlertDescription>
             </Alert>
-            <Flex
-              gap="25px"
-              direction="row"
-              w="50%"
-              justifyContent="flex-end"
-              alignItems="center"
-              mt={4}
-            >
-              <Flex gap="10px" w="100%">
-                <IconButton
-                  icon={<FaChevronLeft />}
-                  onClick={moveToPreviousMonth}
-                />
-                <Input
-                  type="text"
-                  value={`${new Date(selectedStartDate).toLocaleString(
-                    'default',
-                    {
-                      month: 'long',
-                    }
-                  )}, ${new Date(selectedStartDate).getFullYear()}`}
-                  readOnly
-                />
-                <IconButton
-                  icon={<FaChevronRight />}
-                  onClick={moveToNextMonth}
-                  disabled={rightButtonDisabled}
-                />
-              </Flex>
-              <Button
-                onClick={onOpen}
-                colorScheme="blue"
-                variant="solid"
-                alignSelf="self-end"
-                px="3rem"
-              >
-                Add Transaction
-              </Button>
-            </Flex>
           </Flex>
 
           <Modal

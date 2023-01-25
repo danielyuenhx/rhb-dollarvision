@@ -29,6 +29,7 @@ import {
   Tr,
   useDisclosure,
   Spinner,
+  Text,
   Tag,
   Icon,
   IconButton,
@@ -263,6 +264,45 @@ const Wallet = () => {
 
   return (
     <Layout>
+      <Flex
+        gap="25px"
+        direction="row"
+        w="100%"
+        justifyContent="space-between"
+        alignItems="center"
+        mt={4}
+        mb="20px"
+      >
+        <Text fontSize="4xl" fontWeight="extrabold">
+          Wallets
+        </Text>
+        <Flex gap="1rem">
+          <Flex gap="10px" w="100%">
+            <IconButton
+              icon={<FaChevronLeft />}
+              onClick={moveToPreviousMonth}
+            />
+            <Input
+              type="text"
+              value={`${new Date(selectedStartDate).toLocaleString('default', {
+                month: 'long',
+              })}, ${new Date(selectedStartDate).getFullYear()}`}
+              readOnly
+            />
+            <IconButton
+              icon={<FaChevronRight />}
+              onClick={moveToNextMonth}
+              disabled={rightButtonDisabled}
+            />
+          </Flex>
+          {selectedWallet && selectedWallet.type === 'custom' && (
+            <Button px="3rem">Add Transaction</Button>
+          )}
+          <Button px="3rem" colorScheme="blue" variant="solid" onClick={onOpen}>
+            Add Wallet
+          </Button>
+        </Flex>
+      </Flex>
       <Flex direction="column" gap="30px">
         <CategoriseModal
           uncategorisedTransactions={uncategorizedTransactions}
@@ -415,44 +455,6 @@ const Wallet = () => {
             </Tabs>
           </Flex>
           <Flex gap="25px" direction="column" wrap={true} w="60%">
-            <Flex gap="25px" direction="column" w="100%">
-              <Flex
-                gap="25px"
-                direction="row"
-                alignSelf="self-end"
-                alignItems="center"
-                w="100%"
-              >
-                <Flex gap="10px" w="100%">
-                  <IconButton
-                    icon={<FaChevronLeft />}
-                    onClick={moveToPreviousMonth}
-                  />
-                  <Input
-                    type="text"
-                    value={`${new Date(selectedStartDate).toLocaleString(
-                      'default',
-                      {
-                        month: 'long',
-                      }
-                    )}, ${new Date(selectedStartDate).getFullYear()}`}
-                    readOnly
-                  />
-                  <IconButton
-                    icon={<FaChevronRight />}
-                    onClick={moveToNextMonth}
-                    disabled={rightButtonDisabled}
-                  />
-                </Flex>
-                {selectedWallet && selectedWallet.type === 'custom' && (
-                  <Button px="3rem">Add Transaction</Button>
-                )}
-                <Button px="3rem" colorScheme="blue" variant="solid" onClick={onOpen}>
-                  Add Wallet
-                </Button>
-              </Flex>
-            </Flex>
-
             <Modal onClose={onClose} isOpen={isOpen} isCentered>
               <ModalOverlay />
               <ModalContent>

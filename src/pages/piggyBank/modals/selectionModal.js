@@ -30,10 +30,10 @@ const SelectionModal = () => {
               cursor="pointer"
               onClick={() => dispatch(updateModalName(option.name))}
               transform="scale(1)"
-              _hover={{
-                transform: 'scale(1.02)',
-                transitionDuration: '0.2s',
-              }}
+              // _hover={{
+              //   transform: 'scale(1.02)',
+              //   transitionDuration: '0.2s',
+              // }}
             >
               <CardHeader fontWeight="bold">
                 <Box
