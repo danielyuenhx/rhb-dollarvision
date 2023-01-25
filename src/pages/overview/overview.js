@@ -233,7 +233,7 @@ const Overview = () => {
       { name: 'Piggy-bank' },
       { name: 'Balance' },
       { name: 'Previous balance' },
-      { name: 'Total assets'},
+      { name: 'Total assets' },
     ],
     links: [
       { source: 0, target: 7, value: 1000.7 },
@@ -329,6 +329,7 @@ const Overview = () => {
                 colorScheme="blue"
                 variant="solid"
                 alignSelf="self-end"
+                px="3rem"
               >
                 Add Transaction
               </Button>
@@ -354,8 +355,8 @@ const Overview = () => {
                   node={<Node />}
                   nodePadding={50}
                   margin={{
-                    left:100,
-                    right:100,
+                    left: 100,
+                    right: 100,
                     top: 100,
                     bottom: 100,
                   }}

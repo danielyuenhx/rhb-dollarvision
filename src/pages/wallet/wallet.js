@@ -445,9 +445,9 @@ const Wallet = () => {
                   />
                 </Flex>
                 {selectedWallet && selectedWallet.type === 'custom' && (
-                  <Button>Add Transaction</Button>
+                  <Button px="3rem">Add Transaction</Button>
                 )}
-                <Button colorScheme="blue" variant="solid" onClick={onOpen}>
+                <Button px="3rem" colorScheme="blue" variant="solid" onClick={onOpen}>
                   Add Wallet
                 </Button>
               </Flex>
