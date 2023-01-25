@@ -42,7 +42,12 @@ import { useTransactions } from '../../hooks/useTransactions';
 import { useWallets } from '../../hooks/useWallets';
 import _ from 'lodash';
 import CategoriseModal from '../../components/categoriseModal';
-import { FaChevronLeft, FaChevronRight, FaRegStar, FaStar } from 'react-icons/fa';
+import {
+  FaChevronLeft,
+  FaChevronRight,
+  FaRegStar,
+  FaStar,
+} from 'react-icons/fa';
 import { useCategories } from '../../hooks/useCategories';
 import { useTotalBalance } from '../../hooks/useTotalBalance';
 import {
@@ -52,6 +57,7 @@ import {
   setPreviousMonth,
   today,
 } from '../../helpers';
+import * as api from '../../api/index';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -149,12 +155,16 @@ const Wallet = () => {
     '#000000',
   ];
 
-  const [isFav, setIsFav] = useState(selectedWallet?.isFav);
+  const [isFav, setIsFav] = useState(true);
   const [timeoutId, setTimeoutId] = useState();
 
   useEffect(() => {
-    setIsFav(selectedWallet.isFav);
-  }, [selectedWallet]);
+    if (selectedWallet) {
+      setIsFav(selectedWallet?.isFav);
+    } else {
+      setIsFav(wallets?.find(wallet => wallet.id === defaultWalletId).isFav);
+    }
+  }, [selectedWallet, isLoading, walletsAreLoading]);
 
   const favouriteWalletHandler = () => {
     setIsFav(!isFav);
@@ -164,8 +174,12 @@ const Wallet = () => {
 
     setTimeoutId(
       setTimeout(() => {
-        console.log(!isFav + 'updated');
-      }, 1000)
+        if (!isFav !== selectedWallet?.isFav) {
+          api.favouriteWallet(selectedWalletId, !isFav).then(data => {
+            refetchWallets();
+          });
+        }
+      }, 250)
     );
   };
 
