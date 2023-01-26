@@ -242,25 +242,6 @@ const Wallet = () => {
     }
   };
 
-  if (isLoading) {
-    return (
-      <Flex
-        w="100%"
-        marginTop="30vh"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Spinner
-          size="xl"
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="secondaryBlue"
-        />
-      </Flex>
-    );
-  }
-
   return (
     <Layout>
       <Flex
@@ -302,346 +283,373 @@ const Wallet = () => {
           </Button>
         </Flex>
       </Flex>
-      <Flex direction="column" gap="30px">
-        <CategoriseModal
-          uncategorisedTransactions={uncategorizedTransactions}
-          expenseCategories={expenseCategories}
-          incomeCategories={incomeCategories}
-          refetchData={refetchTransactions}
-        />
-        <Flex gap="30px" direction="row">
-          <Flex gap="25px" direction="column" w="40%">
-            <Flex gap="2rem" alignItems="center">
-              <Select value={selectedWalletId} onChange={handleWalletChange}>
-                {wallets.map(wallet => (
-                  <option key={wallet.id} value={wallet.id}>
-                    {wallet.name}
-                  </option>
-                ))}
-              </Select>
-              <IconButton
-                onClick={favouriteWalletHandler}
-                icon={
-                  isFav ? (
-                    <FaStar color="yellow" stroke="black" strokeWidth="10px" />
-                  ) : (
-                    <FaRegStar fill="gray" strokeWidth="0.1px" />
-                  )
-                }
-                w="2rem"
-                h="100%"
-                cursor="pointer"
-                padding="0rem"
-              />
-            </Flex>
-            <Tabs isFitted variant="enclosed" ref={tabsRef}>
-              <TabList mb="1em">
-                <Tab>Income</Tab>
-                <Tab>Expense</Tab>
-              </TabList>
-              <TabPanels>
-                <TabPanel>
-                  <ResponsiveContainer width={width} height={300}>
-                    <PieChart width="100%" height="100%">
-                      <Pie
-                        data={incomeTransactionsGroupedByCategoryAndSorted}
-                        cx="50%"
-                        cy="50%"
-                        // labelLine={true}
-                        // labelKey="name"
-                        // label
-                        // label={renderCustomizedLabel}
-                        innerRadius={40}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="amount"
-                      >
-                        {incomeTransactionsGroupedByCategoryAndSorted.map(
-                          (entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
-                            />
-                          )
-                        )}
-                        <LabelList
-                          dataKey="name"
-                          position="outside"
-                          offset={15}
-                        />
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <TableContainer>
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>Category</Th>
-                          <Th># of Transactions</Th>
-                          <Th isNumeric>Total</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {incomeTransactionsGroupedByCategoryAndSorted.map(
-                          transaction => (
-                            <Tr key={transaction.name}>
-                              <Td>{transaction.name}</Td>
-                              <Td>{transaction.count}</Td>
-                              <Td isNumeric>{transaction.amount.toFixed(2)}</Td>
-                            </Tr>
-                          )
-                        )}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </TabPanel>
-                <TabPanel>
-                  <ResponsiveContainer width={width} height={300}>
-                    <PieChart width="100%" height="100%">
-                      <Pie
-                        data={expenseTransactionsGroupedByCategoryAndSorted}
-                        cx="50%"
-                        cy="50%"
-                        // labelLine={true}
-                        // labelKey="name"
-                        // label
-                        // label={renderCustomizedLabel}
-                        innerRadius={40}
-                        outerRadius={80}
-                        fill="#8884d8"
-                        dataKey="amount"
-                      >
-                        {expenseTransactionsGroupedByCategoryAndSorted.map(
-                          (entry, index) => (
-                            <Cell
-                              key={`cell-${index}`}
-                              fill={COLORS[index % COLORS.length]}
-                            />
-                          )
-                        )}
-                        <LabelList
-                          dataKey="name"
-                          position="outside"
-                          offset={10}
-                        />
-                      </Pie>
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <TableContainer>
-                    <Table variant="simple">
-                      <Thead>
-                        <Tr>
-                          <Th>Category</Th>
-                          <Th># of Transactions</Th>
-                          <Th isNumeric>Total</Th>
-                        </Tr>
-                      </Thead>
-                      <Tbody>
-                        {expenseTransactionsGroupedByCategoryAndSorted.map(
-                          transaction => (
-                            <Tr key={transaction.name}>
-                              <Td>{transaction.name}</Td>
-                              <Td>{transaction.count}</Td>
-                              <Td isNumeric>{transaction.amount.toFixed(2)}</Td>
-                            </Tr>
-                          )
-                        )}
-                      </Tbody>
-                    </Table>
-                  </TableContainer>
-                </TabPanel>
-              </TabPanels>
-            </Tabs>
-          </Flex>
-          <Flex gap="25px" direction="column" wrap={true} w="60%">
-            <Modal onClose={onClose} isOpen={isOpen} isCentered>
-              <ModalOverlay />
-              <ModalContent>
-                <ModalHeader>Add Wallet</ModalHeader>
-                <ModalCloseButton />
-                <ModalBody>
-                  <FormControl>
-                    <VStack spacing={6}>
-                      <Box alignItems="left" width="100%">
-                        <FormLabel fontSize="sm">Wallet Name</FormLabel>
-                        <Input
-                          placeholder="Name"
-                          onChange={handleName}
-                          value={name}
-                        />
-                      </Box>
-                      <Box alignItems="left" width="100%">
-                        <FormLabel fontSize="sm">Initial balance</FormLabel>
-                        <NumberInput defaultValue={0} min={0} precision={2}>
-                          <NumberInputField
-                            onChange={handleBalance}
-                            value={balance}
-                          />
-                        </NumberInput>
-                      </Box>
-                      <Flex direction="column" gap={3} w="100%">
-                        <Button
-                          w="100%"
-                          backgroundColor="#f1592a"
-                          color="white"
-                          _hover={{ background: '#f1592a !important' }}
+      {!isLoading ? (
+        <Flex direction="column" gap="30px">
+          <CategoriseModal
+            uncategorisedTransactions={uncategorizedTransactions}
+            expenseCategories={expenseCategories}
+            incomeCategories={incomeCategories}
+            refetchData={refetchTransactions}
+          />
+          <Flex gap="30px" direction="row">
+            <Flex gap="25px" direction="column" w="40%">
+              <Flex gap="2rem" alignItems="center">
+                <Select value={selectedWalletId} onChange={handleWalletChange}>
+                  {wallets.map(wallet => (
+                    <option key={wallet.id} value={wallet.id}>
+                      {wallet.name}
+                    </option>
+                  ))}
+                </Select>
+                <IconButton
+                  onClick={favouriteWalletHandler}
+                  icon={
+                    isFav ? (
+                      <FaStar
+                        color="yellow"
+                        stroke="black"
+                        strokeWidth="10px"
+                      />
+                    ) : (
+                      <FaRegStar fill="gray" strokeWidth="0.1px" />
+                    )
+                  }
+                  w="2rem"
+                  h="100%"
+                  cursor="pointer"
+                  padding="0rem"
+                />
+              </Flex>
+              <Tabs isFitted variant="enclosed" ref={tabsRef}>
+                <TabList mb="1em">
+                  <Tab>Income</Tab>
+                  <Tab>Expense</Tab>
+                </TabList>
+                <TabPanels>
+                  <TabPanel>
+                    <ResponsiveContainer width={width} height={300}>
+                      <PieChart width="100%" height="100%">
+                        <Pie
+                          data={incomeTransactionsGroupedByCategoryAndSorted}
+                          cx="50%"
+                          cy="50%"
+                          // labelLine={true}
+                          // labelKey="name"
+                          // label
+                          // label={renderCustomizedLabel}
+                          innerRadius={40}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="amount"
                         >
-                          <Image
-                            w="1.5rem"
-                            h="1.5rem"
-                            src="https://static.vecteezy.com/system/resources/previews/012/223/540/non_2x/shopee-element-symbol-shopee-food-shopee-icon-free-vector.jpg"
+                          {incomeTransactionsGroupedByCategoryAndSorted.map(
+                            (entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                              />
+                            )
+                          )}
+                          <LabelList
+                            dataKey="name"
+                            position="outside"
+                            offset={15}
                           />
-                          &nbsp;Import from ShopeePay
-                        </Button>
-                        <Button
-                          w="100%"
-                          backgroundColor="#245dab"
-                          color="white"
-                          _hover={{ background: '#245dab !important' }}
-                        >
-                          <Image
-                            w="1.25rem"
-                            h="1.25rem"
-                            src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Touch_%27n_Go_eWallet_logo.svg/768px-Touch_%27n_Go_eWallet_logo.svg.png?20200518080317"
-                          />
-                          &nbsp;&nbsp;Import from TnG
-                        </Button>
-                      </Flex>
-                    </VStack>
-                  </FormControl>
-                </ModalBody>
-                <ModalFooter>
-                  <Flex gap="1rem">
-                    <Button onClick={onClose}>Close</Button>
-                    <Button
-                      onClick={handleSubmit}
-                      colorScheme="blue"
-                      variant="solid"
-                    >
-                      Add Wallet
-                    </Button>
-                  </Flex>
-                </ModalFooter>
-              </ModalContent>
-            </Modal>
-
-            <Flex gap="25px" direction="row" wrap={true} w="100%">
-              <Card
-                w="50%"
-                borderRadius="0 0 0.375rem 0.375rem"
-                borderTop="3px solid"
-                borderTopColor="purple.300"
-              >
-                <Stat>
-                  <CardBody>
-                    <StatLabel>Total Balance</StatLabel>
-                    <StatNumber>{`MYR ${totalBalance.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>{dateRange}</StatHelpText>
-                  </CardBody>
-                </Stat>
-              </Card>
-              <Card
-                w="50%"
-                borderRadius="0 0 0.375rem 0.375rem"
-                borderTop="3px solid"
-                borderTopColor="blue.300"
-              >
-                <Stat>
-                  <CardBody>
-                    <StatLabel>Nett Change</StatLabel>
-                    <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
-                    <StatHelpText>{dateRange}</StatHelpText>
-                  </CardBody>
-                </Stat>
-              </Card>
-            </Flex>
-
-            <Flex gap="25px" direction="row" wrap={true} w="100%">
-              <Card
-                w="50%"
-                borderRadius="0 0 0.375rem 0.375rem"
-                borderTop="3px solid"
-                borderTopColor="green"
-              >
-                <Stat>
-                  <CardBody>
-                    <StatLabel>Income</StatLabel>
-                    <StatNumber color="green">{`MYR ${totalIncome.toFixed(
-                      2
-                    )}`}</StatNumber>
-                    <StatHelpText>{dateRange}</StatHelpText>
-                  </CardBody>
-                </Stat>
-              </Card>
-              <Card
-                w="50%"
-                borderRadius="0 0 0.375rem 0.375rem"
-                borderTop="3px solid"
-                borderTopColor="red.500"
-              >
-                <Stat>
-                  <CardBody>
-                    <StatLabel>Expense</StatLabel>
-                    <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
-                      2
-                    )}`}</StatNumber>
-                    <StatHelpText>{dateRange}</StatHelpText>
-                  </CardBody>
-                </Stat>
-              </Card>
-            </Flex>
-
-            <Card mb={10}>
-              <TableContainer>
-                <Table variant="simple">
-                  <Thead>
-                    <Tr bg="gray.200">
-                      <Th borderRadius="0.375rem 0 0 0">Category</Th>
-                      <Th>Description</Th>
-                      <Th isNumeric borderRadius="0 0.375rem 0 0">
-                        Amount
-                      </Th>
-                    </Tr>
-                  </Thead>
-                  <Tbody>
-                    {dateKeysSorted.map(dateKey => {
-                      return (
-                        <>
-                          <Tr bg="gray.100">
-                            <Th>{dateKey.split('-').reverse().join('/')}</Th>
-                            <Th></Th>
-                            <Th></Th>
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>Category</Th>
+                            <Th># of Transactions</Th>
+                            <Th isNumeric>Total</Th>
                           </Tr>
-                          {transactionsGroupedByDate[dateKey].map(
+                        </Thead>
+                        <Tbody>
+                          {incomeTransactionsGroupedByCategoryAndSorted.map(
                             transaction => (
-                              <Tr>
-                                <Td>
-                                  <Tag
-                                    colorScheme={transaction.categories.color}
-                                  >
-                                    {transaction.categories.name}
-                                  </Tag>
-                                </Td>
-                                <Td>{transaction.description}</Td>
+                              <Tr key={transaction.name}>
+                                <Td>{transaction.name}</Td>
+                                <Td>{transaction.count}</Td>
                                 <Td isNumeric>
-                                  {parseAmount(
-                                    transaction.amount,
-                                    transaction.categories.type
-                                  )}
+                                  {transaction.amount.toFixed(2)}
                                 </Td>
                               </Tr>
                             )
                           )}
-                        </>
-                      );
-                    })}
-                  </Tbody>
-                </Table>
-              </TableContainer>
-            </Card>
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </TabPanel>
+                  <TabPanel>
+                    <ResponsiveContainer width={width} height={300}>
+                      <PieChart width="100%" height="100%">
+                        <Pie
+                          data={expenseTransactionsGroupedByCategoryAndSorted}
+                          cx="50%"
+                          cy="50%"
+                          // labelLine={true}
+                          // labelKey="name"
+                          // label
+                          // label={renderCustomizedLabel}
+                          innerRadius={40}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="amount"
+                        >
+                          {expenseTransactionsGroupedByCategoryAndSorted.map(
+                            (entry, index) => (
+                              <Cell
+                                key={`cell-${index}`}
+                                fill={COLORS[index % COLORS.length]}
+                              />
+                            )
+                          )}
+                          <LabelList
+                            dataKey="name"
+                            position="outside"
+                            offset={10}
+                          />
+                        </Pie>
+                      </PieChart>
+                    </ResponsiveContainer>
+                    <TableContainer>
+                      <Table variant="simple">
+                        <Thead>
+                          <Tr>
+                            <Th>Category</Th>
+                            <Th># of Transactions</Th>
+                            <Th isNumeric>Total</Th>
+                          </Tr>
+                        </Thead>
+                        <Tbody>
+                          {expenseTransactionsGroupedByCategoryAndSorted.map(
+                            transaction => (
+                              <Tr key={transaction.name}>
+                                <Td>{transaction.name}</Td>
+                                <Td>{transaction.count}</Td>
+                                <Td isNumeric>
+                                  {transaction.amount.toFixed(2)}
+                                </Td>
+                              </Tr>
+                            )
+                          )}
+                        </Tbody>
+                      </Table>
+                    </TableContainer>
+                  </TabPanel>
+                </TabPanels>
+              </Tabs>
+            </Flex>
+            <Flex gap="25px" direction="column" wrap={true} w="60%">
+              <Modal onClose={onClose} isOpen={isOpen} isCentered>
+                <ModalOverlay />
+                <ModalContent>
+                  <ModalHeader>Add Wallet</ModalHeader>
+                  <ModalCloseButton />
+                  <ModalBody>
+                    <FormControl>
+                      <VStack spacing={6}>
+                        <Box alignItems="left" width="100%">
+                          <FormLabel fontSize="sm">Wallet Name</FormLabel>
+                          <Input
+                            placeholder="Name"
+                            onChange={handleName}
+                            value={name}
+                          />
+                        </Box>
+                        <Box alignItems="left" width="100%">
+                          <FormLabel fontSize="sm">Initial balance</FormLabel>
+                          <NumberInput defaultValue={0} min={0} precision={2}>
+                            <NumberInputField
+                              onChange={handleBalance}
+                              value={balance}
+                            />
+                          </NumberInput>
+                        </Box>
+                        <Flex direction="column" gap={3} w="100%">
+                          <Button
+                            w="100%"
+                            backgroundColor="#f1592a"
+                            color="white"
+                            _hover={{ background: '#f1592a !important' }}
+                          >
+                            <Image
+                              w="1.5rem"
+                              h="1.5rem"
+                              src="https://static.vecteezy.com/system/resources/previews/012/223/540/non_2x/shopee-element-symbol-shopee-food-shopee-icon-free-vector.jpg"
+                            />
+                            &nbsp;Import from ShopeePay
+                          </Button>
+                          <Button
+                            w="100%"
+                            backgroundColor="#245dab"
+                            color="white"
+                            _hover={{ background: '#245dab !important' }}
+                          >
+                            <Image
+                              w="1.25rem"
+                              h="1.25rem"
+                              src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/fb/Touch_%27n_Go_eWallet_logo.svg/768px-Touch_%27n_Go_eWallet_logo.svg.png?20200518080317"
+                            />
+                            &nbsp;&nbsp;Import from TnG
+                          </Button>
+                        </Flex>
+                      </VStack>
+                    </FormControl>
+                  </ModalBody>
+                  <ModalFooter>
+                    <Flex gap="1rem">
+                      <Button onClick={onClose}>Close</Button>
+                      <Button
+                        onClick={handleSubmit}
+                        colorScheme="blue"
+                        variant="solid"
+                      >
+                        Add Wallet
+                      </Button>
+                    </Flex>
+                  </ModalFooter>
+                </ModalContent>
+              </Modal>
+
+              <Flex gap="25px" direction="row" wrap={true} w="100%">
+                <Card
+                  w="50%"
+                  borderRadius="0 0 0.375rem 0.375rem"
+                  borderTop="3px solid"
+                  borderTopColor="purple.300"
+                >
+                  <Stat>
+                    <CardBody>
+                      <StatLabel>Total Balance</StatLabel>
+                      <StatNumber>{`MYR ${totalBalance.toFixed(
+                        2
+                      )}`}</StatNumber>
+                      <StatHelpText>{dateRange}</StatHelpText>
+                    </CardBody>
+                  </Stat>
+                </Card>
+                <Card
+                  w="50%"
+                  borderRadius="0 0 0.375rem 0.375rem"
+                  borderTop="3px solid"
+                  borderTopColor="blue.300"
+                >
+                  <Stat>
+                    <CardBody>
+                      <StatLabel>Nett Change</StatLabel>
+                      <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
+                      <StatHelpText>{dateRange}</StatHelpText>
+                    </CardBody>
+                  </Stat>
+                </Card>
+              </Flex>
+
+              <Flex gap="25px" direction="row" wrap={true} w="100%">
+                <Card
+                  w="50%"
+                  borderRadius="0 0 0.375rem 0.375rem"
+                  borderTop="3px solid"
+                  borderTopColor="green"
+                >
+                  <Stat>
+                    <CardBody>
+                      <StatLabel>Income</StatLabel>
+                      <StatNumber color="green">{`MYR ${totalIncome.toFixed(
+                        2
+                      )}`}</StatNumber>
+                      <StatHelpText>{dateRange}</StatHelpText>
+                    </CardBody>
+                  </Stat>
+                </Card>
+                <Card
+                  w="50%"
+                  borderRadius="0 0 0.375rem 0.375rem"
+                  borderTop="3px solid"
+                  borderTopColor="red.500"
+                >
+                  <Stat>
+                    <CardBody>
+                      <StatLabel>Expense</StatLabel>
+                      <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
+                        2
+                      )}`}</StatNumber>
+                      <StatHelpText>{dateRange}</StatHelpText>
+                    </CardBody>
+                  </Stat>
+                </Card>
+              </Flex>
+
+              <Card mb={10}>
+                <TableContainer>
+                  <Table variant="simple">
+                    <Thead>
+                      <Tr bg="gray.200">
+                        <Th borderRadius="0.375rem 0 0 0">Category</Th>
+                        <Th>Description</Th>
+                        <Th isNumeric borderRadius="0 0.375rem 0 0">
+                          Amount
+                        </Th>
+                      </Tr>
+                    </Thead>
+                    <Tbody>
+                      {dateKeysSorted.map(dateKey => {
+                        return (
+                          <>
+                            <Tr bg="gray.100">
+                              <Th>{dateKey.split('-').reverse().join('/')}</Th>
+                              <Th></Th>
+                              <Th></Th>
+                            </Tr>
+                            {transactionsGroupedByDate[dateKey].map(
+                              transaction => (
+                                <Tr>
+                                  <Td>
+                                    <Tag
+                                      colorScheme={transaction.categories.color}
+                                    >
+                                      {transaction.categories.name}
+                                    </Tag>
+                                  </Td>
+                                  <Td>{transaction.description}</Td>
+                                  <Td isNumeric>
+                                    {parseAmount(
+                                      transaction.amount,
+                                      transaction.categories.type
+                                    )}
+                                  </Td>
+                                </Tr>
+                              )
+                            )}
+                          </>
+                        );
+                      })}
+                    </Tbody>
+                  </Table>
+                </TableContainer>
+              </Card>
+            </Flex>
           </Flex>
         </Flex>
-      </Flex>
+      ) : (
+        <Flex
+          w="100%"
+          marginTop="30vh"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Spinner
+            size="xl"
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="secondaryBlue"
+          />
+        </Flex>
+      )}
     </Layout>
   );
 };

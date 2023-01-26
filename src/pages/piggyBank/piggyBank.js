@@ -123,11 +123,11 @@ const PiggyBank = () => {
   return (
     <Layout>
       <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} />
+      <Text mt={4} fontSize="4xl" mb="20px" fontWeight="extrabold">
+        Piggy Bank
+      </Text>
       {items ? (
         <>
-          <Text mt={4} fontSize="4xl" mb="20px" fontWeight="extrabold">
-            Piggy Bank
-          </Text>
           <Flex gap="30px" direction="row">
             <Flex gap="25px" direction="column" w="50%">
               {items &&

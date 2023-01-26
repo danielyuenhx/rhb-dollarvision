@@ -23,18 +23,29 @@ export default class Link extends Component {
         <defs>
           <linearGradient id={gradientID}>
             <stop
-              offset="100%"
+              offset="20%"
               stopColor={
                 (payload.source.name === 'Total Assets' &&
                   payload.target.name === 'Expenses') ||
                 payload.source.name === 'Expenses'
-                  ? '#e87c64'
-                  // : payload.source.name === 'Previous Balance' || payload.target.name === 'Balance'
-                  // ? '#73dffa'
-                  : '#81e383'
+                  ? '#fdaaaa'
+                  : // : payload.source.name === 'Previous Balance' || payload.target.name === 'Balance'
+                    // ? '#73dffa'
+                    '#73d673'
               }
             />
-            {/* <stop offset="80%" stopColor="red" /> */}
+            <stop
+              offset="80%"
+              stopColor={
+                (payload.source.name === 'Total Assets' &&
+                  payload.target.name === 'Expenses') ||
+                payload.source.name === 'Expenses'
+                  ? '#ff6961'
+                  : // : payload.source.name === 'Previous Balance' || payload.target.name === 'Balance'
+                    // ? '#73dffa'
+                    '#b4d285'
+              }
+            />
           </linearGradient>
         </defs>
         <path

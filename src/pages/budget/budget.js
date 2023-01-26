@@ -91,7 +91,7 @@ const Budget = () => {
         mb="20px"
       >
         <Text fontSize="4xl" fontWeight="extrabold">
-          Wallets
+          Budgets
         </Text>
         <Flex gap="1rem">
           <Flex gap="10px" w="100%">
@@ -133,24 +133,41 @@ const Budget = () => {
         <ModalOverlay />
         <AddModal />
       </Modal>
-      <Flex gap="20px" direction="column">
-        <Flex gap="30px" direction="row">
-          <Flex gap="25px" direction="column" w="50%">
-            {budgets &&
-              budgets.map((budget, index) => (
-                <ItemCard
-                  key={budget.id}
-                  index={index}
-                  title={budget.name}
-                  desc={budget.description}
-                  percentage={budget.percentage}
-                  onClick={setSelectedBudgetId.bind(null, budget.id)}
-                />
-              ))}
+      {!isLoading ? (
+        <Flex gap="20px" direction="column">
+          <Flex gap="30px" direction="row">
+            <Flex gap="25px" direction="column" w="50%">
+              {budgets &&
+                budgets.map((budget, index) => (
+                  <ItemCard
+                    key={budget.id}
+                    index={index}
+                    title={budget.name}
+                    desc={budget.description}
+                    percentage={budget.percentage}
+                    onClick={setSelectedBudgetId.bind(null, budget.id)}
+                  />
+                ))}
+            </Flex>
+            {budget && <ItemDetails budget={budget} />}
           </Flex>
-          {budget && <ItemDetails budget={budget} />}
         </Flex>
-      </Flex>
+      ) : (
+        <Flex
+          w="100%"
+          marginTop="30vh"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Spinner
+            size="xl"
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="secondaryBlue"
+          />
+        </Flex>
+      )}
     </Layout>
   );
 };
