@@ -137,18 +137,19 @@ const Overview = () => {
   const tabsRef = useRef();
   const { width } = useContainerDimensions(tabsRef);
 
-  const COLORS = [
-    '#0088FE',
-    '#00C49F',
-    '#FFBB28',
-    '#FF8042',
-    '#FF0000',
-    '#0000FF',
-    '#00FF00',
-    '#FFFF00',
-    '#FF00FF',
-    '#000000',
-  ];
+  const COLORS = {
+    gray: '#A0AEC0',
+    red: '#E53E3E',
+    orange: '#ED8936',
+    yellow: '#FAF089',
+    green: '#68D391',
+    teal: '#4FD1C5',
+    blue: '#4299E1',
+    cyan: '#0BC5EA',
+    purple: '#9F7AEA',
+    pink: '#ED64A6',
+    twitter: '#BEE3F8',
+  };
 
   const todayDate = new Date();
   const offset = todayDate.getTimezoneOffset();
@@ -474,10 +475,10 @@ const Overview = () => {
                           dataKey="amount"
                         >
                           {incomeTransactionsGroupedByCategoryAndSorted.map(
-                            (entry, index) => (
+                            (category, index) => (
                               <Cell
                                 key={`cell-${index}`}
-                                fill={COLORS[index % COLORS.length]}
+                                fill={COLORS[category.color]}
                               />
                             )
                           )}
@@ -564,10 +565,10 @@ const Overview = () => {
                           dataKey="amount"
                         >
                           {expenseTransactionsGroupedByCategoryAndSorted.map(
-                            (entry, index) => (
+                            (category, index) => (
                               <Cell
                                 key={`cell-${index}`}
-                                fill={COLORS[index % COLORS.length]}
+                                fill={COLORS[category.color]}
                               />
                             )
                           )}
