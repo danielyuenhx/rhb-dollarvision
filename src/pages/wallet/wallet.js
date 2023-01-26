@@ -66,6 +66,8 @@ import {
   today,
 } from '../../helpers';
 import * as api from '../../api/index';
+import supabase from '../../supabaseClient';
+import { useCSVReader } from 'react-papaparse';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -167,12 +169,14 @@ const Wallet = () => {
   const [timeoutId, setTimeoutId] = useState();
 
   useEffect(() => {
+    if (!walletsAreLoading) setSelectedWalletId(wallets[0].id);
     if (selectedWallet) {
       setIsFav(selectedWallet?.isFav);
     } else {
-      setIsFav(wallets?.find(wallet => wallet.id === defaultWalletId).isFav);
+      const wallet = wallets?.find(wallet => wallet.id === defaultWalletId);
+      setIsFav(wallet?.isFav);
     }
-  }, [selectedWallet, isLoading, walletsAreLoading]);
+  }, [walletsAreLoading, wallets]);
 
   const favouriteWalletHandler = () => {
     setIsFav(!isFav);
@@ -242,6 +246,125 @@ const Wallet = () => {
     }
   };
 
+  const {
+    isOpen: isOpenAddTransaction,
+    onOpen: onOpenAddTransaction,
+    onClose: onCloseAddTransaction,
+  } = useDisclosure();
+
+  const todayDate = new Date();
+  const offset = todayDate.getTimezoneOffset();
+  const [date, setDate] = useState(
+    new Date(todayDate.getTime() - offset * 60 * 1000)
+      .toISOString()
+      .split('T')[0]
+  );
+  const [selectType, setSelectType] = useState('expense');
+  const [selectCategory, setSelectCategory] = useState('1');
+  const [description, setDescription] = useState('');
+  const [amount, setAmount] = useState(0.0);
+
+  const handleDate = e => {
+    setDate(e.target.value);
+  };
+
+  const handleSelectType = e => {
+    setSelectType(e.target.value);
+  };
+
+  const handleSelectCategory = e => {
+    setSelectCategory(e.target.value);
+  };
+
+  const handleDescription = e => {
+    setDescription(e.target.value);
+  };
+
+  const handleAmount = e => {
+    setAmount(e.target.value);
+  };
+
+  const handleAddTransaction = async e => {
+    e.preventDefault();
+    console.log('submit');
+    const { data } = await supabase
+      .from('transactions')
+      .insert({
+        wallet_id: selectedWalletId,
+        date: date,
+        category_id: selectCategory,
+        description: description,
+        amount: amount,
+      })
+      .select(`*, categories (*), wallets (*)`);
+    console.log(data);
+    setSelectType('expense');
+    setSelectCategory('1');
+    setDescription('');
+    setAmount(0.0);
+    refetchTransactions();
+    refetchTotalBalance();
+    onCloseAddTransaction();
+    toast({
+      title: 'Transaction added!',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
+  const { CSVReader } = useCSVReader();
+
+  const {
+    isOpen: isOpenImport,
+    onOpen: onOpenImport,
+    onClose: onCloseImport,
+  } = useDisclosure();
+
+  const [importData, setImportData] = useState([]);
+
+  const handleImport = () => {
+    importData.map(async data => {
+      if (!isNaN(data[2]) && !isNaN(parseFloat(data[2]))) {
+        const dateSplit = data[0].split('/');
+        const date = new Date(
+          `${dateSplit[2]}/${dateSplit[1]}/${dateSplit[0]}`
+        );
+        const { res } = await supabase
+          .from('transactions')
+          .insert({
+            wallet_id: selectedWalletId.toString(),
+            date: date.toLocaleDateString(),
+            description: data[1],
+            category_id: data[2][0] === '-' ? '11' : '12',
+            amount: data[2][0] === '-' ? data[2].substring(1) : data[2],
+          })
+          .select(`*, categories (*), wallets (*)`);
+        console.log(res);
+      } else if (!isNaN(data[3]) && !isNaN(parseFloat(data[3]))) {
+        const { data } = await api.updateInitialBalance(
+          selectedWalletId.toString(),
+          {
+            initial_balance: data[3],
+          }
+        );
+        console.log(data);
+      }
+    });
+    setImportData([]);
+    refetchTransactions();
+    refetchTotalBalance();
+    onCloseImport();
+
+    toast({
+      title: 'Bank statement imported!',
+      description: `Transactions imported to ${selectedWallet.name}.`,
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
+  };
+
   return (
     <Layout>
       <Flex
@@ -275,14 +398,84 @@ const Wallet = () => {
               disabled={rightButtonDisabled}
             />
           </Flex>
-          {selectedWallet && selectedWallet.type === 'custom' && (
-            <Button px="3rem">Add Transaction</Button>
-          )}
-          <Button px="3rem" colorScheme="blue" variant="solid" onClick={onOpen}>
+          <Button colorScheme="blue" variant="solid" onClick={onOpen} w="200px">
             Add Wallet
           </Button>
         </Flex>
       </Flex>
+      <Modal
+        onClose={onCloseAddTransaction}
+        isOpen={isOpenAddTransaction}
+        isCentered
+        size="lg"
+      >
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Add Transaction</ModalHeader>
+          <ModalCloseButton />
+          <ModalBody>
+            <FormControl>
+              <VStack spacing={4}>
+                <Box alignItems="left" width="100%">
+                  <FormLabel fontSize="sm">Date</FormLabel>
+                  <Input
+                    onChange={handleDate}
+                    placeholder="Select Date"
+                    type="date"
+                    value={date}
+                  />
+                </Box>
+                <Box alignItems="left" width="100%">
+                  <FormLabel fontSize="sm">Type</FormLabel>
+                  <Select onChange={handleSelectType} value={selectType}>
+                    <option value="expense">Expense</option>
+                    <option value="income">Income</option>
+                  </Select>
+                </Box>
+                <Box alignItems="left" width="100%">
+                  <FormLabel fontSize="sm">Category</FormLabel>
+                  <Select
+                    onChange={handleSelectCategory}
+                    value={selectCategory}
+                  >
+                    {selectType === 'expense'
+                      ? expenseCategories?.map(category => (
+                          <option value={category.id}>{category.name}</option>
+                        ))
+                      : incomeCategories?.map(category => (
+                          <option value={category.id}>{category.name}</option>
+                        ))}
+                    <option value={11}>Uncategorised</option>
+                  </Select>
+                </Box>
+                <Box alignItems="left" width="100%">
+                  <FormLabel fontSize="sm">Description (Optional)</FormLabel>
+                  <Input
+                    placeholder="Write Description"
+                    onChange={handleDescription}
+                    value={description}
+                  />
+                </Box>
+                <Box alignItems="left" width="100%">
+                  <FormLabel fontSize="sm">Amount</FormLabel>
+                  <NumberInput defaultValue={0} min={0} precision={2}>
+                    <NumberInputField onChange={handleAmount} value={amount} />
+                  </NumberInput>
+                </Box>
+              </VStack>
+            </FormControl>
+          </ModalBody>
+          <ModalFooter>
+            <Button
+              onClick={handleAddTransaction}
+              colorScheme="blue"
+              variant="solid"
+            >
+              Add Transaction
+            </Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
       {!isLoading ? (
         <Flex direction="column" gap="30px">
           <CategoriseModal
@@ -291,35 +484,155 @@ const Wallet = () => {
             incomeCategories={incomeCategories}
             refetchData={refetchTransactions}
           />
+          <Flex justifyContent="space-between" w="100%">
+            <Flex gap="2rem" alignItems="center" w="40%">
+              <Select value={selectedWalletId} onChange={handleWalletChange}>
+                {wallets.map(wallet => (
+                  <option key={wallet.id} value={wallet.id}>
+                    {wallet.name}
+                  </option>
+                ))}
+              </Select>
+              <IconButton
+                onClick={favouriteWalletHandler}
+                icon={
+                  isFav ? (
+                    <FaStar color="yellow" stroke="black" strokeWidth="10px" />
+                  ) : (
+                    <FaRegStar fill="gray" strokeWidth="0.1px" />
+                  )
+                }
+                w="2rem"
+                h="100%"
+                cursor="pointer"
+                padding="0rem"
+              />
+            </Flex>
+            {selectedWallet?.type === 'custom' && (
+              <Flex gap="1rem">
+                <Button onClick={onOpenImport}>Import Bank Statement</Button>
+                <Button onClick={onOpenAddTransaction}>Add Transaction</Button>
+              </Flex>
+            )}
+            <Modal
+              onClose={onCloseImport}
+              isOpen={isOpenImport}
+              isCentered
+              size="lg"
+            >
+              <ModalOverlay />
+              <ModalContent>
+                <ModalHeader>Import Bank Statement</ModalHeader>
+                <ModalCloseButton />
+                <ModalBody>
+                  <CSVReader
+                    onUploadAccepted={results => {
+                      setImportData([...results.data]);
+                    }}
+                  >
+                    {({
+                      getRootProps,
+                      acceptedFile,
+                      ProgressBar,
+                      getRemoveFileProps,
+                    }) => (
+                      <>
+                        <Flex alignItems="center" gap="1rem" mb="1rem">
+                          <Button {...getRootProps()}>Browse CSV file</Button>
+                          <Box>{acceptedFile && acceptedFile.name}</Box>
+                          {acceptedFile && (
+                            <Button
+                              {...getRemoveFileProps()}
+                              colorScheme="red"
+                              variant="ghost"
+                            >
+                              Remove
+                            </Button>
+                          )}
+                        </Flex>
+                        <ProgressBar />
+                      </>
+                    )}
+                  </CSVReader>
+                </ModalBody>
+                <ModalFooter>
+                  <Button
+                    onClick={handleImport}
+                    colorScheme="blue"
+                    variant="solid"
+                    disabled={!importData.length}
+                  >
+                    Import
+                  </Button>
+                </ModalFooter>
+              </ModalContent>
+            </Modal>
+          </Flex>
+
+          <Flex gap="25px" direction="row" wrap={true} w="100%">
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="purple.300"
+            >
+              <Stat>
+                <CardBody>
+                  <StatLabel>Total Balance</StatLabel>
+                  <StatNumber>{`MYR ${totalBalance.toFixed(2)}`}</StatNumber>
+                  <StatHelpText>{dateRange}</StatHelpText>
+                </CardBody>
+              </Stat>
+            </Card>
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="blue.300"
+            >
+              <Stat>
+                <CardBody>
+                  <StatLabel>Nett Change</StatLabel>
+                  <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
+                  <StatHelpText>{dateRange}</StatHelpText>
+                </CardBody>
+              </Stat>
+            </Card>
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="green"
+            >
+              <Stat>
+                <CardBody>
+                  <StatLabel>Income</StatLabel>
+                  <StatNumber color="green">{`MYR ${totalIncome.toFixed(
+                    2
+                  )}`}</StatNumber>
+                  <StatHelpText>{dateRange}</StatHelpText>
+                </CardBody>
+              </Stat>
+            </Card>
+            <Card
+              w="25%"
+              borderRadius="0 0 0.375rem 0.375rem"
+              borderTop="3px solid"
+              borderTopColor="red.500"
+            >
+              <Stat>
+                <CardBody>
+                  <StatLabel>Expense</StatLabel>
+                  <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
+                    2
+                  )}`}</StatNumber>
+                  <StatHelpText>{dateRange}</StatHelpText>
+                </CardBody>
+              </Stat>
+            </Card>
+          </Flex>
           <Flex gap="30px" direction="row">
             <Flex gap="25px" direction="column" w="40%">
-              <Flex gap="2rem" alignItems="center">
-                <Select value={selectedWalletId} onChange={handleWalletChange}>
-                  {wallets.map(wallet => (
-                    <option key={wallet.id} value={wallet.id}>
-                      {wallet.name}
-                    </option>
-                  ))}
-                </Select>
-                <IconButton
-                  onClick={favouriteWalletHandler}
-                  icon={
-                    isFav ? (
-                      <FaStar
-                        color="yellow"
-                        stroke="black"
-                        strokeWidth="10px"
-                      />
-                    ) : (
-                      <FaRegStar fill="gray" strokeWidth="0.1px" />
-                    )
-                  }
-                  w="2rem"
-                  h="100%"
-                  cursor="pointer"
-                  padding="0rem"
-                />
-              </Flex>
               <Tabs isFitted variant="enclosed" ref={tabsRef}>
                 <TabList mb="1em">
                   <Tab>Income</Tab>
@@ -572,74 +885,6 @@ const Wallet = () => {
                   </ModalFooter>
                 </ModalContent>
               </Modal>
-
-              <Flex gap="25px" direction="row" wrap={true} w="100%">
-                <Card
-                  w="50%"
-                  borderRadius="0 0 0.375rem 0.375rem"
-                  borderTop="3px solid"
-                  borderTopColor="purple.300"
-                >
-                  <Stat>
-                    <CardBody>
-                      <StatLabel>Total Balance</StatLabel>
-                      <StatNumber>{`MYR ${totalBalance.toFixed(
-                        2
-                      )}`}</StatNumber>
-                      <StatHelpText>{dateRange}</StatHelpText>
-                    </CardBody>
-                  </Stat>
-                </Card>
-                <Card
-                  w="50%"
-                  borderRadius="0 0 0.375rem 0.375rem"
-                  borderTop="3px solid"
-                  borderTopColor="blue.300"
-                >
-                  <Stat>
-                    <CardBody>
-                      <StatLabel>Nett Change</StatLabel>
-                      <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
-                      <StatHelpText>{dateRange}</StatHelpText>
-                    </CardBody>
-                  </Stat>
-                </Card>
-              </Flex>
-
-              <Flex gap="25px" direction="row" wrap={true} w="100%">
-                <Card
-                  w="50%"
-                  borderRadius="0 0 0.375rem 0.375rem"
-                  borderTop="3px solid"
-                  borderTopColor="green"
-                >
-                  <Stat>
-                    <CardBody>
-                      <StatLabel>Income</StatLabel>
-                      <StatNumber color="green">{`MYR ${totalIncome.toFixed(
-                        2
-                      )}`}</StatNumber>
-                      <StatHelpText>{dateRange}</StatHelpText>
-                    </CardBody>
-                  </Stat>
-                </Card>
-                <Card
-                  w="50%"
-                  borderRadius="0 0 0.375rem 0.375rem"
-                  borderTop="3px solid"
-                  borderTopColor="red.500"
-                >
-                  <Stat>
-                    <CardBody>
-                      <StatLabel>Expense</StatLabel>
-                      <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
-                        2
-                      )}`}</StatNumber>
-                      <StatHelpText>{dateRange}</StatHelpText>
-                    </CardBody>
-                  </Stat>
-                </Card>
-              </Flex>
 
               <Card mb={10}>
                 <TableContainer>

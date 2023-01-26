@@ -165,6 +165,7 @@ const Overview = () => {
 
   const handleDate = e => {
     setDate(e.target.value);
+    console.log(e.target.value)
   };
 
   const handleWallet = e => {
@@ -290,7 +291,7 @@ const Overview = () => {
             colorScheme="blue"
             variant="solid"
             alignSelf="self-end"
-            px="3rem"
+            w="200px"
           >
             Add Transaction
           </Button>
@@ -585,7 +586,7 @@ const Overview = () => {
                 </TabPanels>
               </Tabs>
             </Flex>
-            <Modal onClose={onClose} isOpen={isOpen} isCentered>
+            <Modal onClose={onClose} isOpen={isOpen} isCentered size="lg">
               <ModalOverlay />
               <ModalContent>
                 <ModalHeader>Add Transaction</ModalHeader>

@@ -81,17 +81,6 @@ export const Sidebar = () => {
       ),
     },
     {
-      path: '/piggybank',
-      name: 'Piggy Bank',
-      icon: (
-        <FontAwesomeIcon
-          icon={faPiggyBank}
-          color={selected === '/piggybank' ? 'white' : '#3dbbf5'}
-          size="xl"
-        />
-      ),
-    },
-    {
       path: '/wallet',
       name: 'Wallet',
       icon: (
@@ -109,6 +98,17 @@ export const Sidebar = () => {
         <FontAwesomeIcon
           icon={faMoneyBill}
           color={selected === '/budget' ? 'white' : '#3dbbf5'}
+          size="xl"
+        />
+      ),
+    },
+    {
+      path: '/piggybank',
+      name: 'Piggy Bank',
+      icon: (
+        <FontAwesomeIcon
+          icon={faPiggyBank}
+          color={selected === '/piggybank' ? 'white' : '#3dbbf5'}
           size="xl"
         />
       ),
@@ -233,7 +233,7 @@ export const Sidebar = () => {
             >
               <Text
                 textAlign="left"
-                p="15px 0px 0px 15px"
+                p={`${expand ? "15px" : "0px"} 0px 0px ${expand ? "15px" : "0px"}`}
                 color="#ffffff"
                 width={expand ? '200px' : '0px'}
                 height={expand ? '35px' : '0px'}

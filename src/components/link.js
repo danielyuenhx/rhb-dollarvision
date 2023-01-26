@@ -28,10 +28,10 @@ export default class Link extends Component {
                 (payload.source.name === 'Total Assets' &&
                   payload.target.name === 'Expenses') ||
                 payload.source.name === 'Expenses'
-                  ? '#fdaaaa'
+                  ? '#f97c7c'
                   : // : payload.source.name === 'Previous Balance' || payload.target.name === 'Balance'
                     // ? '#73dffa'
-                    '#73d673'
+                    '#b4d285'
               }
             />
             <stop
@@ -43,7 +43,7 @@ export default class Link extends Component {
                   ? '#ff6961'
                   : // : payload.source.name === 'Previous Balance' || payload.target.name === 'Balance'
                     // ? '#73dffa'
-                    '#b4d285'
+                    '#c4dea4'
               }
             />
           </linearGradient>

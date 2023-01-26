@@ -117,6 +117,7 @@ const Budget = () => {
             colorScheme="blue"
             variant="solid"
             alignSelf="self-end"
+            w="200px"
           >
             Add Budget
           </Button>
