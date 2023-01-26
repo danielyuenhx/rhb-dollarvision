@@ -9,7 +9,6 @@ import {
   StatNumber,
   StatHelpText,
   StatGroup,
-  Progress,
   Tooltip,
   Table,
   Thead,

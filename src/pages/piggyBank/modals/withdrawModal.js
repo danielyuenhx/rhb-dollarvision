@@ -77,7 +77,7 @@ const WithdrawModal = props => {
       <ModalBody>
         <Flex direction="column" gap="20px">
           <Flex width="100%">
-            <Select placeholder="Select piggy bank to withdraw from">
+            <Select placeholder="Select Piggy Bank to withdraw from">
               {piggyBankList.map(piggy => {
                 return <option value={piggy}>{piggy}</option>;
               })}

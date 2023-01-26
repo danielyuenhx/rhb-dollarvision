@@ -8,6 +8,7 @@ import {
   Modal,
   ModalOverlay,
   Spinner,
+  Text,
 } from '@chakra-ui/react';
 import supabase from '../../supabaseClient';
 import ItemDetails from './itemDetails';
@@ -124,6 +125,9 @@ const PiggyBank = () => {
       {/* <ReactCanvasConfetti /> */}
       {items ? (
         <>
+          <Text mt={4} fontSize="4xl" mb="20px" fontWeight="extrabold">
+            Piggy Bank
+          </Text>
           <Flex gap="30px" direction="row">
             <Flex gap="25px" direction="column" w="50%">
               {items &&
@@ -154,8 +158,9 @@ const PiggyBank = () => {
                 _hover={{ transform: '' }}
                 float="right"
                 onClick={WithdrawHandler}
+                mt={-2}
               >
-                Withdraw From Piggy Banks
+                Withdraw from Piggy Bank
               </Button>
             </Flex>
             {items && <ItemDetails selectedItem={items[selectedItem]} />}

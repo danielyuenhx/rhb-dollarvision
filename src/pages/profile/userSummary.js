@@ -1,7 +1,6 @@
 import React from 'react';
 import { Flex, Card, CardBody, CardHeader, Text } from '@chakra-ui/react';
 import UserStatistics from './userStatistics';
-import { useWallets } from '../../hooks/useWallets';
 
 const UserSummary = () => {
   return (

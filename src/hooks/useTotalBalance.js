@@ -2,8 +2,9 @@ import { useQuery } from 'react-query';
 import { api } from '../api';
 import { searchParamsToString } from '../api/utils';
 
-const getTotalBalance = async (endDate, walletId) => {
+const getTotalBalance = async (startDate, endDate, walletId) => {
   let query = {};
+  if (startDate) query.startDate = startDate;
   if (endDate) query.endDate = endDate;
   if (walletId) query.walletId = walletId;
 
@@ -18,10 +19,10 @@ const getTotalBalance = async (endDate, walletId) => {
   }
 };
 
-export const useTotalBalance = (endDate = undefined, walletId = undefined) => {
+export const useTotalBalance = (startDate = undefined, endDate = undefined, walletId = undefined) => {
   const { data, ...others } = useQuery({
-    queryKey: ['totalBalance', endDate, walletId],
-    queryFn: () => getTotalBalance(endDate, walletId),
+    queryKey: ['totalBalance', startDate, endDate, walletId],
+    queryFn: () => getTotalBalance(startDate, endDate, walletId),
   });
 
   // all attributes in data

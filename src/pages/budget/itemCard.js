@@ -1,10 +1,10 @@
 import React from 'react';
-import { Card, CardBody, Progress, Text, Tooltip } from '@chakra-ui/react';
+import { Card, CardBody, Text, Tooltip } from '@chakra-ui/react';
 import ProgressBar from '@ramonak/react-progress-bar';
 
 const itemCard = ({ index, title, desc, percentage, onClick }) => {
   return (
-    <Card onClick={onClick.bind(null, index)} cursor="pointer">
+    <Card onClick={onClick.bind(null, index)} cursor="pointer" maxWidth="350px">
       <CardBody>
         <Text fontSize="lg" fontWeight="bold">
           {title}
