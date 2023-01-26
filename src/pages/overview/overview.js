@@ -69,7 +69,7 @@ import {
   setPreviousMonth,
   today,
 } from '../../helpers';
-import SankeyModal from './sankeyModal';
+import SankeyModal from '../../components/sankeyModal';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -165,7 +165,7 @@ const Overview = () => {
 
   const handleDate = e => {
     setDate(e.target.value);
-    console.log(e.target.value)
+    console.log(e.target.value);
   };
 
   const handleWallet = e => {
@@ -330,39 +330,55 @@ const Overview = () => {
           <Flex gap="25px" direction="row" wrap={true} w="100%">
             <Card
               w="25%"
-              borderRadius="0 0 0.375rem 0.375rem"
+              borderRadius="0.375rem"
               borderTop="3px solid"
-              borderTopColor="purple.300"
+              borderTopColor="secondaryBlue"
               onClick={onOpenSankey}
               cursor="pointer"
             >
               <Stat>
                 <CardBody>
                   <StatLabel>Total Balance</StatLabel>
-                  <StatNumber>{`MYR ${totalBalance.toFixed(2)}`}</StatNumber>
+                  <StatNumber color="secondaryBlue">{`MYR ${totalBalance.toFixed(
+                    2
+                  )}`}</StatNumber>
                   <StatHelpText>{dateRange}</StatHelpText>
                 </CardBody>
               </Stat>
             </Card>
             <Card
               w="25%"
-              borderRadius="0 0 0.375rem 0.375rem"
+              borderRadius="0.375rem"
               borderTop="3px solid"
-              borderTopColor="blue.300"
+              borderTopColor={
+                nettChange < 0
+                  ? 'red.600'
+                  : nettChange > 0
+                  ? 'green'
+                  : 'secondaryBlue'
+              }
               onClick={onOpenSankey}
               cursor="pointer"
             >
               <Stat>
                 <CardBody>
                   <StatLabel>Nett Change</StatLabel>
-                  <StatNumber>{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
+                  <StatNumber
+                    color={
+                      nettChange < 0
+                        ? 'red.600'
+                        : nettChange > 0
+                        ? 'green'
+                        : 'secondaryBlue'
+                    }
+                  >{`MYR ${nettChange.toFixed(2)}`}</StatNumber>
                   <StatHelpText>{dateRange}</StatHelpText>
                 </CardBody>
               </Stat>
             </Card>
             <Card
               w="25%"
-              borderRadius="0 0 0.375rem 0.375rem"
+              borderRadius="0.375rem"
               borderTop="3px solid"
               borderTopColor="green"
               onClick={onOpenSankey}
@@ -380,16 +396,16 @@ const Overview = () => {
             </Card>
             <Card
               w="25%"
-              borderRadius="0 0 0.375rem 0.375rem"
+              borderRadius="0.375rem"
               borderTop="3px solid"
-              borderTopColor="red.500"
+              borderTopColor="red.600"
               onClick={onOpenSankey}
               cursor="pointer"
             >
               <Stat>
                 <CardBody>
                   <StatLabel>Total Expense</StatLabel>
-                  <StatNumber color="red.700">{`MYR ${totalExpense.toFixed(
+                  <StatNumber color="red.600">{`MYR ${totalExpense.toFixed(
                     2
                   )}`}</StatNumber>
                   <StatHelpText>{dateRange}</StatHelpText>

@@ -8,20 +8,13 @@ import {
   ModalHeader,
   ModalOverlay,
   Button,
-  Text,
 } from '@chakra-ui/react';
-import Node from '../../components/node';
+import Node from './node';
 import {
-  ToolTip,
   Sankey,
-  PieChart,
-  Pie,
-  Cell,
-  ResponsiveContainer,
-  LabelList,
   Tooltip,
 } from 'recharts';
-import Link from '../../components/link';
+import Link from './link';
 
 const SankeyModal = ({
   isOpen,
@@ -34,28 +27,6 @@ const SankeyModal = ({
   remainingBalance,
   period,
 }) => {
-  const data0 = {
-    nodes: [
-      { name: 'Income' },
-      { name: 'Expenses' },
-      { name: 'Food' },
-      { name: 'Shopping' },
-      { name: 'Piggy-bank' },
-      { name: 'Balance' },
-      { name: 'Previous balance' },
-      { name: 'Total assets' },
-    ],
-    links: [
-      { source: 0, target: 7, value: 1000.7 },
-      { source: 1, target: 2, value: 300.7 },
-      { source: 1, target: 3, value: 300.7 },
-      { source: 7, target: 4, value: 1000 },
-      { source: 7, target: 1, value: 399.3 },
-      { source: 6, target: 7, value: 399.3 },
-    ],
-  };
-  console.log(incomeTransactions);
-
   const sankeyData = {
     nodes: [],
     links: [],
@@ -69,7 +40,7 @@ const SankeyModal = ({
   const offset = 3;
 
   // mapping income transactions to income
-  incomeTransactions.map((transaction, index) => {
+  incomeTransactions?.map((transaction, index) => {
     sankeyData.nodes.push({ name: transaction.name });
     sankeyData.links.push({
       source: index + offset,
@@ -78,7 +49,7 @@ const SankeyModal = ({
     });
   });
 
-  const prevBalOffset = offset + incomeTransactions.length;
+  const prevBalOffset = offset + incomeTransactions?.length;
 
   // mapping previous balance to total assets
   sankeyData.nodes.push({ name: 'Previous Balance' });
@@ -97,7 +68,7 @@ const SankeyModal = ({
   const expenseOffset = prevBalOffset + 1;
 
   // mapping expense to expense transactions
-  expenseTransactions.map((transaction, index) => {
+  expenseTransactions?.map((transaction, index) => {
     sankeyData.nodes.push({ name: transaction.name });
     sankeyData.links.push({
       source: 2,
@@ -106,7 +77,7 @@ const SankeyModal = ({
     });
   });
 
-  const balanceOffset = expenseOffset + expenseTransactions.length;
+  const balanceOffset = expenseOffset + expenseTransactions?.length;
 
   // TODO: mapping total assets to piggy bank
   // sankeyData.nodes.push({ name: 'Piggy bank' });
