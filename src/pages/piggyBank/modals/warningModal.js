@@ -44,6 +44,7 @@ const WarningModal = props => {
       });
     }
     props.refetchPiggyBanks();
+    props.startAnimation();
     dispatch(updateModalName('Completed'));
   };
 

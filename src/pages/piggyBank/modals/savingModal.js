@@ -18,7 +18,7 @@ import {
 import { useDispatch, useSelector } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
 
-const SavingModal = () => {
+const SavingModal = ({ startAnimation }) => {
   const [sliderValue, setSliderValue] = useState(10);
   const [amount, setAmount] = useState(10000);
   const [initialDesposit, setInitialDeposit] = useState(3000);
@@ -43,6 +43,7 @@ const SavingModal = () => {
     if (recommended < installment) {
       dispatch(updateModalName('Warning'));
     } else {
+      startAnimation();
       dispatch(updateModalName('Completed'));
     }
   };

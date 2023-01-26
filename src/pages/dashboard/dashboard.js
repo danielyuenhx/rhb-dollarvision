@@ -51,7 +51,7 @@ const Dashboard = () => {
           </Box>
         </Flex>
       </Flex>
-      <Alert status="info" mb="30px">
+      <Alert status="info" mb="30px" borderRadius={5}>
         <AlertIcon />
         Kindly be informed that Kiosk terminals at RHB Branches will be
         decommissioned on 1st January 2022. We apologise for any inconvenience

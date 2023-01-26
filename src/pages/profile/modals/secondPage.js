@@ -47,8 +47,7 @@ const SecondPage = props => {
                 Expenses
               </Text>
               <Text fontSize="20px">
-                You have spent a total of RM 12000, and almost 30% of it are
-                spent on food.
+                You have spent a total of RM12000 on expenses, and 30% of it is spent on Food.
               </Text>
             </Flex>
           </SlideFade>

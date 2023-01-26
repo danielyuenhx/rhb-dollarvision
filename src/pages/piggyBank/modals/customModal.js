@@ -18,7 +18,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
 
-const CustomModal = () => {
+const CustomModal = ({ startAnimation }) => {
   const [sliderValue, setSliderValue] = useState(10);
   const [amount, setAmount] = useState(80000);
   const [customItem, setCustomItem] = useState('iPhone 14');
@@ -42,6 +42,7 @@ const CustomModal = () => {
   };
 
   const proceedHandler = async () => {
+    startAnimation();
     dispatch(updateModalName('Completed'));
   };
 

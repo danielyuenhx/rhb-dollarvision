@@ -33,7 +33,7 @@ const AssetsModal = props => {
 
   const [asset, setAssets] = useState('Car');
   const [amount, setAmount] = useState(80000);
-  const [initialDesposit, setInitialDeposit] = useState(3000);
+  const [initialDesposit, setInitialDeposit] = useState(500);
   const [downPaymentPercentage, setDownPaymentPercentage] = useState(20);
 
   const toast = useToast();
@@ -164,6 +164,7 @@ const AssetsModal = props => {
         });
       }
       props.refetchPiggyBanks();
+      props.startAnimation();
       dispatch(updateModalName('Completed'));
     }
   };

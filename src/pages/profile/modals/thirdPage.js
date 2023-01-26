@@ -39,8 +39,8 @@ const ThirdPage = props => {
                 Budgeting
               </Text>
               <Text fontSize="20px">
-                You are very good with your budgeting as well despite all of the
-                spendings you had.
+                Congratulations! You did not overspend on a single budget
+                throughout the entire year.
               </Text>
             </Flex>
           </SlideFade>
