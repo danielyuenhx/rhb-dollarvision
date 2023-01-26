@@ -305,7 +305,7 @@ const Overview = () => {
               incomeCategories={incomeCategories}
               refetchData={refetchTransactions}
             />
-            <Alert status="error">
+            <Alert status="error" borderRadius="10px">
               <AlertIcon />
               <AlertTitle>You have exceeded your budget for Food!</AlertTitle>
               <AlertDescription>

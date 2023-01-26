@@ -153,7 +153,7 @@ const CategoriseModal = ({
         </Modal>
       )}
       {uncategorisedTransactions.length !== 0 && (
-        <Alert status="info" cursor="pointer" onClick={onOpenUncategorised}>
+        <Alert status="info" cursor="pointer" onClick={onOpenUncategorised} borderRadius="10px">
           <AlertIcon />
           <AlertTitle>{`You have ${
             uncategorisedTransactions.length
