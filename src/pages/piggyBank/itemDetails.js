@@ -9,7 +9,6 @@ import {
   StatHelpText,
   StatGroup,
   Flex,
-  Progress,
   Tooltip,
   Box,
 } from '@chakra-ui/react';
@@ -18,15 +17,15 @@ import { faEdit } from '@fortawesome/free-solid-svg-icons';
 import ProgressBar from '@ramonak/react-progress-bar';
 import React from 'react';
 
-const itemDetails = ({ selectedItem }) => {
+const itemDetails = ({ piggyBank }) => {
   const currentDate = new Date();
   const completionDate = new Date();
   completionDate.setMonth(
     completionDate.getMonth() +
-      Math.round(selectedItem.total / selectedItem.per_month)
+      Math.round(piggyBank.total / piggyBank.per_month)
   );
 
-  const progress = selectedItem.paid / selectedItem.total;
+  const progress = piggyBank.paid / piggyBank.total;
 
   return (
     <Card w="100%" h="100%">
@@ -34,9 +33,9 @@ const itemDetails = ({ selectedItem }) => {
         <Flex justifyContent="space-between" alignItems="center">
           <Box>
             <Text fontSize="2xl" fontWeight="bold" color="white">
-              {selectedItem.name}
+              {piggyBank.name}
             </Text>
-            <Text color="white">{selectedItem.desc}</Text>
+            <Text color="white">{piggyBank.description}</Text>
           </Box>
           <Box marginRight="10px" cursor="pointer">
             <FontAwesomeIcon icon={faEdit} size="xl" color="white" />
@@ -48,7 +47,7 @@ const itemDetails = ({ selectedItem }) => {
           <Stat>
             <StatLabel>Total</StatLabel>
             <StatNumber>
-              {selectedItem.total.toLocaleString('en-US', {
+              {piggyBank.total.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'MYR',
               })}
@@ -57,13 +56,10 @@ const itemDetails = ({ selectedItem }) => {
           <Stat>
             <StatLabel>Remaining amount</StatLabel>
             <StatNumber>
-              {(selectedItem.total - selectedItem.paid).toLocaleString(
-                'en-US',
-                {
-                  style: 'currency',
-                  currency: 'MYR',
-                }
-              )}
+              {(piggyBank.total - piggyBank.paid).toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'MYR',
+              })}
             </StatNumber>
           </Stat>
         </StatGroup>
@@ -71,7 +67,7 @@ const itemDetails = ({ selectedItem }) => {
           <Stat>
             <StatLabel>Saved amount</StatLabel>
             <StatNumber>
-              {selectedItem.paid.toLocaleString('en-US', {
+              {piggyBank.paid.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'MYR',
               })}
@@ -84,7 +80,7 @@ const itemDetails = ({ selectedItem }) => {
           <Stat>
             <StatLabel>Per month</StatLabel>
             <StatNumber>
-              {selectedItem.per_month.toLocaleString('en-US', {
+              {piggyBank.per_month.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'MYR',
               })}
@@ -108,11 +104,11 @@ const itemDetails = ({ selectedItem }) => {
             placement="top"
           >
             <ProgressBar
-              completed={progress * 100}
+              completed={+(progress * 100).toFixed(2)}
               height="30px"
               bgColor="#0067b1"
               labelAlignment="center"
-              isLabelVisible={(progress * 100) ? true : false }
+              isLabelVisible={progress * 100 ? true : false}
             />
           </Tooltip>
         </Box>

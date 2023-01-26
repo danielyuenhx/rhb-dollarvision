@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 // import ReactCanvasConfetti from 'react-canvas-confetti';
 import Layout from '../../components/layout';
 import {
@@ -10,7 +10,6 @@ import {
   Spinner,
   Text,
 } from '@chakra-ui/react';
-import supabase from '../../supabaseClient';
 import ItemDetails from './itemDetails';
 import ItemCard from './itemCard';
 import SelectionModal from './modals/selectionModal';
@@ -22,6 +21,8 @@ import { updateModalName } from '../../redux/modalSlice';
 import CustomModal from './modals/customModal';
 import WarningModal from './modals/warningModal';
 import WithdrawModal from './modals/withdrawModal';
+import { usePiggyBanks } from '../../hooks/usePiggyBanks';
+import { usePiggyBankById } from '../../hooks/usePiggyBankById';
 
 // const canvasStyles = {
 //   position: 'fixed',
@@ -44,9 +45,17 @@ import WithdrawModal from './modals/withdrawModal';
 
 const PiggyBank = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const [selectedItem, setSelectedItem] = useState(0);
-  const [items, setItems] = useState();
   const dispatch = useDispatch();
+
+  const { data: piggyBanks, isLoading: piggyBanksAreLoading } = usePiggyBanks();
+  const defaultPiggyBankId =
+    !piggyBanksAreLoading && piggyBanks ? piggyBanks[0].id : 1;
+  const [selectedPiggyBankId, setSelectedPiggyBankId] =
+    useState(defaultPiggyBankId);
+
+  const { data: piggyBank, isLoading: piggyBankIsLoading } =
+    usePiggyBankById(selectedPiggyBankId);
+  const isLoading = piggyBanksAreLoading || piggyBankIsLoading;
 
   const current = useSelector(state => state.modal.currentModalName);
 
@@ -77,16 +86,6 @@ const PiggyBank = () => {
     onOpen();
     dispatch(updateModalName('Withdraw'));
   };
-
-  useEffect(() => {
-    const getPiggybank = async () => {
-      let { data: items } = await supabase
-        .from('piggybank')
-        .select('name, desc, total, paid, per_month');
-      setItems(items);
-    };
-    getPiggybank();
-  }, []);
 
   // const refAnimationInstance = useRef(null);
   // const [intervalId, setIntervalId] = useState();
@@ -120,26 +119,47 @@ const PiggyBank = () => {
   //   };
   // }, [intervalId]);
 
+  if (isLoading) {
+    return (
+      <Layout>
+        <Flex
+          w="100%"
+          marginTop="30vh"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Spinner
+            size="xl"
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="secondaryBlue"
+          />
+        </Flex>
+      </Layout>
+    );
+  }
+
   return (
     <Layout>
       {/* <ReactCanvasConfetti /> */}
-      {items ? (
+      {piggyBanks ? (
         <>
           <Text mt={4} fontSize="4xl" mb="20px" fontWeight="extrabold">
             Piggy Bank
           </Text>
           <Flex gap="30px" direction="row">
             <Flex gap="25px" direction="column" w="50%">
-              {items &&
-                items.map((item, index) => (
+              {piggyBanks &&
+                piggyBanks.map((pb, index) => (
                   <ItemCard
-                    key={index}
+                    key={pb.id}
                     index={index}
-                    title={item.name}
-                    desc={item.desc}
-                    total={item.total}
-                    paid={item.paid}
-                    onClick={setSelectedItem.bind(null, index)}
+                    title={pb.name}
+                    desc={pb.description}
+                    total={pb.total}
+                    paid={pb.paid}
+                    onClick={setSelectedPiggyBankId.bind(null, pb.id)}
                   />
                 ))}
               <Button
@@ -163,7 +183,7 @@ const PiggyBank = () => {
                 Withdraw from Piggy Bank
               </Button>
             </Flex>
-            {items && <ItemDetails selectedItem={items[selectedItem]} />}
+            {piggyBank && <ItemDetails piggyBank={piggyBank} />}
           </Flex>
 
           <Modal

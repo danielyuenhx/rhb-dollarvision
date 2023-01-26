@@ -61,22 +61,24 @@ const Budget = () => {
   };
 
   if (isLoading) {
-    <Layout>
-      <Flex
-        w="100%"
-        marginTop="30vh"
-        justifyContent="center"
-        alignItems="center"
-      >
-        <Spinner
-          size="xl"
-          thickness="4px"
-          speed="0.65s"
-          emptyColor="gray.200"
-          color="secondaryBlue"
-        />
-      </Flex>
-    </Layout>;
+    return (
+      <Layout>
+        <Flex
+          w="100%"
+          marginTop="30vh"
+          justifyContent="center"
+          alignItems="center"
+        >
+          <Spinner
+            size="xl"
+            thickness="4px"
+            speed="0.65s"
+            emptyColor="gray.200"
+            color="secondaryBlue"
+          />
+        </Flex>
+      </Layout>
+    );
   }
 
   return (
