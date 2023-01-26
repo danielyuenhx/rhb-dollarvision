@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Flex,
   ModalContent,
@@ -20,13 +20,31 @@ import {
 } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
+import * as api from '../../../api/index';
 
 const WithdrawModal = props => {
-  const piggyBankList = ['Retirement', 'Car', 'Education'];
-  const [withdrawAmount, setWithdrawAmount] = useState(1000);
-
   const dispatch = useDispatch();
   const toast = useToast();
+  const [withdrawAmount, setWithdrawAmount] = useState(1000);
+  const [piggyBanks, setPiggyBanks] = useState();
+  let piggyId;
+  let options = [];
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        await api.getPiggyBanks().then(res => setPiggyBanks(res?.data));
+      } catch (e) {
+        console.log(e);
+      }
+    };
+
+    fetchData().catch(console.error);
+  }, []);
+
+  piggyBanks?.data?.map(piggy => {
+    return options.push({ id: piggy.id, name: piggy.name });
+  });
 
   let total = 50000;
   let perMonth = 300;
@@ -45,24 +63,38 @@ const WithdrawModal = props => {
       Math.round((total - (savedAmount - withdrawAmount)) / perMonth)
   );
 
-  // if withdraw x amount
-  // savedAmount - withdrawAmount
-  // total / installment to get the expected
-
   const withdrawAmountHandler = event => {
     setWithdrawAmount(event.target.value);
   };
 
-  const proceedHandler = () => {
+  const proceedHandler = async () => {
+    console.log(piggyId);
+    console.log(withdrawAmount);
+    try {
+      await api
+        .withdrawPiggyBank(piggyId, withdrawAmount)
+        .then(res => console.log(res));
+
+      toast({
+        title: 'Withdraw success',
+        description: `RM ${withdrawAmount} has been transferred to your primary account.`,
+        status: 'info',
+        duration: 5000,
+        isClosable: true,
+      });
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: 'Failed',
+        description: `An error occured.`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+
     dispatch(updateModalName(''));
     props.onClose();
-    toast({
-      title: 'Withdraw success',
-      description: `RM ${withdrawAmount} has been transferred to your primary account.`,
-      status: 'info',
-      duration: 5000,
-      isClosable: true,
-    });
   };
 
   return (
@@ -77,9 +109,15 @@ const WithdrawModal = props => {
       <ModalBody>
         <Flex direction="column" gap="20px">
           <Flex width="100%">
-            <Select placeholder="Select Piggy Bank to withdraw from">
-              {piggyBankList.map(piggy => {
-                return <option value={piggy}>{piggy}</option>;
+            <Select
+              placeholder="Select Piggy Bank to withdraw from"
+              onChange={e => {
+                piggyId = e.target.value;
+                console.log(piggyId);
+              }}
+            >
+              {options.map(piggy => {
+                return <option value={piggy.id}>{piggy.name}</option>;
               })}
             </Select>
           </Flex>

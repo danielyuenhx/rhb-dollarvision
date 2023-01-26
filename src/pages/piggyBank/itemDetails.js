@@ -108,7 +108,7 @@ const itemDetails = ({ piggyBank }) => {
               height="30px"
               bgColor="#0067b1"
               labelAlignment="center"
-              isLabelVisible={progress * 100 ? true : false}
+              isLabelVisible={(progress * 100).toFixed(2) > 20 ? true : false}
             />
           </Tooltip>
         </Box>

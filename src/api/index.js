@@ -25,3 +25,25 @@ export const favouriteWallet = (walletId, isFav) =>
 
 export const createBudget = (name, description, limit, categoryIds) =>
   api.post('/budgets', { name, description, limit, categoryIds });
+
+export const createPiggyBank = (
+  name,
+  description,
+  walletId,
+  total,
+  perMonth,
+  initialDeposit
+) =>
+  api.post('/piggy_banks', {
+    name,
+    description,
+    walletId,
+    total,
+    perMonth,
+    initialDeposit,
+  });
+
+export const withdrawPiggyBank = (id, amount) =>
+  api.post(`/piggy_banks/${id}/withdraw`, { id, amount });
+
+export const getPiggyBanks = () => api.get('/piggy_banks');

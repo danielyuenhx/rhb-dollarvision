@@ -6,18 +6,44 @@ import {
   ModalBody,
   ModalHeader,
   Text,
+  useToast,
 } from '@chakra-ui/react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
+import * as api from '../../../api/index';
 
-const WarningModal = () => {
+const WarningModal = props => {
+  const piggyBank = useSelector(state => state.modal.piggyBankData);
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const BackHandler = () => {
     dispatch(updateModalName('Selection'));
   };
 
   const proceedHandler = async () => {
+    try {
+      await api
+        .createPiggyBank(
+          piggyBank.name,
+          piggyBank.desc,
+          piggyBank.walletId,
+          piggyBank.downPaymentAmount,
+          piggyBank.installment,
+          piggyBank.initialDesposit
+        )
+        .then(res => console.log(res));
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: 'Failed',
+        description: `An error occured.`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+    props.refetchPiggyBanks();
     dispatch(updateModalName('Completed'));
   };
 
@@ -47,9 +73,10 @@ const WarningModal = () => {
           {/* Calculations */}
           <Flex direction="column" gap="20px">
             <Text textAlign="justify">
-            The installment plan that you have selected is more than the
-            recommended amount, are you sure you want to proceed? You will need
-            to be very strict with your budgeting to sustain in a long term
+              The installment plan that you have selected is more than the
+              recommended amount, are you sure you want to proceed? You will
+              need to be very strict with your budgeting to sustain in a long
+              term
             </Text>
           </Flex>
           {/* Confirmation */}

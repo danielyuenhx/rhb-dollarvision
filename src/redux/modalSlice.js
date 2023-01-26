@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState = {
   currentModalName: '',
   modalState: false,
+  piggyBankData: {},
 };
 
 export const modalSlice = createSlice({
@@ -15,9 +16,13 @@ export const modalSlice = createSlice({
     updateModalState: (state, action) => {
       state.modalState = action.payload;
     },
+    updatePiggyBankData: (state, action) => {
+      state.piggyBankData = action.payload;
+    },
   },
 });
 
-export const { updateModalName, updateModalState } = modalSlice.actions;
+export const { updateModalName, updateModalState, updatePiggyBankData } =
+  modalSlice.actions;
 
 export default modalSlice.reducer;

@@ -47,7 +47,11 @@ const PiggyBank = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
   const dispatch = useDispatch();
 
-  const { data: piggyBanks, isLoading: piggyBanksAreLoading } = usePiggyBanks();
+  const {
+    data: piggyBanks,
+    isLoading: piggyBanksAreLoading,
+    refetch: refetchPiggyBanks,
+  } = usePiggyBanks();
   const defaultPiggyBankId =
     !piggyBanksAreLoading && piggyBanks ? piggyBanks[0].id : 1;
   const [selectedPiggyBankId, setSelectedPiggyBankId] =
@@ -61,7 +65,9 @@ const PiggyBank = () => {
 
   const renderModal = () => {
     if (current === 'Assets') {
-      return <AssetsModal />;
+      return (
+        <AssetsModal refetchPiggyBanks={refetchPiggyBanks} data={piggyBank} />
+      );
     } else if (current === 'Education Fund' || current === 'Investments') {
       return <SavingModal />;
     } else if (current === 'Custom Fund') {
@@ -71,9 +77,14 @@ const PiggyBank = () => {
     } else if (current === 'Selection') {
       return <SelectionModal />;
     } else if (current === 'Warning') {
-      return <WarningModal />;
+      return <WarningModal refetchPiggyBanks={refetchPiggyBanks} />;
     } else if (current === 'Withdraw') {
-      return <WithdrawModal onClose={onClose} />;
+      return (
+        <WithdrawModal
+          onClose={onClose}
+          refetchPiggyBanks={refetchPiggyBanks}
+        />
+      );
     }
   };
 

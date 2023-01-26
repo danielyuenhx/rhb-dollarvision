@@ -27,6 +27,7 @@ const SelectionModal = () => {
         <SimpleGrid columns={2} spacing={5}>
           {PIGGYBANK_OPTIONS.map((option, index) => (
             <Card
+              key={option.name}
               cursor="pointer"
               onClick={() => dispatch(updateModalName(option.name))}
               transform="scale(1)"
