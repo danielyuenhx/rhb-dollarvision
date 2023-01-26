@@ -1,5 +1,6 @@
 import React from 'react';
 import { Card, CardBody, Progress, Text, Tooltip } from '@chakra-ui/react';
+import ProgressBar from '@ramonak/react-progress-bar';
 
 const itemCard = ({ index, title, desc, total, paid, onClick }) => {
   return (
@@ -16,11 +17,11 @@ const itemCard = ({ index, title, desc, total, paid, onClick }) => {
           color="black"
           placement="top"
         >
-          <Progress
-            hasStripe
-            colorScheme="blue"
-            height="32px"
-            value={(paid / total) * 100}
+          <ProgressBar
+            completed={(paid / total) * 100}
+            isLabelVisible={false}
+            height="30px"
+            bgColor="#0067b1"
           />
         </Tooltip>
       </CardBody>

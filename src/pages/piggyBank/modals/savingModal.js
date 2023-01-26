@@ -72,34 +72,6 @@ const SavingModal = () => {
       </ModalHeader>
       <ModalBody>
         <Flex gap="30px" direction="column">
-          {/* What to save */}
-          {/* How much */}
-          <Flex direction="column" gap="20px">
-            <Text as="b">How much do you want to put aside for {current}?</Text>
-            <InputGroup>
-              <InputLeftAddon children="RM" />
-              <Input
-                type="number"
-                placeholder="10000"
-                defaultValue={amount}
-                onChange={handleChange}
-              />
-            </InputGroup>
-          </Flex>
-
-          {/* Initial deposit */}
-          <Flex direction="column" gap="20px" justifyContent="space-between">
-            <Text as="b">Initial deposit?</Text>
-            <InputGroup>
-              <InputLeftAddon children="RM" />
-              <Input
-                type="number"
-                placeholder="5000"
-                defaultValue={initialDesposit}
-                onChange={handleDepositChange}
-              />
-            </InputGroup>
-          </Flex>
           {/* How long */}
           <Flex direction="column">
             <Text as="b">How many years do you want to save this for?</Text>
@@ -128,6 +100,35 @@ const SavingModal = () => {
               <SliderThumb />
             </Slider>
           </Flex>
+          
+          {/* How much */}
+          <Flex direction="column" gap="20px">
+            <Text as="b">How much do you want to put aside for {current}?</Text>
+            <InputGroup>
+              <InputLeftAddon children="RM" />
+              <Input
+                type="number"
+                placeholder="10000"
+                defaultValue={amount}
+                onChange={handleChange}
+              />
+            </InputGroup>
+          </Flex>
+
+          {/* Initial deposit */}
+          <Flex direction="column" gap="20px" justifyContent="space-between">
+            <Text as="b">Initial deposit?</Text>
+            <InputGroup>
+              <InputLeftAddon children="RM" />
+              <Input
+                type="number"
+                placeholder="5000"
+                defaultValue={initialDesposit}
+                onChange={handleDepositChange}
+              />
+            </InputGroup>
+          </Flex>
+          
 
           {/* Calculations */}
           <Flex direction="column" gap="20px">

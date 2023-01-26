@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardBody,
@@ -23,16 +23,25 @@ import {
   Flex,
 } from '@chakra-ui/react';
 import _ from 'lodash';
+import ProgressBar from '@ramonak/react-progress-bar';
 
-const itemDetails = ({ budget }) => {
+const ItemDetails = ({ budget }) => {
   const { name, limit, totalExpense, percentage, categories, transactions } =
     budget;
   const currentDate = new Date();
-  // const completionDate = new Date();
-  // completionDate.setMonth(
-  //   completionDate.getMonth() +
-  //     Math.round(selectedItem.total / selectedItem.per_month)
-  // );
+
+  const [daysLeft, setDaysLeft] = useState();
+  const getMonthDaysLeft = () => {
+    let date = new Date();
+    return (
+      new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate() -
+      date.getDate()
+    );
+  };
+
+  useEffect(() => {
+    setDaysLeft(getMonthDaysLeft());
+  }, []);
 
   const parseAmount = (amount, categoryType) => {
     if (categoryType === 'expense') {
@@ -79,7 +88,14 @@ const itemDetails = ({ budget }) => {
               })}
             </StatNumber>
           </Stat>
+          <Stat>
+            <StatLabel>Remaining Per Day</StatLabel>
+            <StatNumber>
+              RM {((limit - totalExpense) / daysLeft).toFixed(2)}
+            </StatNumber>
+          </Stat>
         </StatGroup>
+
         <StatGroup mb={5}>
           <Stat>
             <StatLabel color="red.600">Spent</StatLabel>
@@ -105,6 +121,7 @@ const itemDetails = ({ budget }) => {
             </StatNumber>
           </Stat>
         </StatGroup>
+
         <Box mb="30px">
           <Text fontSize="md" mb="5px">
             Total expenditure
@@ -116,11 +133,12 @@ const itemDetails = ({ budget }) => {
             color="black"
             placement="top"
           >
-            <Progress
-              hasStripe
-              colorScheme="blue"
-              height="32px"
-              value={percentage}
+            <ProgressBar
+              completed={percentage}
+              labelAlignment="center"
+              isLabelVisible={percentage > 20 ? true : false}
+              height="30px"
+              bgColor="#0067b1"
             />
           </Tooltip>
         </Box>
@@ -171,4 +189,4 @@ const itemDetails = ({ budget }) => {
   );
 };
 
-export default itemDetails;
+export default ItemDetails;

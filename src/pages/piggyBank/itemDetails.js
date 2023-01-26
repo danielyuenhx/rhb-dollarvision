@@ -15,6 +15,7 @@ import {
 } from '@chakra-ui/react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit } from '@fortawesome/free-solid-svg-icons';
+import ProgressBar from '@ramonak/react-progress-bar';
 import React from 'react';
 
 const itemDetails = ({ selectedItem }) => {
@@ -106,11 +107,12 @@ const itemDetails = ({ selectedItem }) => {
             color="black"
             placement="top"
           >
-            <Progress
-              hasStripe
-              colorScheme="blue"
-              height="32px"
-              value={progress * 100}
+            <ProgressBar
+              completed={progress * 100}
+              height="30px"
+              bgColor="#0067b1"
+              labelAlignment="center"
+              isLabelVisible={(progress * 100) ? true : false }
             />
           </Tooltip>
         </Box>

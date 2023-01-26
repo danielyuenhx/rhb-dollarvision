@@ -8,7 +8,7 @@ import {
   Spinner,
   useDisclosure,
   Modal,
-  ModalOverlay
+  ModalOverlay,
 } from '@chakra-ui/react';
 
 import ItemCard from './itemCard';
@@ -89,7 +89,7 @@ const Budget = () => {
         closeOnOverlayClick={false}
       >
         <ModalOverlay />
-        <AddModal />
+        <AddModal onClose={onClose} />
       </Modal>
       <Flex gap="20px" direction="column">
         <Flex gap="20px" direction="column" alignItems="flex-end">
