@@ -10,7 +10,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
 
-const WarningModal = () => {
+const WarningModal = ({ startAnimation }) => {
   const dispatch = useDispatch();
 
   const BackHandler = () => {
@@ -18,6 +18,7 @@ const WarningModal = () => {
   };
 
   const proceedHandler = async () => {
+    startAnimation();
     dispatch(updateModalName('Completed'));
   };
 
@@ -47,9 +48,10 @@ const WarningModal = () => {
           {/* Calculations */}
           <Flex direction="column" gap="20px">
             <Text textAlign="justify">
-            The installment plan that you have selected is more than the
-            recommended amount, are you sure you want to proceed? You will need
-            to be very strict with your budgeting to sustain in a long term
+              The installment plan that you have selected is more than the
+              recommended amount, are you sure you want to proceed? You will
+              need to be very strict with your budgeting to sustain in a long
+              term
             </Text>
           </Flex>
           {/* Confirmation */}

@@ -47,7 +47,6 @@ import {
 import React, { useRef, useState } from 'react';
 import Layout from '../../components/layout';
 import {
-  Sankey,
   PieChart,
   Pie,
   Cell,
@@ -70,7 +69,7 @@ import {
   setPreviousMonth,
   today,
 } from '../../helpers';
-import Node from '../../components/node';
+import SankeyModal from './sankeyModal';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -115,6 +114,7 @@ const Overview = () => {
   } = useCategories();
   const {
     data: totalBalance,
+    totalBalancePrevMonth,
     isLoading: totalBalanceIsLoading,
     refetch: refetchTotalBalance,
   } = useTotalBalance(selectedStartDate, selectedEndDate);
@@ -165,6 +165,7 @@ const Overview = () => {
 
   const handleDate = e => {
     setDate(e.target.value);
+    console.log(e.target.value)
   };
 
   const handleWallet = e => {
@@ -220,27 +221,6 @@ const Overview = () => {
     onClose: onCloseSankey,
   } = useDisclosure();
 
-  const data0 = {
-    nodes: [
-      { name: 'Income' },
-      { name: 'Expenses' },
-      { name: 'Food' },
-      { name: 'Shopping' },
-      { name: 'Piggy-bank' },
-      { name: 'Balance' },
-      { name: 'Previous balance' },
-      { name: 'Total assets' },
-    ],
-    links: [
-      { source: 0, target: 7, value: 1000.7 },
-      { source: 1, target: 2, value: 300.7 },
-      { source: 1, target: 3, value: 300.7 },
-      { source: 7, target: 4, value: 1000 },
-      { source: 7, target: 1, value: 399.3 },
-      { source: 6, target: 7, value: 399.3 },
-    ],
-  };
-
   const moveToPreviousMonth = () => {
     setPreviousMonth(
       selectedStartDate,
@@ -253,25 +233,25 @@ const Overview = () => {
     setNextMonth(selectedStartDate, setSelectedStartDate, setSelectedEndDate);
   };
 
-  if (isLoading)
-    return (
-      <Layout>
-        <Flex
-          w="100%"
-          marginTop="30vh"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Spinner
-            size="xl"
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="secondaryBlue"
-          />
-        </Flex>
-      </Layout>
-    );
+  // if (isLoading)
+  //   return (
+  //     <Layout>
+  //       <Flex
+  //         w="100%"
+  //         marginTop="30vh"
+  //         justifyContent="center"
+  //         alignItems="center"
+  //       >
+  //         <Spinner
+  //           size="xl"
+  //           thickness="4px"
+  //           speed="0.65s"
+  //           emptyColor="gray.200"
+  //           color="secondaryBlue"
+  //         />
+  //       </Flex>
+  //     </Layout>
+  //   );
 
   return (
     <Layout>
@@ -311,13 +291,13 @@ const Overview = () => {
             colorScheme="blue"
             variant="solid"
             alignSelf="self-end"
-            px="3rem"
+            w="200px"
           >
             Add Transaction
           </Button>
         </Flex>
       </Flex>
-      {transactions ? (
+      {transactions && !isLoading ? (
         <Flex gap="30px" direction="column">
           <Flex direction="column" gap="1rem" alignItems="flex-end">
             <CategoriseModal
@@ -334,49 +314,19 @@ const Overview = () => {
               </AlertDescription>
             </Alert>
           </Flex>
-
-          <Modal
+          <SankeyModal
             isOpen={isOpenSankey}
             onClose={onCloseSankey}
-            scrollBehavior="inside"
-            motionPreset="slideInBottom"
-            size="5xl"
-          >
-            <ModalOverlay />
-            <ModalContent>
-              <ModalHeader>Overview</ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <Sankey
-                  width={960}
-                  height={500}
-                  data={data0}
-                  node={<Node />}
-                  nodePadding={50}
-                  margin={{
-                    left: 100,
-                    right: 100,
-                    top: 100,
-                    bottom: 100,
-                  }}
-                  iterations={0}
-                  link={{ stroke: '#77c878' }}
-                >
-                  <Tooltip />
-                </Sankey>
-              </ModalBody>
-              <ModalFooter>
-                <Button
-                  colorScheme="blue"
-                  variant="solid"
-                  alignSelf="self-end"
-                  onClick={onCloseSankey}
-                >
-                  Close
-                </Button>
-              </ModalFooter>
-            </ModalContent>
-          </Modal>
+            totalIncome={totalIncome}
+            totalExpense={totalExpense}
+            incomeTransactions={incomeTransactionsGroupedByCategoryAndSorted}
+            expenseTransactions={expenseTransactionsGroupedByCategoryAndSorted}
+            previousBalance={totalBalancePrevMonth}
+            remainingBalance={totalBalance}
+            period={`${new Date(selectedStartDate).toLocaleString('default', {
+              month: 'long',
+            })} ${new Date(selectedStartDate).getFullYear()}`}
+          />
           <Flex gap="25px" direction="row" wrap={true} w="100%">
             <Card
               w="25%"
@@ -399,6 +349,8 @@ const Overview = () => {
               borderRadius="0 0 0.375rem 0.375rem"
               borderTop="3px solid"
               borderTopColor="blue.300"
+              onClick={onOpenSankey}
+              cursor="pointer"
             >
               <Stat>
                 <CardBody>
@@ -413,6 +365,8 @@ const Overview = () => {
               borderRadius="0 0 0.375rem 0.375rem"
               borderTop="3px solid"
               borderTopColor="green"
+              onClick={onOpenSankey}
+              cursor="pointer"
             >
               <Stat>
                 <CardBody>
@@ -429,6 +383,8 @@ const Overview = () => {
               borderRadius="0 0 0.375rem 0.375rem"
               borderTop="3px solid"
               borderTopColor="red.500"
+              onClick={onOpenSankey}
+              cursor="pointer"
             >
               <Stat>
                 <CardBody>
@@ -450,15 +406,51 @@ const Overview = () => {
                 </TabList>
                 <TabPanels>
                   <TabPanel>
-                    <ResponsiveContainer width={width} height={300}>
+                    <ResponsiveContainer width="100%" height={300} aspect={2}>
                       <PieChart width="100%" height="100%">
                         <Pie
                           data={incomeTransactionsGroupedByCategoryAndSorted}
                           cx="50%"
                           cy="50%"
                           // labelLine={true}
-                          // labelKey="name"
-                          // label
+                          label={({
+                            cx,
+                            cy,
+                            midAngle,
+                            innerRadius,
+                            outerRadius,
+                            value,
+                            index,
+                          }) => {
+                            const RADIAN = Math.PI / 180;
+                            // eslint-disable-next-line
+                            const radius =
+                              25 + innerRadius + (outerRadius - innerRadius);
+                            // eslint-disable-next-line
+                            const x =
+                              cx + radius * Math.cos(-midAngle * RADIAN);
+                            // eslint-disable-next-line
+                            const y =
+                              cy + radius * Math.sin(-midAngle * RADIAN);
+
+                            return (
+                              <text
+                                x={x}
+                                y={y}
+                                fill="#8884d8"
+                                textAnchor={x > cx ? 'start' : 'end'}
+                                dominantBaseline="central"
+                                fontSize="12"
+                              >
+                                {
+                                  incomeTransactionsGroupedByCategoryAndSorted[
+                                    index
+                                  ].name
+                                }
+                                {''}({value})
+                              </text>
+                            );
+                          }}
                           // label={renderCustomizedLabel}
                           innerRadius={40}
                           outerRadius={80}
@@ -473,11 +465,6 @@ const Overview = () => {
                               />
                             )
                           )}
-                          <LabelList
-                            dataKey="name"
-                            position="outside"
-                            offset={15}
-                          />
                         </Pie>
                       </PieChart>
                     </ResponsiveContainer>
@@ -507,7 +494,7 @@ const Overview = () => {
                     </TableContainer>
                   </TabPanel>
                   <TabPanel>
-                    <ResponsiveContainer width={width} height={300}>
+                    <ResponsiveContainer width="100%" height={300} aspect={2}>
                       <PieChart width="100%" height="100%">
                         <Pie
                           data={expenseTransactionsGroupedByCategoryAndSorted}
@@ -517,6 +504,44 @@ const Overview = () => {
                           // labelKey="name"
                           // label
                           // label={renderCustomizedLabel}
+                          label={({
+                            cx,
+                            cy,
+                            midAngle,
+                            innerRadius,
+                            outerRadius,
+                            value,
+                            index,
+                          }) => {
+                            const RADIAN = Math.PI / 180;
+                            // eslint-disable-next-line
+                            const radius =
+                              20 + innerRadius + (outerRadius - innerRadius);
+                            // eslint-disable-next-line
+                            const x =
+                              cx + radius * Math.cos(-midAngle * RADIAN);
+                            // eslint-disable-next-line
+                            const y =
+                              cy + radius * Math.sin(-midAngle * RADIAN);
+
+                            return (
+                              <text
+                                x={x}
+                                y={y}
+                                fill="#8884d8"
+                                textAnchor={x > cx ? 'start' : 'end'}
+                                dominantBaseline="central"
+                                fontSize="12"
+                              >
+                                {
+                                  expenseTransactionsGroupedByCategoryAndSorted[
+                                    index
+                                  ].name
+                                }
+                                {''}({value})
+                              </text>
+                            );
+                          }}
                           innerRadius={40}
                           outerRadius={80}
                           fill="#8884d8"
@@ -530,11 +555,6 @@ const Overview = () => {
                               />
                             )
                           )}
-                          <LabelList
-                            dataKey="name"
-                            position="outside"
-                            offset={10}
-                          />
                         </Pie>
                       </PieChart>
                     </ResponsiveContainer>
@@ -566,7 +586,7 @@ const Overview = () => {
                 </TabPanels>
               </Tabs>
             </Flex>
-            <Modal onClose={onClose} isOpen={isOpen} isCentered>
+            <Modal onClose={onClose} isOpen={isOpen} isCentered size="lg">
               <ModalOverlay />
               <ModalContent>
                 <ModalHeader>Add Transaction</ModalHeader>
