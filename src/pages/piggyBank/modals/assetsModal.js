@@ -25,6 +25,7 @@ import {
 } from '../../../redux/modalSlice';
 import { useDispatch } from 'react-redux';
 import * as api from '../../../api/index';
+import supabase from '../../../supabaseClient';
 
 const AssetsModal = props => {
   const [sliderValue, setSliderValue] = useState(5);
@@ -105,6 +106,14 @@ const AssetsModal = props => {
   let name = `${asset} Savings`;
   let description = `Funds for ${asset} down payment`;
   let walletId = 1;
+  
+  const todayDate = new Date();
+  const offset = todayDate.getTimezoneOffset();
+  const [date, setDate] = useState(
+    new Date(todayDate.getTime() - offset * 60 * 1000)
+      .toISOString()
+      .split('T')[0]
+  );
 
   const proceedHandler = async e => {
     e.preventDefault();
@@ -132,6 +141,17 @@ const AssetsModal = props => {
             installment,
             initialDesposit
           )
+          .then(res => console.log(res));
+
+        await supabase
+          .from('transactions')
+          .insert({
+            wallet_id: 1,
+            date: date,
+            category_id: 13,
+            description: 'Deposit to piggy bank',
+            amount: initialDesposit,
+          })
           .then(res => console.log(res));
       } catch (e) {
         console.log(e);

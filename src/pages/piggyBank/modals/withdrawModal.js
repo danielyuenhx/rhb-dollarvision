@@ -21,6 +21,7 @@ import {
 import { useDispatch } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
 import * as api from '../../../api/index';
+import supabase from '../../../supabaseClient';
 
 const WithdrawModal = props => {
   const dispatch = useDispatch();
@@ -46,9 +47,38 @@ const WithdrawModal = props => {
     return options.push({ id: piggy.id, name: piggy.name });
   });
 
-  let total = 50000;
-  let perMonth = 300;
-  let savedAmount = 5000;
+  const [total, setTotal] = useState(10000);
+  const [perMonth, setPerMonth] = useState(500);
+  const [savedAmount, setSavedAmount] = useState(2000);
+  // let total = 50000;
+  // let perMonth = 300;
+  // let savedAmount = 5000;
+
+  // const clonePiggy = piggyBanks;
+
+  // useEffect(() => {
+  //   console.log('id change');
+
+  //   for (let i = 0; i < piggyBanks?.data?.length; i++) {
+  //     if (piggyId === piggyBanks?.data?.id) {
+  //       console.log('triggered');
+  //       setTotal(piggyBanks?.data?.total);
+  //     }
+  //   }
+  // }, [piggyId]);
+
+  // console.log(total);
+
+  // useEffect(() => {
+  //   clonePiggy?.data?.filter(piggy => {
+  //     console.log(piggy)
+  //     return piggy.id === piggyId;
+  //   });
+  // }, [piggyId]);
+
+  // console.log(clonePiggy);
+  // console.log(perMonth);
+  // console.log(savedAmount);
 
   // Before
   const completionDate = new Date();
@@ -67,12 +97,31 @@ const WithdrawModal = props => {
     setWithdrawAmount(event.target.value);
   };
 
+  const todayDate = new Date();
+  const offset = todayDate.getTimezoneOffset();
+  const [date, setDate] = useState(
+    new Date(todayDate.getTime() - offset * 60 * 1000)
+      .toISOString()
+      .split('T')[0]
+  );
+
   const proceedHandler = async () => {
     console.log(piggyId);
     console.log(withdrawAmount);
     try {
       await api
         .withdrawPiggyBank(piggyId, withdrawAmount)
+        .then(res => console.log(res));
+
+      await supabase
+        .from('transactions')
+        .insert({
+          wallet_id: 1,
+          date: date,
+          category_id: 9,
+          description: 'Withdraw from piggy bank',
+          amount: withdrawAmount,
+        })
         .then(res => console.log(res));
 
       toast({
