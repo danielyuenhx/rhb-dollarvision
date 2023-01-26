@@ -405,15 +405,51 @@ const Overview = () => {
                 </TabList>
                 <TabPanels>
                   <TabPanel>
-                    <ResponsiveContainer width={width} height={300}>
+                    <ResponsiveContainer width="100%" height={300} aspect={2}>
                       <PieChart width="100%" height="100%">
                         <Pie
                           data={incomeTransactionsGroupedByCategoryAndSorted}
                           cx="50%"
                           cy="50%"
                           // labelLine={true}
-                          // labelKey="name"
-                          // label
+                          label={({
+                            cx,
+                            cy,
+                            midAngle,
+                            innerRadius,
+                            outerRadius,
+                            value,
+                            index,
+                          }) => {
+                            const RADIAN = Math.PI / 180;
+                            // eslint-disable-next-line
+                            const radius =
+                              25 + innerRadius + (outerRadius - innerRadius);
+                            // eslint-disable-next-line
+                            const x =
+                              cx + radius * Math.cos(-midAngle * RADIAN);
+                            // eslint-disable-next-line
+                            const y =
+                              cy + radius * Math.sin(-midAngle * RADIAN);
+
+                            return (
+                              <text
+                                x={x}
+                                y={y}
+                                fill="#8884d8"
+                                textAnchor={x > cx ? 'start' : 'end'}
+                                dominantBaseline="central"
+                                fontSize="12"
+                              >
+                                {
+                                  incomeTransactionsGroupedByCategoryAndSorted[
+                                    index
+                                  ].name
+                                }
+                                {''}({value})
+                              </text>
+                            );
+                          }}
                           // label={renderCustomizedLabel}
                           innerRadius={40}
                           outerRadius={80}
@@ -428,11 +464,6 @@ const Overview = () => {
                               />
                             )
                           )}
-                          <LabelList
-                            dataKey="name"
-                            position="outside"
-                            offset={15}
-                          />
                         </Pie>
                       </PieChart>
                     </ResponsiveContainer>
@@ -462,7 +493,7 @@ const Overview = () => {
                     </TableContainer>
                   </TabPanel>
                   <TabPanel>
-                    <ResponsiveContainer width={width} height={300}>
+                    <ResponsiveContainer width="100%" height={300} aspect={2}>
                       <PieChart width="100%" height="100%">
                         <Pie
                           data={expenseTransactionsGroupedByCategoryAndSorted}
@@ -472,6 +503,44 @@ const Overview = () => {
                           // labelKey="name"
                           // label
                           // label={renderCustomizedLabel}
+                          label={({
+                            cx,
+                            cy,
+                            midAngle,
+                            innerRadius,
+                            outerRadius,
+                            value,
+                            index,
+                          }) => {
+                            const RADIAN = Math.PI / 180;
+                            // eslint-disable-next-line
+                            const radius =
+                              20 + innerRadius + (outerRadius - innerRadius);
+                            // eslint-disable-next-line
+                            const x =
+                              cx + radius * Math.cos(-midAngle * RADIAN);
+                            // eslint-disable-next-line
+                            const y =
+                              cy + radius * Math.sin(-midAngle * RADIAN);
+
+                            return (
+                              <text
+                                x={x}
+                                y={y}
+                                fill="#8884d8"
+                                textAnchor={x > cx ? 'start' : 'end'}
+                                dominantBaseline="central"
+                                fontSize="12"
+                              >
+                                {
+                                  expenseTransactionsGroupedByCategoryAndSorted[
+                                    index
+                                  ].name
+                                }
+                                {''}({value})
+                              </text>
+                            );
+                          }}
                           innerRadius={40}
                           outerRadius={80}
                           fill="#8884d8"
@@ -485,11 +554,6 @@ const Overview = () => {
                               />
                             )
                           )}
-                          <LabelList
-                            dataKey="name"
-                            position="outside"
-                            offset={10}
-                          />
                         </Pie>
                       </PieChart>
                     </ResponsiveContainer>
