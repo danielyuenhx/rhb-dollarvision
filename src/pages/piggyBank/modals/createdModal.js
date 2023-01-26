@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Flex,
   ModalContent,
@@ -8,7 +8,12 @@ import {
 } from '@chakra-ui/react';
 import { Player } from '@lottiefiles/react-lottie-player';
 
-const CreatedModal = () => {
+const CreatedModal = ({ startAnimation, stopAnimation }) => {
+  // useEffect(() => {
+  //   startAnimation();
+  //   console.log('startted');
+  // }, []);
+
   return (
     <ModalContent>
       <ModalCloseButton
@@ -16,7 +21,7 @@ const CreatedModal = () => {
           // setSelect('');
           // setConfirmed(false);
           // setAssets('');
-          // stopAnimation();
+          stopAnimation();
         }}
       />
       <ModalBody py="50px">

@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-// import ReactCanvasConfetti from 'react-canvas-confetti';
+import React, { useEffect, useState, useRef, useCallback } from 'react';
+import ReactCanvasConfetti from 'react-canvas-confetti';
 import Layout from '../../components/layout';
 import {
   Button,
@@ -23,24 +23,24 @@ import CustomModal from './modals/customModal';
 import WarningModal from './modals/warningModal';
 import WithdrawModal from './modals/withdrawModal';
 
-// const canvasStyles = {
-//   position: 'fixed',
-//   pointerEvents: 'none',
-//   width: '100%',
-//   height: '100%',
-//   top: 0,
-//   left: 0,
-//   zIndex: '1000',
-// };
+const canvasStyles = {
+  position: 'fixed',
+  pointerEvents: 'none',
+  width: '100%',
+  height: '100%',
+  top: 0,
+  left: 0,
+  zIndex: '1000',
+};
 
-// function getAnimationSettings(angle, originX) {
-//   return {
-//     particleCount: 3,
-//     angle,
-//     spread: 55,
-//     origin: { x: originX },
-//   };
-// }
+function getAnimationSettings(angle, originX) {
+  return {
+    particleCount: 3,
+    angle,
+    spread: 55,
+    origin: { x: originX },
+  };
+}
 
 const PiggyBank = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
@@ -50,19 +50,51 @@ const PiggyBank = () => {
 
   const current = useSelector(state => state.modal.currentModalName);
 
+  const refAnimationInstance = useRef(null);
+  const [intervalId, setIntervalId] = useState();
+
+  const getInstance = useCallback(instance => {
+    refAnimationInstance.current = instance;
+  }, []);
+
+  const nextTickAnimation = useCallback(() => {
+    if (refAnimationInstance.current) {
+      refAnimationInstance.current(getAnimationSettings(60, 0));
+      refAnimationInstance.current(getAnimationSettings(120, 1));
+    }
+  }, []);
+
+  const startAnimation = useCallback(() => {
+    if (!intervalId) {
+      setIntervalId(setInterval(nextTickAnimation, 16));
+    }
+  }, [nextTickAnimation, intervalId]);
+
+  const stopAnimation = useCallback(() => {
+    clearInterval(intervalId);
+    setIntervalId(null);
+    refAnimationInstance.current && refAnimationInstance.current.reset();
+  }, [intervalId]);
+
+  useEffect(() => {
+    return () => {
+      clearInterval(intervalId);
+    };
+  }, [intervalId]);
+
   const renderModal = () => {
     if (current === 'Assets') {
-      return <AssetsModal />;
+      return <AssetsModal startAnimation={startAnimation} />;
     } else if (current === 'Education Fund' || current === 'Investments') {
-      return <SavingModal />;
+      return <SavingModal startAnimation={startAnimation} />;
     } else if (current === 'Custom Fund') {
-      return <CustomModal />;
+      return <CustomModal startAnimation={startAnimation} />;
     } else if (current === 'Completed') {
-      return <CreatedModal />;
+      return <CreatedModal stopAnimation={stopAnimation} />;
     } else if (current === 'Selection') {
       return <SelectionModal />;
     } else if (current === 'Warning') {
-      return <WarningModal />;
+      return <WarningModal startAnimation={startAnimation} />;
     } else if (current === 'Withdraw') {
       return <WithdrawModal onClose={onClose} />;
     }
@@ -88,41 +120,9 @@ const PiggyBank = () => {
     getPiggybank();
   }, []);
 
-  // const refAnimationInstance = useRef(null);
-  // const [intervalId, setIntervalId] = useState();
-
-  // const getInstance = useCallback(instance => {
-  //   refAnimationInstance.current = instance;
-  // }, []);
-
-  // const nextTickAnimation = useCallback(() => {
-  //   if (refAnimationInstance.current) {
-  //     refAnimationInstance.current(getAnimationSettings(60, 0));
-  //     refAnimationInstance.current(getAnimationSettings(120, 1));
-  //   }
-  // }, []);
-
-  // const startAnimation = useCallback(() => {
-  //   if (!intervalId) {
-  //     setIntervalId(setInterval(nextTickAnimation, 16));
-  //   }
-  // }, [nextTickAnimation, intervalId]);
-
-  // const stopAnimation = useCallback(() => {
-  //   clearInterval(intervalId);
-  //   setIntervalId(null);
-  //   refAnimationInstance.current && refAnimationInstance.current.reset();
-  // }, [intervalId]);
-
-  // useEffect(() => {
-  //   return () => {
-  //     clearInterval(intervalId);
-  //   };
-  // }, [intervalId]);
-
   return (
     <Layout>
-      {/* <ReactCanvasConfetti /> */}
+      <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} />
       {items ? (
         <>
           <Text mt={4} fontSize="4xl" mb="20px" fontWeight="extrabold">
