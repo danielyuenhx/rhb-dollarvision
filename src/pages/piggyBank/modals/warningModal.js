@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Flex,
@@ -10,12 +10,21 @@ import {
 } from '@chakra-ui/react';
 import { useDispatch, useSelector } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
+import supabase from '../../../supabaseClient';
 import * as api from '../../../api/index';
 
 const WarningModal = props => {
   const piggyBank = useSelector(state => state.modal.piggyBankData);
   const dispatch = useDispatch();
   const toast = useToast();
+
+  const todayDate = new Date();
+  const offset = todayDate.getTimezoneOffset();
+  const [date, setDate] = useState(
+    new Date(todayDate.getTime() - offset * 60 * 1000)
+      .toISOString()
+      .split('T')[0]
+  );
 
   const BackHandler = () => {
     dispatch(updateModalName('Selection'));
