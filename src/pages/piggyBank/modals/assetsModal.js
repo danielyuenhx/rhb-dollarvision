@@ -53,7 +53,7 @@ const AssetsModal = props => {
 
   // Insurance and loan
   let insurance = 1200 * 7;
-  let loan = (amount / (7 * 12)) * (104.5 / 100);
+  let loan = ((amount / (7 * 12)) * (104.5 / 100) - amount / (7 * 12)) * 48;
 
   let balance = 10000;
   let downPaymentAmount = 0;
