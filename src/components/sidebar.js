@@ -82,7 +82,7 @@ export const Sidebar = () => {
     },
     {
       path: '/wallet',
-      name: 'Wallet',
+      name: 'Accounts',
       icon: (
         <FontAwesomeIcon
           icon={faWallet}

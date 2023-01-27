@@ -17,7 +17,7 @@ const Dashboard = () => {
             Hi, Daniel!
           </Text>
           <Text mb="20px" color="gray.500">
-            Your last login was on 10:30:00 PM, Fri 13 Jan 2023
+            Your last login was on 10:30:00 PM, Fri 27 Jan 2023
           </Text>
         </Box>
         <Flex gap="10px">

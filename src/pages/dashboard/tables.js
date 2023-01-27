@@ -11,10 +11,15 @@ import {
 } from '@chakra-ui/react';
 import { useTransactions } from '../../hooks/useTransactions';
 import { useCalculations } from '../../hooks/useCalculations';
+import { useTotalBalance } from '../../hooks/useTotalBalance';
 
 const Tables = () => {
-  const { allTransactionsByWallet } = useTransactions(1);
-  const { totalBalance } = useCalculations(0, allTransactionsByWallet);
+  const {
+    data: totalBalance,
+    totalBalancePrevMonth,
+    isLoading: totalBalanceIsLoading,
+    refetch: refetchTotalBalance,
+  } = useTotalBalance('2023-01-01', '2023-01-31');
 
   return (
     <>
