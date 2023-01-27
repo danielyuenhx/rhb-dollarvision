@@ -31,6 +31,14 @@ const WarningModal = props => {
         piggyBank.installment,
         piggyBank.initialDesposit
       );
+
+      await supabase.from('transactions').insert({
+        wallet_id: 1,
+        date: date,
+        category_id: 13,
+        description: 'Deposit to piggy bank',
+        amount: piggyBank.initialDesposit,
+      });
     } catch (e) {
       console.log(e);
       toast({
