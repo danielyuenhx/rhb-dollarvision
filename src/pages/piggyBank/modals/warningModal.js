@@ -6,19 +6,43 @@ import {
   ModalBody,
   ModalHeader,
   Text,
+  useToast,
 } from '@chakra-ui/react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { updateModalName } from '../../../redux/modalSlice';
+import * as api from '../../../api/index';
 
-const WarningModal = ({ startAnimation }) => {
+const WarningModal = props => {
+  const piggyBank = useSelector(state => state.modal.piggyBankData);
   const dispatch = useDispatch();
+  const toast = useToast();
 
   const BackHandler = () => {
     dispatch(updateModalName('Selection'));
   };
 
   const proceedHandler = async () => {
-    startAnimation();
+    try {
+      await api.createPiggyBank(
+        piggyBank.name,
+        piggyBank.desc,
+        piggyBank.walletId,
+        piggyBank.downPaymentAmount,
+        piggyBank.installment,
+        piggyBank.initialDesposit
+      );
+    } catch (e) {
+      console.log(e);
+      toast({
+        title: 'Failed',
+        description: `An error occured.`,
+        status: 'error',
+        duration: 5000,
+        isClosable: true,
+      });
+    }
+    props.refetchPiggyBanks();
+    props.startAnimation();
     dispatch(updateModalName('Completed'));
   };
 

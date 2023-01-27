@@ -16,46 +16,69 @@ import {
   InputGroup,
   Switch,
   Collapse,
+  Select,
+  useToast,
 } from '@chakra-ui/react';
-import { updateModalName } from '../../../redux/modalSlice';
+import {
+  updateModalName,
+  updatePiggyBankData,
+} from '../../../redux/modalSlice';
 import { useDispatch } from 'react-redux';
+import * as api from '../../../api/index';
+import supabase from '../../../supabaseClient';
 
-const AssetsModal = ({ startAnimation }) => {
+const AssetsModal = props => {
   const [sliderValue, setSliderValue] = useState(5);
   const [insuranceActivate, setInsuranceActivate] = useState(false);
 
   const [asset, setAssets] = useState('Car');
   const [amount, setAmount] = useState(80000);
-  const [initialDesposit, setInitialDeposit] = useState(3000);
+  const [initialDesposit, setInitialDeposit] = useState(500);
   const [downPaymentPercentage, setDownPaymentPercentage] = useState(20);
 
+  const toast = useToast();
+  const [piggyBankActive, setPiggyBankActive] = useState(0);
+
+  const getData = async () => {
+    try {
+      await api
+        .getPiggyBanks()
+        .then(res => setPiggyBankActive(res?.data?.count));
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  getData();
+
   // Insurance and loan
-  let insurance = 500 * 7;
+  let insurance = 1200 * 7;
   let loan = (amount / (7 * 12)) * (104.5 / 100);
 
   let balance = 10000;
   let downPaymentAmount = 0;
 
   if (insuranceActivate) {
-    downPaymentAmount = (
-      amount * (downPaymentPercentage / 100) -
-      initialDesposit +
-      loan +
-      insurance
+    downPaymentAmount = parseFloat(
+      (downPaymentAmount =
+        amount * (downPaymentPercentage / 100) -
+        initialDesposit +
+        loan +
+        insurance)
     ).toFixed(2);
   } else {
-    downPaymentAmount = (
-      amount * (downPaymentPercentage / 100) -
-      initialDesposit
+    downPaymentAmount = parseFloat(
+      (downPaymentAmount =
+        amount * (downPaymentPercentage / 100) - initialDesposit)
     ).toFixed(2);
   }
 
-  let installment = (downPaymentAmount / (sliderValue * 12)).toFixed(2);
+  let installment = parseFloat(
+    (downPaymentAmount / (sliderValue * 12)).toFixed(2)
+  );
   let recommended = balance * (10 / 100).toFixed(2);
-  let piggyBankActive = 5;
 
-  // saved amount is initial deposit
-  // per month is installment
+  downPaymentAmount = +parseFloat(downPaymentAmount).toFixed(3);
 
   const dispatch = useDispatch();
 
@@ -80,11 +103,63 @@ const AssetsModal = ({ startAnimation }) => {
     dispatch(updateModalName('Selection'));
   };
 
-  const proceedHandler = async () => {
+  let name = `${asset} Savings`;
+  let description = `Funds for ${asset} down payment`;
+  let walletId = 1;
+
+  const todayDate = new Date();
+  const offset = todayDate.getTimezoneOffset();
+  const [date, setDate] = useState(
+    new Date(todayDate.getTime() - offset * 60 * 1000)
+      .toISOString()
+      .split('T')[0]
+  );
+
+  const proceedHandler = async e => {
+    e.preventDefault();
+
     if (recommended < installment) {
+      dispatch(
+        updatePiggyBankData({
+          name: name,
+          desc: description,
+          walletId: walletId,
+          downPaymentAmount: downPaymentAmount,
+          installment: installment,
+          initialDesposit: initialDesposit,
+        })
+      );
       dispatch(updateModalName('Warning'));
     } else {
-      startAnimation();
+      try {
+        await api.createPiggyBank(
+          name,
+          description,
+          walletId,
+          downPaymentAmount,
+          installment,
+          initialDesposit
+        );
+
+        await supabase.from('transactions').insert({
+          wallet_id: 1,
+          date: date,
+          category_id: 13,
+          description: 'Deposit to piggy bank',
+          amount: initialDesposit,
+        });
+      } catch (e) {
+        console.log(e);
+        toast({
+          title: 'Failed',
+          description: `An error occured.`,
+          status: 'error',
+          duration: 5000,
+          isClosable: true,
+        });
+      }
+      props.refetchPiggyBanks();
+      props.startAnimation();
       dispatch(updateModalName('Completed'));
     }
   };
@@ -215,6 +290,13 @@ const AssetsModal = ({ startAnimation }) => {
                 </InputGroup>
               </Flex>
             </Flex>
+
+            <Flex direction="column" gap="20px" justifyContent="space-between">
+              <Text as="b">Select wallet for auto deduction</Text>
+              <Select placeholder="Select option">
+                <option value="option1">RHB Savings Account-I</option>
+              </Select>
+            </Flex>
           </Flex>
 
           {/* Activate insurance and loan calculator */}
@@ -234,16 +316,16 @@ const AssetsModal = ({ startAnimation }) => {
                 {/* Insurance */}
                 <Flex direction="row" gap="20px">
                   <Flex direction="column" gap="20px">
-                    <Text>Insurance</Text>
+                    <Text>Insurance Per Year</Text>
                     <InputGroup>
                       <InputLeftAddon children="RM" />
-                      <Input type="number" defaultValue={500} isDisabled />
+                      <Input type="number" defaultValue={1200} isDisabled />
                     </InputGroup>
                   </Flex>
 
                   {/* Loan */}
                   <Flex direction="column" gap="20px">
-                    <Text>Loan</Text>
+                    <Text>Loan Interest</Text>
                     <InputGroup>
                       <InputLeftAddon children="%" />
                       <Input type="number" defaultValue={4.5} isDisabled />
@@ -277,7 +359,7 @@ const AssetsModal = ({ startAnimation }) => {
               for better sustainability.
             </Text>
 
-            {piggyBankActive >= 3 ? (
+            {piggyBankActive >= 4 ? (
               <Fragment>
                 <Text as="b" fontSize="15px" marginTop="20px">
                   Reminder

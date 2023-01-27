@@ -60,11 +60,6 @@ const AddModal = props => {
       selectedCategoryIds.push(category.id);
     });
 
-    console.log(name);
-    console.log(desc);
-    console.log(amount);
-    console.log(selectedCategoryIds);
-
     try {
       setIsLoading(true);
       await api
