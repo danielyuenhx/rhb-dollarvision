@@ -292,7 +292,7 @@ const AssetsModal = props => {
             </Flex>
 
             <Flex direction="column" gap="20px" justifyContent="space-between">
-              <Text as="b">Select wallet for auto deduction</Text>
+              <Text as="b">Select account for auto deduction</Text>
               <Select placeholder="Select option">
                 <option value="option1">RHB Savings Account-I</option>
               </Select>
