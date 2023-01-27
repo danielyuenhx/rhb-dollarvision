@@ -359,7 +359,6 @@ const Wallet = () => {
           selectedWalletId.toString(),
           data[3]
         );
-        console.log(res);
       }
     });
     setImportData([]);
