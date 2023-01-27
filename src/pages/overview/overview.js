@@ -621,7 +621,7 @@ const Overview = () => {
                         />
                       </Box>
                       <Box alignItems="left" width="100%">
-                        <FormLabel fontSize="sm">Wallet</FormLabel>
+                        <FormLabel fontSize="sm">Account</FormLabel>
                         <Select onChange={handleWallet} value={wallet}>
                           <option value="1">RHB Savings Account-I</option>
                           <option value="3">Cash</option>
@@ -694,7 +694,7 @@ const Overview = () => {
                     <Thead>
                       <Tr bg="gray.200">
                         <Th borderRadius="0.375rem 0 0 0">Category</Th>
-                        <Th>Wallet</Th>
+                        <Th>Account</Th>
                         <Th>Description</Th>
                         <Th isNumeric borderRadius="0 0.375rem 0 0">
                           Amount
