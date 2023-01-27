@@ -24,7 +24,11 @@ const ThirdPage = props => {
             <Text opacity="0">dummy text</Text>
           </ModalHeader> */}
       <ModalCloseButton />
-      <ModalBody minHeight="500px">
+      <ModalBody
+        minHeight="500px"
+        background={`linear-gradient(180deg, rgba(61,187,245,1) 0%, rgba(255,255,255,1) 100%)`}
+        borderRadius="inherit"
+      >
         <Flex direction="column">
           {/* first section */}
           <SlideFade direction="left" in={props.isOpen} delay={0.8}>

@@ -32,7 +32,11 @@ const SecondPage = props => {
             <Text opacity="0">dummy text</Text>
           </ModalHeader> */}
       <ModalCloseButton />
-      <ModalBody minHeight="500px">
+      <ModalBody
+        minHeight="500px"
+        background={`linear-gradient(180deg, rgba(61,187,245,1) 0%, rgba(255,255,255,1) 100%)`}
+        borderRadius="inherit"
+      >
         <Flex direction="column">
           {/* first section */}
           <SlideFade direction="left" in={props.isOpen} delay={0.8}>
@@ -47,7 +51,8 @@ const SecondPage = props => {
                 Expenses
               </Text>
               <Text fontSize="20px">
-                You have spent a total of RM12000 on expenses, and 30% of it is spent on Food.
+                You have spent a total of RM12000 on expenses, and 30% of it is
+                spent on Food.
               </Text>
             </Flex>
           </SlideFade>
