@@ -101,7 +101,6 @@ const UserCard = props => {
   const dispatch = useDispatch();
 
   const renderModal = () => {
-    // console.log(current === 'First');
     if (current === 'First') {
       return <FirstPage isOpen={isOpen} />;
     } else if (current === 'Second') {

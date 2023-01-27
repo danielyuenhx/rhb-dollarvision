@@ -28,8 +28,13 @@ const WithdrawModal = props => {
   const toast = useToast();
   const [withdrawAmount, setWithdrawAmount] = useState(1000);
   const [piggyBanks, setPiggyBanks] = useState();
-  let piggyId;
+  const [piggyId, setPiggyId] = useState();
   let options = [];
+  let selectPiggyData = [];
+
+  const [total, setTotal] = useState(10000);
+  const [perMonth, setPerMonth] = useState(500);
+  const [savedAmount, setSavedAmount] = useState(2000);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,38 +52,23 @@ const WithdrawModal = props => {
     return options.push({ id: piggy.id, name: piggy.name });
   });
 
-  const [total, setTotal] = useState(10000);
-  const [perMonth, setPerMonth] = useState(500);
-  const [savedAmount, setSavedAmount] = useState(2000);
-  // let total = 50000;
-  // let perMonth = 300;
-  // let savedAmount = 5000;
+  piggyBanks?.data?.map(piggy => {
+    if (piggyId === piggy.id) {
+      return selectPiggyData?.push({
+        id: piggy.id,
+        name: piggy.name,
+        total: piggy.total,
+        perMonth: piggy.per_month,
+        savedAmount: piggy.paid,
+      });
+    }
+  });
 
-  // const clonePiggy = piggyBanks;
-
-  // useEffect(() => {
-  //   console.log('id change');
-
-  //   for (let i = 0; i < piggyBanks?.data?.length; i++) {
-  //     if (piggyId === piggyBanks?.data?.id) {
-  //       console.log('triggered');
-  //       setTotal(piggyBanks?.data?.total);
-  //     }
-  //   }
-  // }, [piggyId]);
-
-  // console.log(total);
-
-  // useEffect(() => {
-  //   clonePiggy?.data?.filter(piggy => {
-  //     console.log(piggy)
-  //     return piggy.id === piggyId;
-  //   });
-  // }, [piggyId]);
-
-  // console.log(clonePiggy);
-  // console.log(perMonth);
-  // console.log(savedAmount);
+  useEffect(() => {
+    setTotal(selectPiggyData[0]?.total);
+    setPerMonth(selectPiggyData[0]?.perMonth);
+    setSavedAmount(selectPiggyData[0]?.savedAmount);
+  }, [selectPiggyData, piggyId]);
 
   // Before
   const completionDate = new Date();
@@ -106,12 +96,8 @@ const WithdrawModal = props => {
   );
 
   const proceedHandler = async () => {
-    console.log(piggyId);
-    console.log(withdrawAmount);
     try {
-      await api
-        .withdrawPiggyBank(piggyId, withdrawAmount)
-        .then(res => console.log(res));
+      await api.withdrawPiggyBank(piggyId, withdrawAmount);
 
       await supabase
         .from('transactions')
@@ -161,8 +147,8 @@ const WithdrawModal = props => {
             <Select
               placeholder="Select Piggy Bank to withdraw from"
               onChange={e => {
-                piggyId = e.target.value;
-                console.log(piggyId);
+                setPiggyId(parseInt(e.target.value));
+                // console.log(piggyId);
               }}
             >
               {options.map(piggy => {
@@ -184,40 +170,44 @@ const WithdrawModal = props => {
               />
             </InputGroup>
           </Flex>
-          <Flex direction="column" gap="20px">
-            <Text as="b">How does it affect your goal?</Text>
-            <Flex direction="column">
-              <StatGroup gap="100px">
-                {/* After */}
-                <Stat>
-                  <StatLabel>Before Withdraw</StatLabel>
-                  <StatNumber color="green">RM {savedAmount} saved</StatNumber>
-                  <StatHelpText width="150px">
-                    Expected completion by{' '}
-                    {completionDate.toLocaleString('default', {
-                      month: 'long',
-                    })}{' '}
-                    {completionDate.getFullYear()}
-                  </StatHelpText>
-                </Stat>
+          {total ? (
+            <Flex direction="column" gap="20px">
+              <Text as="b">How does it affect your goal?</Text>
+              <Flex direction="column">
+                <StatGroup gap="100px">
+                  {/* After */}
+                  <Stat>
+                    <StatLabel>Before Withdraw</StatLabel>
+                    <StatNumber color="green">
+                      RM {savedAmount} saved
+                    </StatNumber>
+                    <StatHelpText width="150px">
+                      Expected completion by{' '}
+                      {completionDate.toLocaleString('default', {
+                        month: 'long',
+                      })}{' '}
+                      {completionDate.getFullYear()}
+                    </StatHelpText>
+                  </Stat>
 
-                {/* Before */}
-                <Stat>
-                  <StatLabel>After Withdraw</StatLabel>
-                  <StatNumber color="red">
-                    RM {savedAmount - withdrawAmount} saved
-                  </StatNumber>
-                  <StatHelpText width="150px">
-                    Expected completion by{' '}
-                    {completionDateAfter.toLocaleString('default', {
-                      month: 'long',
-                    })}{' '}
-                    {completionDateAfter.getFullYear()}
-                  </StatHelpText>
-                </Stat>
-              </StatGroup>
+                  {/* Before */}
+                  <Stat>
+                    <StatLabel>After Withdraw</StatLabel>
+                    <StatNumber color="red">
+                      RM {savedAmount - withdrawAmount} saved
+                    </StatNumber>
+                    <StatHelpText width="150px">
+                      Expected completion by{' '}
+                      {completionDateAfter.toLocaleString('default', {
+                        month: 'long',
+                      })}{' '}
+                      {completionDateAfter.getFullYear()}
+                    </StatHelpText>
+                  </Stat>
+                </StatGroup>
+              </Flex>
             </Flex>
-          </Flex>
+          ) : null}
 
           <Flex width="100%" justify="center" marginBottom="20px">
             <Button

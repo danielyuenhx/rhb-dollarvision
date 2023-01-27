@@ -23,16 +23,14 @@ const WarningModal = props => {
 
   const proceedHandler = async () => {
     try {
-      await api
-        .createPiggyBank(
-          piggyBank.name,
-          piggyBank.desc,
-          piggyBank.walletId,
-          piggyBank.downPaymentAmount,
-          piggyBank.installment,
-          piggyBank.initialDesposit
-        )
-        .then(res => console.log(res));
+      await api.createPiggyBank(
+        piggyBank.name,
+        piggyBank.desc,
+        piggyBank.walletId,
+        piggyBank.downPaymentAmount,
+        piggyBank.installment,
+        piggyBank.initialDesposit
+      );
     } catch (e) {
       console.log(e);
       toast({

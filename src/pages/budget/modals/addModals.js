@@ -19,7 +19,7 @@ import { useCategories } from '../../../hooks/useCategories';
 import { createBudget } from '../../../api';
 import * as api from '../../../api/index';
 
-const AddModal = (props) => {
+const AddModal = props => {
   const [amount, setAmount] = useState();
   const [name, setName] = useState();
   const [choice, setChoice] = useState();
@@ -58,12 +58,14 @@ const AddModal = (props) => {
       selectedCategoryIds.push(category.id);
     });
 
-
     try {
-      const data = await api
-        .createBudget(name, desc, amount, selectedCategoryIds)
-        .then(res => console.log(res));
-      // console.log(data);
+      const data = await api.createBudget(
+        name,
+        desc,
+        amount,
+        selectedCategoryIds
+      );
+
       toast({
         title: 'Budget created!',
         description: `Budget named ${name} is created with a limit of RM ${amount}.`,

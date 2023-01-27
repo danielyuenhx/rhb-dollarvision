@@ -106,7 +106,7 @@ const AssetsModal = props => {
   let name = `${asset} Savings`;
   let description = `Funds for ${asset} down payment`;
   let walletId = 1;
-  
+
   const todayDate = new Date();
   const offset = todayDate.getTimezoneOffset();
   const [date, setDate] = useState(
@@ -132,27 +132,22 @@ const AssetsModal = props => {
       dispatch(updateModalName('Warning'));
     } else {
       try {
-        await api
-          .createPiggyBank(
-            name,
-            description,
-            walletId,
-            downPaymentAmount,
-            installment,
-            initialDesposit
-          )
-          .then(res => console.log(res));
+        await api.createPiggyBank(
+          name,
+          description,
+          walletId,
+          downPaymentAmount,
+          installment,
+          initialDesposit
+        );
 
-        await supabase
-          .from('transactions')
-          .insert({
-            wallet_id: 1,
-            date: date,
-            category_id: 13,
-            description: 'Deposit to piggy bank',
-            amount: initialDesposit,
-          })
-          .then(res => console.log(res));
+        await supabase.from('transactions').insert({
+          wallet_id: 1,
+          date: date,
+          category_id: 13,
+          description: 'Deposit to piggy bank',
+          amount: initialDesposit,
+        });
       } catch (e) {
         console.log(e);
         toast({
