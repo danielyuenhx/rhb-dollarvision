@@ -33,7 +33,7 @@ const header = () => {
       </Link>
       <Flex width="700px" justifyContent="space-between" alignItems="center">
         <Clock
-          format={'h:mm:ss A, ddd D MMM YYYY'}
+          format={'h:mm A, ddd D MMM YYYY'}
           style={{ fontSize: '18px' }}
           ticking={true}
         />

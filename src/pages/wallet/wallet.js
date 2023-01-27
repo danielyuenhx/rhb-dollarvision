@@ -191,10 +191,16 @@ const Wallet = () => {
     }
 
     setTimeoutId(
-      setTimeout(() => {
+      setTimeout(async () => {
         if (!isFav !== selectedWallet?.isFav) {
-          api.favouriteWallet(selectedWalletId, !isFav).then(data => {
+          await api.favouriteWallet(selectedWalletId, !isFav).then(data => {
             refetchWallets();
+          });
+          toast({
+            title: !isFav === true ? 'Wallet favourited' : 'Wallet unfavourited',
+            status: 'success',
+            duration: 5000,
+            isClosable: true,
           });
         }
       }, 150)
@@ -232,7 +238,7 @@ const Wallet = () => {
       refetchWallets();
       toast({
         title: 'Wallet created!',
-        description: `Custom wallet ${name} created with an initial balance of RM${balance}.`,
+        description: `Custom wallet ${name} created with an initial balance of RM ${balance}.`,
         status: 'success',
         duration: 5000,
         isClosable: true,
@@ -388,7 +394,7 @@ const Wallet = () => {
         mb="20px"
       >
         <Text fontSize="4xl" fontWeight="extrabold">
-          Wallets
+          Accounts
         </Text>
         <Flex gap="1rem">
           <Flex gap="10px" w="100%">
@@ -410,7 +416,7 @@ const Wallet = () => {
             />
           </Flex>
           <Button colorScheme="blue" variant="solid" onClick={onOpen} w="200px">
-            Add Wallet
+            Add Account
           </Button>
         </Flex>
       </Flex>
@@ -866,13 +872,13 @@ const Wallet = () => {
               <Modal onClose={onClose} isOpen={isOpen} isCentered>
                 <ModalOverlay />
                 <ModalContent>
-                  <ModalHeader>Add Wallet</ModalHeader>
+                  <ModalHeader>Add Account</ModalHeader>
                   <ModalCloseButton />
                   <ModalBody>
                     <FormControl>
                       <VStack spacing={6}>
                         <Box alignItems="left" width="100%">
-                          <FormLabel fontSize="sm">Wallet Name</FormLabel>
+                          <FormLabel fontSize="sm">Account Name</FormLabel>
                           <Input
                             placeholder="Name"
                             onChange={handleName}
@@ -927,7 +933,7 @@ const Wallet = () => {
                         colorScheme="blue"
                         variant="solid"
                       >
-                        Add Wallet
+                        Add Account
                       </Button>
                     </Flex>
                   </ModalFooter>

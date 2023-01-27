@@ -10,7 +10,7 @@ const Dashboard = () => {
       <Flex
         justifyContent="space-between"
         alignItems="center"
-        marginTop="-20px"
+        marginTop="20px"
       >
         <Box>
           <Text fontSize="4xl" fontWeight="bold">
