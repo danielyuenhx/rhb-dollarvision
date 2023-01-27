@@ -153,9 +153,41 @@ const PiggyBank = () => {
   return (
     <Layout>
       <ReactCanvasConfetti refConfetti={getInstance} style={canvasStyles} />
-      <Text mt={4} fontSize="4xl" mb="20px" fontWeight="extrabold">
-        Piggy Bank
-      </Text>
+      <Flex
+        gap="25px"
+        direction="row"
+        w="100%"
+        justifyContent="space-between"
+        alignItems="center"
+        mt={4}
+        mb="20px"
+      >
+        <Text mt={4} fontSize="4xl" mb="20px" fontWeight="extrabold">
+          Piggy Bank
+        </Text>
+        <Flex gap="1rem">
+          <Button
+            variant="outline"
+            colorScheme="red"
+            w="auto"
+            float="right"
+            onClick={WithdrawHandler}
+            maxWidth="400px"
+          >
+            Withdraw from Piggy Bank
+          </Button>
+          <Button
+            w="auto"
+            float="right"
+            onClick={AddPiggyBankHandler}
+            maxWidth="400px"
+            colorScheme="blue"
+            variant="solid"
+          >
+            Add Piggy Bank
+          </Button>
+        </Flex>
+      </Flex>
       {piggyBanks ? (
         <>
           <Flex gap="30px" direction="row">
@@ -173,28 +205,6 @@ const PiggyBank = () => {
                     selected={pb.id === selectedPiggyBankId}
                   />
                 ))}
-              <Button
-                variant="primaryButton"
-                w="auto"
-                _hover={{ transform: '' }}
-                float="right"
-                onClick={AddPiggyBankHandler}
-                maxWidth="400px"
-              >
-                Add Piggy Bank
-              </Button>
-              <Button
-                variant="outline"
-                colorScheme="red"
-                w="auto"
-                _hover={{ transform: '' }}
-                float="right"
-                onClick={WithdrawHandler}
-                mt={-2}
-                maxWidth="400px"
-              >
-                Withdraw from Piggy Bank
-              </Button>
             </Flex>
             {piggyBank ? (
               <ItemDetails piggyBank={piggyBank} />

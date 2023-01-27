@@ -151,7 +151,7 @@ const UserCard = props => {
         <CardFooter>
           <Flex w="100%" justify="space-between" alignItems="flex-end">
             <Tag variant="outline" h="20px" w="auto">
-              <TagLabel>11 / 01 / 2023</TagLabel>
+              <TagLabel>27 / 01 / 2023</TagLabel>
             </Tag>
             <Flex textAlign="right" justifyContent="flex-end" maxWidth="80px">
               <Text fontWeight="bold">Behaviour Card</Text>

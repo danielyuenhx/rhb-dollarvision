@@ -14,7 +14,7 @@ const Profile = () => {
           Summary
         </Text>
         <UserCard />
-        <UserSummary />
+        {/* <UserSummary /> */}
         {/* <UserDetails /> */}
         <UserCategory />
       </Flex>
