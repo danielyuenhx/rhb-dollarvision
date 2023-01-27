@@ -2,9 +2,14 @@ import React from 'react';
 import { Card, CardBody, Text, Tooltip } from '@chakra-ui/react';
 import ProgressBar from '@ramonak/react-progress-bar';
 
-const itemCard = ({ index, title, desc, percentage, onClick }) => {
+const itemCard = ({ index, title, desc, percentage, onClick, selected }) => {
   return (
-    <Card onClick={onClick.bind(null, index)} cursor="pointer" maxWidth="350px">
+    <Card
+      onClick={onClick.bind(null, index)}
+      cursor="pointer"
+      maxWidth="400px"
+      outline={selected ? "1px solid #0067b1" : ''}
+    >
       <CardBody>
         <Text fontSize="lg" fontWeight="bold">
           {title}

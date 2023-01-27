@@ -21,9 +21,10 @@ import {
   Tr,
   useDisclosure,
   Select,
+  useToast,
 } from '@chakra-ui/react';
 import { useDispatch } from 'react-redux';
-import { categoriseTransaction } from '../redux/transactionSlice';
+import * as api from '../api/index';
 
 const parseAmount = (amount, categoryType) => {
   if (categoryType === 'expense') {
@@ -45,18 +46,25 @@ const CategoriseModal = ({
     onClose: onCloseUncategorised,
   } = useDisclosure();
 
-  const dispatch = useDispatch();
+  const toast = useToast();
 
   const handleSave = e => {
     e.preventDefault();
     const select = [...e.target.elements].filter(
       element => element.nodeName === 'SELECT'
     );
-    select.map(item => {
-      dispatch(categoriseTransaction(item.id, item.value));
+    select.map(async item => {
+      // dispatch(categoriseTransaction(item.id, item.value));
+      await api.categoriseTransaction(item.id, item.value);
     });
     refetchData();
     onCloseUncategorised();
+    toast({
+      title: 'Transactions categorised!',
+      status: 'success',
+      duration: 5000,
+      isClosable: true,
+    });
   };
 
   return (
@@ -153,7 +161,12 @@ const CategoriseModal = ({
         </Modal>
       )}
       {uncategorisedTransactions.length !== 0 && (
-        <Alert status="info" cursor="pointer" onClick={onOpenUncategorised} borderRadius={5}>
+        <Alert
+          status="info"
+          cursor="pointer"
+          onClick={onOpenUncategorised}
+          borderRadius={5}
+        >
           <AlertIcon />
           <AlertTitle>{`You have ${
             uncategorisedTransactions.length

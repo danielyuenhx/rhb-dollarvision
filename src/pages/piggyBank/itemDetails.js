@@ -46,7 +46,7 @@ const itemDetails = ({ piggyBank }) => {
         <StatGroup mb={5}>
           <Stat>
             <StatLabel>Total</StatLabel>
-            <StatNumber>
+            <StatNumber color="secondaryBlue">
               {piggyBank.total.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'MYR',
@@ -55,7 +55,7 @@ const itemDetails = ({ piggyBank }) => {
           </Stat>
           <Stat>
             <StatLabel>Remaining amount</StatLabel>
-            <StatNumber>
+            <StatNumber color="secondaryBlue">
               {(piggyBank.total - piggyBank.paid).toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'MYR',
@@ -66,7 +66,7 @@ const itemDetails = ({ piggyBank }) => {
         <StatGroup mb={5}>
           <Stat>
             <StatLabel>Saved amount</StatLabel>
-            <StatNumber>
+            <StatNumber color="green.600">
               {piggyBank.paid.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'MYR',
@@ -79,7 +79,7 @@ const itemDetails = ({ piggyBank }) => {
           </Stat>
           <Stat>
             <StatLabel>Per month</StatLabel>
-            <StatNumber>
+            <StatNumber color="red.600">
               {piggyBank.per_month.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'MYR',

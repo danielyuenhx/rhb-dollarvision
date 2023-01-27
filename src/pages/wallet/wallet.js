@@ -168,18 +168,21 @@ const Wallet = () => {
     twitter: '#BEE3F8',
   };
 
+  useEffect(() => {
+    if (!walletsAreLoading) setSelectedWalletId(wallets[0].id);
+  }, [walletsAreLoading, wallets]);
+
   const [isFav, setIsFav] = useState(true);
   const [timeoutId, setTimeoutId] = useState();
 
   useEffect(() => {
-    if (!walletsAreLoading) setSelectedWalletId(wallets[0].id);
     if (selectedWallet) {
       setIsFav(selectedWallet?.isFav);
     } else {
       const wallet = wallets?.find(wallet => wallet.id === defaultWalletId);
       setIsFav(wallet?.isFav);
     }
-  }, [walletsAreLoading, wallets]);
+  }, [selectedWalletId, wallets]);
 
   const favouriteWalletHandler = () => {
     setIsFav(!isFav);
@@ -333,6 +336,7 @@ const Wallet = () => {
         const date = new Date(
           `${dateSplit[2]}/${dateSplit[1]}/${dateSplit[0]}`
         );
+
         const { res } = await supabase
           .from('transactions')
           .insert({
@@ -343,15 +347,13 @@ const Wallet = () => {
             amount: data[2][0] === '-' ? data[2].substring(1) : data[2],
           })
           .select(`*, categories (*), wallets (*)`);
-        console.log(res);
       } else if (!isNaN(data[3]) && !isNaN(parseFloat(data[3]))) {
-        const { data } = await api.updateInitialBalance(
+        console.log(data[3]);
+        const { res } = await api.updateInitialBalance(
           selectedWalletId.toString(),
-          {
-            initial_balance: data[3],
-          }
+          data[3]
         );
-        console.log(data);
+        console.log(res);
       }
     });
     setImportData([]);

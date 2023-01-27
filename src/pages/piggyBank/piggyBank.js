@@ -150,6 +150,7 @@ const PiggyBank = () => {
                     total={pb.total}
                     paid={pb.paid}
                     onClick={setSelectedPiggyBankId.bind(null, pb.id)}
+                    selected={pb.id === selectedPiggyBankId}
                   />
                 ))}
               <Button
@@ -158,6 +159,7 @@ const PiggyBank = () => {
                 _hover={{ transform: '' }}
                 float="right"
                 onClick={AddPiggyBankHandler}
+                maxWidth="400px"
               >
                 Add Piggy Bank
               </Button>
@@ -169,11 +171,24 @@ const PiggyBank = () => {
                 float="right"
                 onClick={WithdrawHandler}
                 mt={-2}
+                maxWidth="400px"
               >
                 Withdraw from Piggy Bank
               </Button>
             </Flex>
-            {piggyBank && <ItemDetails piggyBank={piggyBank} />}
+            {piggyBank ? (
+              <ItemDetails piggyBank={piggyBank} />
+            ) : (
+              <Flex w="100%" justifyContent="center" alignItems="center">
+                <Spinner
+                  size="xl"
+                  thickness="4px"
+                  speed="0.65s"
+                  emptyColor="gray.200"
+                  color="secondaryBlue"
+                />
+              </Flex>
+            )}
           </Flex>
 
           <Modal

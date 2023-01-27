@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   Button,
   Flex,
@@ -11,15 +11,15 @@ import {
   InputLeftAddon,
   Text,
   useToast,
+  Box,
+  Spinner,
 } from '@chakra-ui/react';
 import Select from 'react-select';
 import makeAnimated from 'react-select/animated';
-import { useDispatch, useSelector } from 'react-redux';
 import { useCategories } from '../../../hooks/useCategories';
-import { createBudget } from '../../../api';
 import * as api from '../../../api/index';
 
-const AddModal = (props) => {
+const AddModal = props => {
   const [amount, setAmount] = useState();
   const [name, setName] = useState();
   const [choice, setChoice] = useState();
@@ -51,6 +51,8 @@ const AddModal = (props) => {
 
   const toast = useToast();
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const proceedHandler = async e => {
     e.preventDefault();
 
@@ -64,10 +66,11 @@ const AddModal = (props) => {
     console.log(selectedCategoryIds);
 
     try {
-      const data = await api
+      setIsLoading(true);
+      await api
         .createBudget(name, desc, amount, selectedCategoryIds)
         .then(res => console.log(res));
-      // console.log(data);
+      setIsLoading(false);
       toast({
         title: 'Budget created!',
         description: `Budget named ${name} is created with a limit of RM ${amount}.`,
@@ -87,7 +90,8 @@ const AddModal = (props) => {
     }
 
     selectedCategoryIds = [];
-    props.onclose();
+    props.onClose();
+    props.refetchBudgets();
   };
 
   return (
@@ -101,39 +105,46 @@ const AddModal = (props) => {
       <ModalBody>
         <Flex gap="20px" direction="column">
           {/* Name */}
-          <Flex gap="20px" direction="column">
-            <Text fontWeight="bold">Name for the budget</Text>
+          <Flex gap="0.5rem" direction="column">
+            <Text fontWeight="bold">Budget Name</Text>
             <Input placeholder="Lunch Budget" onChange={handleNameChange} />
           </Flex>
 
-          <Flex gap="20px" direction="column">
+          <Flex gap="0.5rem" direction="column">
             <Text fontWeight="bold">Short description</Text>
             <Input
-              placeholder="Daily lunch at office"
+              placeholder="Daily lunch at work"
               onChange={handleDescChange}
             />
           </Flex>
 
           {/* Budget Category */}
-          <Flex direction="column">
-            <Text fontWeight="bold">Category</Text>
-            <Text fontSize="sm" as="i">
-              Tips: you can select more than 1 category for your budgeting
-            </Text>
+          <Flex direction="column" gap="0.5rem">
+            <Box>
+              <Text fontWeight="bold">Category</Text>
+              <Text fontSize="sm" color="gray">
+                Tip: You can select more than one category for your budgeting
+              </Text>
+            </Box>
+
+            <Select
+              options={categoryNames}
+              isMulti
+              value={choice}
+              placeholder="Select categories"
+              components={animatedComponents}
+              onChange={handleChoiceChange}
+            />
           </Flex>
 
-          <Select
-            options={categoryNames}
-            isMulti
-            value={choice}
-            placeholder="Select categories"
-            components={animatedComponents}
-            onChange={handleChoiceChange}
-          />
-
           {/* Set Price */}
-          <Flex gap="20px" direction="column">
-            <Text fontWeight="bold">Budget amount</Text>
+          <Flex gap="0.5rem" direction="column">
+            <Box>
+              <Text fontWeight="bold">Budget Amount</Text>
+              <Text fontSize="sm" color="gray">
+                Amount allocated over the duration of a single month
+              </Text>
+            </Box>
             <InputGroup>
               <InputLeftAddon children="RM" />
               <Input
@@ -147,7 +158,7 @@ const AddModal = (props) => {
           {/* Confirmation */}
           <Flex direction="column" gap="20px" textAlign="center">
             <Button onClick={proceedHandler} colorScheme="blue" variant="solid">
-              Create Budget
+              {!isLoading ? 'Create Budget' : <Spinner />}
             </Button>
           </Flex>
         </Flex>

@@ -22,8 +22,8 @@ export const createWallet = (name, initialBalance) =>
   api.post(`/wallets`, { name, initialBalance });
 export const favouriteWallet = (walletId, isFav) =>
   api.put(`/wallets/${walletId}`, { isFav });
-export const updateInitialBalance = (walletId, balance) =>
-  api.put(`/wallets/${walletId}`, balance);
-  
+export const updateInitialBalance = (walletId, initial_balance) =>
+  api.put(`/wallets/${walletId}`, { initial_balance });
+
 export const createBudget = (name, description, limit, categoryIds) =>
   api.post('/budgets', { name, description, limit, categoryIds });

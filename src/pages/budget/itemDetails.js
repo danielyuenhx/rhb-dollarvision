@@ -80,7 +80,7 @@ const ItemDetails = ({ budget }) => {
         <StatGroup mb={5}>
           <Stat>
             <StatLabel>Total Budget</StatLabel>
-            <StatNumber>
+            <StatNumber color="secondaryBlue">
               {limit.toLocaleString('en-US', {
                 style: 'currency',
                 currency: 'MYR',
@@ -88,16 +88,21 @@ const ItemDetails = ({ budget }) => {
             </StatNumber>
           </Stat>
           <Stat>
-            <StatLabel>Remaining Per Day</StatLabel>
-            <StatNumber>
-              RM {((limit - totalExpense) / daysLeft).toFixed(2)}
+            <StatLabel>Remaining expenditure</StatLabel>
+            <StatNumber
+              color={limit - totalExpense >= 0 ? 'green.600' : 'red.600'}
+            >
+              {(limit - totalExpense).toLocaleString('en-US', {
+                style: 'currency',
+                currency: 'MYR',
+              })}
             </StatNumber>
           </Stat>
         </StatGroup>
 
         <StatGroup mb={5}>
           <Stat>
-            <StatLabel color="red.600">Spent</StatLabel>
+            <StatLabel>Spent</StatLabel>
             <StatNumber color="red.600">
               {totalExpense.toLocaleString('en-US', {
                 style: 'currency',
@@ -111,13 +116,13 @@ const ItemDetails = ({ budget }) => {
             </StatHelpText>
           </Stat>
           <Stat>
-            <StatLabel color="green.600">Remaining expenditure</StatLabel>
-            <StatNumber color="green.600">
-              {(limit - totalExpense).toLocaleString('en-US', {
-                style: 'currency',
-                currency: 'MYR',
-              })}
+            <StatLabel>Remaining per day</StatLabel>
+            <StatNumber
+              color={limit - totalExpense >= 0 ? 'green.600' : 'red.600'}
+            >
+              MYR {((limit - totalExpense) / daysLeft).toFixed(2)}/day
             </StatNumber>
+            <StatHelpText>{daysLeft} days left</StatHelpText>
           </Stat>
         </StatGroup>
 

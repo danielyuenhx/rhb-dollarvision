@@ -34,10 +34,11 @@ const Budget = () => {
     today.getMonth() === new Date(selectedStartDate).getMonth() &&
     today.getFullYear() === new Date(selectedStartDate).getFullYear();
 
-  const { data: budgets, isLoading: budgetsAreLoading } = useBudgets(
-    selectedStartDate,
-    selectedEndDate
-  );
+  const {
+    data: budgets,
+    isLoading: budgetsAreLoading,
+    refetch: refetchBudgets,
+  } = useBudgets(selectedStartDate, selectedEndDate);
   const defaultBudgetId = !budgetsAreLoading && budgets ? budgets[0].id : 1;
   const [selectedBudgetId, setSelectedBudgetId] = useState(defaultBudgetId);
 
@@ -59,27 +60,6 @@ const Budget = () => {
   const moveToNextMonth = () => {
     setNextMonth(selectedStartDate, setSelectedStartDate, setSelectedEndDate);
   };
-
-  if (isLoading) {
-    return (
-      <Layout>
-        <Flex
-          w="100%"
-          marginTop="30vh"
-          justifyContent="center"
-          alignItems="center"
-        >
-          <Spinner
-            size="xl"
-            thickness="4px"
-            speed="0.65s"
-            emptyColor="gray.200"
-            color="secondaryBlue"
-          />
-        </Flex>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>
@@ -125,36 +105,51 @@ const Budget = () => {
           </Button>
         </Flex>
       </Flex>
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        isCentered
-        size="xl"
-        scrollBehavior={'inside'}
-        closeOnOverlayClick={false}
-      >
-        <ModalOverlay />
-        <AddModal onClose={onClose} />
-      </Modal>
-      {!isLoading ? (
-        <Flex gap="20px" direction="column">
-          <Flex gap="30px" direction="row">
-            <Flex gap="25px" direction="column" w="50%">
-              {budgets &&
-                budgets.map((budget, index) => (
-                  <ItemCard
-                    key={budget.id}
-                    index={index}
-                    title={budget.name}
-                    desc={budget.description}
-                    percentage={budget.percentage}
-                    onClick={setSelectedBudgetId.bind(null, budget.id)}
+      {budgets ? (
+        <>
+          <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            isCentered
+            size="xl"
+            scrollBehavior={'inside'}
+            closeOnOverlayClick={false}
+          >
+            <ModalOverlay />
+            <AddModal onClose={onClose} refetchBudgets={refetchBudgets} />
+          </Modal>
+          <Flex gap="20px" direction="column">
+            <Flex gap="30px" direction="row">
+              <Flex gap="25px" direction="column" w="50%">
+                {budgets &&
+                  budgets.map((budget, index) => (
+                    <ItemCard
+                      key={budget.id}
+                      index={index}
+                      title={budget.name}
+                      desc={budget.description}
+                      percentage={budget.percentage}
+                      onClick={setSelectedBudgetId.bind(null, budget.id)}
+                      selected={budget.id === selectedBudgetId}
+                    />
+                  ))}
+              </Flex>
+              {budget ? (
+                <ItemDetails budget={budget} />
+              ) : (
+                <Flex w="100%" justifyContent="center" alignItems="center">
+                  <Spinner
+                    size="xl"
+                    thickness="4px"
+                    speed="0.65s"
+                    emptyColor="gray.200"
+                    color="secondaryBlue"
                   />
-                ))}
+                </Flex>
+              )}
             </Flex>
-            {budget && <ItemDetails budget={budget} />}
           </Flex>
-        </Flex>
+        </>
       ) : (
         <Flex
           w="100%"
